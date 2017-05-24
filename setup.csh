@@ -10,3 +10,6 @@ setenv PYTHONPATH $ROOTSYS/lib:${PYTHONPATH}
 setenv ROOT_ANALYSIS_HOME /sciclone/home10/jrstevens01/builds/gluex_root_analysis
 source $ROOT_ANALYSIS_HOME/env_analysis.csh
 
+# Data location for GlueX Workshop exercises
+setenv DATA /sciclone/data10/jrstevens01/workshops/data_2016
+

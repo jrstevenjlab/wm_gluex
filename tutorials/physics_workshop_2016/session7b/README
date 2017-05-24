@@ -1,0 +1,40 @@
+
+The goal of this session is to practice loading GlueX software and running jobs on the JLab CUE.
+These scripts can be used as a starting point for further data analysis.
+
+To configure the GlueX software, load the gluex_env_jlab.[c]sh script as in the following:
+
+   source gluex_env_jlab.sh
+
+To use your a diffent copy of sim-recon, change version_workshop.xml 
+- To use one of the tagged "official" versions:
+    <package name="sim-recon" version="1.11.1"\>
+- To use one of your own personal copies (example):
+    <package name="sim-recon" home="/work/halld2/home/sdobbs/my-sim-recon-dir"/>
+
+For more information:  https://halldweb.jlab.org/docs/gluex_build/    OR
+                       http://argus.phys.uregina.ca/cgi-bin/public/DocDB/ShowDocument?docid=2793
+
+
+To setup your batch job exercise:
+
+mkdir -p /work/halld/home/$USER/
+cp -R /group/halld/Software/workshops/physics_workshop_2016/session7b /work/halld/home/$USER/workshop_exercise
+cd /work/halld/home/$USER/workshop_exercise
+
+To setup the plugin for the exercise:
+
+mkdir -p $HALLD_MY/plugins/omega_ref
+cp -R /group/halld/Software/workshops/physics_workshop_2016/session2/omega_ref $HALLD_MY/plugins/omega_ref
+cd $HALLD_MY/plugins/omega_ref
+scons install
+
+To submit analysis jobs to the batch queue:
+
+1) Edit swif_gluex_analysis.py to set the configuration variables for your job
+
+2) Run the script, e.g., "./swif_gluex_analysis.py" - this will create a SWIF workflow.
+   You can then deal with the workflow using standard SWIF commnads, e.g.
+      "swif run -workflow MY_WORKFLOW_NAME"
+
+For more information:  https://halldweb.jlab.org/wiki/index.php/SWIF_Analysis_Jobs

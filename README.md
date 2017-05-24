@@ -14,6 +14,20 @@ Then source the setup.csh script to set your environment variables:
 
 Now you should have access to root, python, etc. for running some basic analysis tutorials.  
 
-If you're new to the group you should start by studying the ROOT tutorial, which you can find linked from https://wm1693.box.com/s/750ri1v5276ozdrk8iu0gj0nxxan1pwr as "ROOTClassManual2015."  This provides instructions for excercises using the ROOT software framework and specifically uses some source code located in this repository.  You can access the source code needed for these excercise with the following command
+-------------------------
+----- ROOT Tutorial -----
+-------------------------
+
+You should start by studying the ROOT tutorial, which you can find linked in this GitHub repository under: tutorials/root/ROOTClassManual2015.pdf  This provides instructions for excercises using the ROOT software framework and specifically uses some source code located in this repository.  You can access the source code needed for these excercise with the following command
 
 `cd $WM_GLUEX/tutorials/root`
+
+-----------------------------------
+----- GlueX Analysis Tutorial -----
+-----------------------------------
+
+An introduction to the GlueX analysis software is provided through a workshop conducted in May 2016 where various aspects of the GlueX software were overviewed and demonstrated.  The webpage for the workshop https://halldweb.jlab.org/wiki/index.php/GlueX_Physics_Workshop_2016 contains links to both presentation files and YouTube videos of the presentations explaining the steps in the tutorials.  A set of excercises for the different sessions are included in this GitHub repository and can be accessed with the following command
+
+`cd $WM_GLUEX/tutorials/physics_workshop_2016`
+
+You should complete the excercises from session: 3a, 3b, 5a, and 5b.

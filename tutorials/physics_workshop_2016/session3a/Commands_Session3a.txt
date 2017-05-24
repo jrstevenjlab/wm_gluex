@@ -1,7 +1,7 @@
 Session3a Commands:
 
 View TTree:
-root -l tree_omega_sim1_10000_0.root
+root -l $DATA/session3/tree_omega_sim1_10000_0.root
 TBrowser b;
 .q #quit root
 

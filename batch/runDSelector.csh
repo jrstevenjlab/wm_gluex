@@ -2,8 +2,11 @@
 
 echo $HOSTNAME
 echo $MyRun
+echo $MyCodeDir
+echo $MyDataInDir
+echo $MyDataOutDir
 
-source $WM_GLUEX/setup.csh
+source $MyEnv/setup.csh
 env
 
 pwd
@@ -13,14 +16,14 @@ mkdir -p $MyRun/
 cd $MyRun/
 
 pwd 
-cp ../DSelector*.C ./
-cp ../DSelector*.h ./
-cp ../runSelector.C ./
+cp $MyCodeDir/selector/DSelector*.C ./
+cp $MyCodeDir/selector/DSelector*.h ./
+cp $MyCodeDir/selector/runSelector.C ./
 
 ls -al
 
-root.exe -l -b -q runSelector.C\(\"$MyRun\"\)
-mv hist*.acc.root ../../out/
+root.exe -l -b -q runSelector.C\(\"$MyRun\",\"$MyDataInDir\"\)
+mv hist*.acc.root $MyDataOutDir
 
 cd ../
 rm -rf $MyRun/

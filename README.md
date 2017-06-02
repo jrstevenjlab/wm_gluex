@@ -12,7 +12,13 @@ Then source the setup.csh script to set your environment variables:
 
 `source setup.csh`
 
-Now you should have access to root, python, etc. for running some basic analysis tutorials.  
+Now you should have access to root, python, etc. for running some basic analysis tutorials.
+
+Finally, you should copy the file .rootrc into your home directory with the command
+
+`cp $WM_GLUEX/.rootrc ~/`
+
+which will load a custom ROOT environment everytime you open a session.  This is needed to properly access some of the libraries in the tutorials below.
 
 -------------------------
 ----- ROOT Tutorial -----

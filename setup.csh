@@ -6,10 +6,6 @@ source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUE
 #source /$YOURPATH/root/bin/thisroot.csh
 setenv PYTHONPATH $ROOTSYS/lib:${PYTHONPATH}
 
-# ROOT analysis
-setenv ROOT_ANALYSIS_HOME /sciclone/home10/jrstevens01/builds/gluex_root_analysis
-source $ROOT_ANALYSIS_HOME/env_analysis.csh
-
 # Data location for GlueX Workshop exercises
 setenv DATA /sciclone/data10/jrstevens01/workshops/data_2016
 

@@ -27,6 +27,6 @@ omega_skim_Tree->Process("DSelector_session3a.C+");
 Run PROOF-Lite:
 root -l
 .x $ROOT_ANALYSIS_HOME/scripts/Load_DSelector.C
-DPROOFLiteManager::Process_Tree("$DATA/session3/tree_omega_sim1_10000_0.root", "omega_skim_Tree", "DSelector_session3a.C+", "my_outfile.root", 2); //2: 2 threads
+DPROOFLiteManager::Process_Tree("$DATA/session3/tree_omega_sim1_10000_0.root", "omega_skim_Tree", "DSelector_session3a.C+", 2, "my_outfile.root"); //2: 2 threads
 .q #quit root
 

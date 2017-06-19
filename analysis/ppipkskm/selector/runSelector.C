@@ -6,7 +6,7 @@
 #include "TString.h"
 #include "TSystem.h"
    
-void runSelector(TString runNumber = "11366", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2016-02/analysis/ver05/tree_pipkskm/") 
+void runSelector(TString runNumber = "11366", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2016-02/analysis/ver06/tree_pipkskm/") 
 {
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");

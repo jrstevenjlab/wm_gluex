@@ -8,7 +8,7 @@ Next modify the submit.sh script as needed for your specific analysis.  At a min
 
 When you execute the submission script using the following command:
 
-`./setup.sh`
+`./submit.sh`
 
 it will loop over the run numbers provided submit a 'job' to a batch node to execute your runSelector macro on the data from each run.  The output files produced should be copied to the location you specify in the $MyDataOutDir variable.
 

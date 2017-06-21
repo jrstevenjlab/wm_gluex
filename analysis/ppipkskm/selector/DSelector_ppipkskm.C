@@ -224,7 +224,7 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		TLorentzVector lockppimP4 = locKMinusP4 + locPiPlus1P4;
                 TLorentzVector loc2kpiP4 = locKMinusP4 + locPiPlus1P4 + locDecayingKShortP4;
 
-		TLorentzVector loc2piX4_Measured = dPiPlus1Wrapper->Get_X4_Measured() + dPiMinusWrapper->Get_X4_Measured();
+		TLorentzVector loc2piX4_Measured = dPiPlus2Wrapper->Get_X4_Measured() + dPiMinusWrapper->Get_X4_Measured();
                 loc2piX4_Measured *= 0.5;
                 TLorentzVector locProtonX4_Measured = dProtonWrapper->Get_X4_Measured();
                 TLorentzVector locDeltaX4_Measured = loc2piX4_Measured - locProtonX4_Measured;

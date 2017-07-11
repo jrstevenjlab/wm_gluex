@@ -340,7 +340,7 @@ Bool_t DSelector_p3pi_workshop::Process(Long64_t locEntry)
                         locIsEventCut = false; // Combo has been cut previously
         }
         if(!locIsEventCut && dOutputTreeFileName != "") 
-	FillOutputTree();
+	Fill_OutputTree();
 */
 
 	return kTRUE;

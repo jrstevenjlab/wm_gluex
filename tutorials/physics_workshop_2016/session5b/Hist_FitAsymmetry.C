@@ -12,7 +12,7 @@ void Hist_FitAsymmetry() {
 
 	TH1F *hpara = (TH1F*)h2para->ProjectionY("phi_para");
 	TH1F *hperp = (TH1F*)h2perp->ProjectionY("phi_perp");
-	TH1F *hasym = hperp->GetAsymmetry(hpara);
+	TH1F *hasym = (TH1F*)hperp->GetAsymmetry(hpara);
 	TH1F *hsum = (TH1F*)hpara->Clone(); hsum->Add(hperp);
 	cc1->cd(1);
 	TF1* fpara = new TF1("fitpara","[0]*(1.0 + [1]*cos(2*(x + [2])/180.*3.14159))");

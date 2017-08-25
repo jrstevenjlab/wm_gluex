@@ -1,3 +1,5 @@
+setenv JANA_CALIB_CONTEXT "variation=mc"
+
 genr8 -M100 -r10000 -s10000 -Aomegapi.txt < omegapi.in
 
 genr8_2_hddm -V"0 0 50 80" omegapi.txt

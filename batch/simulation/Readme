@@ -1,0 +1,13 @@
+Initiate batch job simulation with the following command
+
+./gluex_MC.py ConfigFile RunNumber NEvents per_file=NEventsPerFile batch=1
+
+where each of the following  
+
+ConfigFile: contains the MCWrapper configuration parameters (see gen_omegapi.in)
+RunNumber: is the run number for your events (for Spring 2017 between 30274 and 31057)
+NEvents: is the # of events you want to generate
+NEventsPerFile: is the # of events to simulate for each job/file (5000 is a good number)
+
+To submit many jobs, through qsub, to the W&M HPC nodes us batch=1.  Otherwise you can generate a small number of events (<5000) interactively by running the same command with batch=0.
+

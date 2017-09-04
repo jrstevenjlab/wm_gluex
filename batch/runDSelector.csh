@@ -24,6 +24,7 @@ ls -al
 
 root.exe -l -b -q runSelector.C\(\"$MyRun\",\"$MyDataInDir\"\)
 mv hist*.acc.root $MyDataOutDir
+mv tree*.acc.root $MyDataOutDir
 
 cd ../
 rm -rf $MyRun/

@@ -93,47 +93,49 @@ void DSelector_pomegapi::Init(TTree *locTree)
 	/******************************** EXAMPLE USER INITIALIZATION: STAND-ALONE HISTOGRAMS *******************************/
 
 	//EXAMPLE MANUAL HISTOGRAMS:
-	dHist_MissingMassSquared = new TH1I("MissingMassSquared", ";Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
-	dHist_BeamEnergy = new TH1I("BeamEnergy", ";Beam Energy (GeV)", 600, 0.0, 12.0);
-	dHist_3PiMass_Measured = new TH1I("3PiMass_Measured", ";3 Pion Mass (GeV/c^{2})", 600, 0.6, 1.1);
-	dHist_MM2_Weighted = new TH1I("MM2_Weighted", ";Weighted Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
-	dHist_lambda_peak = new TH1I("lambda_peak", ";{lambda} (peak)", 600, 0, 1);
-       	dHist_lambda_wings = new TH1I("lambda_wings", ";{lambda} (wings)", 600, 0, 1);
-       	dHist_lambda_uncut = new TH1I("lambda_uncut", ";{lambda} (uncut)", 600, 0, 1);
-	dHist_4PiMass = new TH1I("4PiMass", ";Pi+Pi-Pi0Pi0 Mass (GeV/c^{2})", 600, 0, 3);
-	dHist_OmegaPiMass = new TH1I("OmegaPiMass", ";Omega Pi0 Mass (GeV)", 600, 0, 3);
-	dHist_3vs4 = new TH2I("3vs4", ";3 Pion Mass vs 4 Pion Mass", 600, 0, 3, 600, 0, 3);
-	dHist_Man_t = new TH1I("Man_t", ";Four-Momentum Transfer Squared (GeV)^{2}", 600, 0.0, 1.0);
+	dHist_MissingMassSquared = new TH1F("MissingMassSquared", ";Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
+	dHist_BeamEnergy = new TH1F("BeamEnergy", ";Beam Energy (GeV)", 600, 0.0, 12.0);
+
+	//MY HISTOGRAMS:
+	dHist_3PiMass_Measured = new TH1F("3PiMass_Measured", ";3 Pion Mass (GeV/c^{2})", 600, 0.6, 1.1);
+	dHist_MM2_Weighted = new TH1F("MM2_Weighted", ";Weighted Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
+	dHist_lambda_peak = new TH1F("lambda_peak", ";{lambda} (peak)", 600, 0, 1);
+       	dHist_lambda_wings = new TH1F("lambda_wings", ";{lambda} (wings)", 600, 0, 1);
+       	dHist_lambda_uncut = new TH1F("lambda_uncut", ";{lambda} (uncut)", 600, 0, 1);
+	dHist_4PiMass = new TH1F("4PiMass", ";Pi+Pi-Pi0Pi0 Mass (GeV/c^{2})", 600, 0, 3);
+	dHist_OmegaPiMass = new TH1F("OmegaPiMass", ";Omega Pi0 Mass (GeV)", 600, 0, 3);
+	dHist_3vs4 = new TH2F("3vs4", ";3 Pion Mass vs 4 Pion Mass", 600, 0, 3, 600, 0, 3);
+	dHist_Man_t = new TH1F("Man_t", ";Four-Momentum Transfer Squared (GeV)^{2}", 600, 0.0, 1.0);
 	//Decay Angles
-	dHist_costheta = new TH1I("costheta", ";Cos(theta)", 600, -1.0, 1.0);
-	dHist_phi = new TH1I("phi", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_costhetaH = new TH1I("costhetaH", ";Cos(theta_H)", 600, -1.0, 1.0);
-	dHist_phiH = new TH1I("phiH", ";phi_H (rad)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_costheta = new TH1F("costheta", ";Cos(theta)", 600, -1.0, 1.0);
+	dHist_phi = new TH1F("phi", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_costhetaH = new TH1F("costhetaH", ";Cos(theta_H)", 600, -1.0, 1.0);
+	dHist_phiH = new TH1F("phiH", ";phi_H (rad)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	//Angles vs mass
-	dHist_CosThetaVsMass = new TH2I("CosThetaVsMass", ";Cos(theta) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiVsMass = new TH2I("PhiVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
-	dHist_CosThetaHVsMass = new TH2I("CosThetaHVsMass", ";Cos(theta_H) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiHVsMass = new TH2I("PhiHVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaVsMass = new TH2F("CosThetaVsMass", ";Cos(theta) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiVsMass = new TH2F("PhiVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaHVsMass = new TH2F("CosThetaHVsMass", ";Cos(theta_H) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiHVsMass = new TH2F("PhiHVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
 	//Angles in t range [0.1, 0.3]
-	dHist_CosTheta_t1 = new TH1I("CosTheta_t1", ";Cos(theta) with t[0.1, 0.3]", 600, -1.0, 1.0);
-	dHist_Phi_t1 = new TH1I("Phi_t1", ";Phi with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_CosThetaH_t1 = new TH1I("CosThetaH_t1", ";Cos(theta_H) with t[0.1, 0.3]", 600, -1.0, 1.0);
-	dHist_PhiH_t1 = new TH1I("PhiH_t1", ";Phi_H with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosTheta_t1 = new TH1F("CosTheta_t1", ";Cos(theta) with t[0.1, 0.3]", 600, -1.0, 1.0);
+	dHist_Phi_t1 = new TH1F("Phi_t1", ";Phi with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosThetaH_t1 = new TH1F("CosThetaH_t1", ";Cos(theta_H) with t[0.1, 0.3]", 600, -1.0, 1.0);
+	dHist_PhiH_t1 = new TH1F("PhiH_t1", ";Phi_H with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	//Angles in t range [0.3, 1.0]
-	dHist_CosTheta_t2 = new TH1I("CosTheta_t2", ";Cos(theta) with t[0.3, 1.0]", 600, -1.0, 1.0);
-	dHist_Phi_t2 = new TH1I("Phi_t2", ";Phi with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_CosThetaH_t2 = new TH1I("CosThetaH_t2", ";Cos(theta_H) with t[0.3, 1.0]", 600, -1.0, 1.0);
-	dHist_PhiH_t2 = new TH1I("PhiH_t2", ";Phi_H with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosTheta_t2 = new TH1F("CosTheta_t2", ";Cos(theta) with t[0.3, 1.0]", 600, -1.0, 1.0);
+	dHist_Phi_t2 = new TH1F("Phi_t2", ";Phi with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosThetaH_t2 = new TH1F("CosThetaH_t2", ";Cos(theta_H) with t[0.3, 1.0]", 600, -1.0, 1.0);
+	dHist_PhiH_t2 = new TH1F("PhiH_t2", ";Phi_H with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	//Angles vs mass in t range [0.1, 0.3]
-	dHist_CosThetaVsMass_t1 = new TH2I("CosThetaVsMass_t1", ";Cos(theta) vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiVsMass_t1 = new TH2I("PhiVsMass_t1", ";Phi vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
-	dHist_CosThetaHVsMass_t1 = new TH2I("CosThetaHVsMass_t1", ";Cos(theta_H) vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiHVsMass_t1 = new TH2I("PhiHVsMass_t1", ";Phi vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaVsMass_t1 = new TH2F("CosThetaVsMass_t1", ";Cos(theta) vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiVsMass_t1 = new TH2F("PhiVsMass_t1", ";Phi vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaHVsMass_t1 = new TH2F("CosThetaHVsMass_t1", ";Cos(theta_H) vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiHVsMass_t1 = new TH2F("PhiHVsMass_t1", ";Phi vs Omega Pi Mass with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
 	//Angles vs mass in t range [0.3, 1.0]
-	dHist_CosThetaVsMass_t2 = new TH2I("CosThetaVsMass_t2", ";Cos(theta) vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiVsMass_t2 = new TH2I("PhiVsMass_t2", ";Phi vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
-	dHist_CosThetaHVsMass_t2 = new TH2I("CosThetaHVsMass_t2", ";Cos(theta_H) vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiHVsMass_t2 = new TH2I("PhiHVsMass_t2", ";Phi_H vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaVsMass_t2 = new TH2F("CosThetaVsMass_t2", ";Cos(theta) vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiVsMass_t2 = new TH2F("PhiVsMass_t2", ";Phi vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaHVsMass_t2 = new TH2F("CosThetaHVsMass_t2", ";Cos(theta_H) vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiHVsMass_t2 = new TH2F("PhiHVsMass_t2", ";Phi_H vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
 	
 
 	/***************************************** ADVANCED: CHOOSE BRANCHES TO READ ****************************************/
@@ -455,8 +457,18 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		//}
 
 		/*************************************** HISTOGRAM WEIGHTED MISSING MASS SQUARED *********************************/
-	       	//Missing Mass Squared
-		double locMM2_Weighted = locMissingP4_Measured.M2();
+	       	//Missing Mass Squared is defined above, here we'll define weights for the 3Pi mass, that we'll use over and over
+		//Assign weight for first 3Pi combo
+		double weight1;
+		if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
+		else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
+		else weight1 = 0;
+		//Assign weight for second 3Pi combo
+		double weight2;
+		if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
+		else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
+		else weight2 = 0;
+		
 
 		//Uniqueness tracking: Build the map of particles used for the missing mass
 		map<Particle_t, set<Int_t> > locUsedThisCombo_MM2_Weighted;
@@ -473,19 +485,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_MM2_Weighted.find(locUsedThisCombo_MM2_Weighted) == locUsedSoFar_MM2_Weighted.end())
 		{
 		  //unique missing mass combo: histogram it, and register this combo of particles
-		  //Assign weight for first 3Pi combo
-		  double weight1;
-		  if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-		  else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-		  else weight1 = 0;
-		   dHist_MM2_Weighted->Fill(locMM2_Weighted, weight1);
-		  
-		  //Assign weight for second 3Pi combo
-		  double weight2;
-		  if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-		  else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-		  else weight2 = 0;
-		   dHist_MM2_Weighted->Fill(locMM2_Weighted, weight2);
+		   dHist_MM2_Weighted->Fill(locMissingMassSquared, weight1);		  
+		   dHist_MM2_Weighted->Fill(locMissingMassSquared, weight2);
 		   locUsedSoFar_MM2_Weighted.insert(locUsedThisCombo_MM2_Weighted);
 		}
 
@@ -505,9 +506,6 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		TVector3 locPiMinusP3_1 = locPiMinusP4_Boosted1.Vect();
 		TVector3 locPlusCrossMinus1 = locPiPlusP3_1.Cross(locPiMinusP3_1);		
 
-		//Decay matrix element squared
-	       	double loclambda_peak1 = 4/3. * fabs(locPlusCrossMinus1.Dot(locPlusCrossMinus1))/powf((1/9. * loc3Pi1P4_Measured.M2() - locPi01P4_Measured.M2()), 2.);
-
 		//Boost Pi+ and Pi- to the 3Pi rest frame
 		//Sum the 3Pi 4-Momenta
 		TLorentzVector loc3PiP4_2 = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi02P4_Measured;
@@ -522,8 +520,10 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		TVector3 locPiMinusP3_2 = locPiMinusP4_Boosted2.Vect();
 		TVector3 locPlusCrossMinus2 = locPiPlusP3_2.Cross(locPiMinusP3_2);		
 
-		//Decay matrix element squared
-	       	double loclambda_peak2 = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/powf((1/9. * loc3Pi2P4_Measured.M2() - locPi02P4_Measured.M2()), 2.);
+		//Decay matrix element squared (for first photon pair)
+	       	double loclambda1 = 4/3. * fabs(locPlusCrossMinus1.Dot(locPlusCrossMinus1))/TMath::Power((1/9. * loc3Pi1P4_Measured.M2() - locPi01P4_Measured.M2()), 2.);
+		//Decay matrix element squared (for second photon pair)
+	       	double loclambda2 = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/TMath::Power((1/9. * loc3Pi2P4_Measured.M2() - locPi02P4_Measured.M2()), 2.);
 		
 		//Uniqueness Tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_lambda_peak;
@@ -541,11 +541,11 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    double weightpeak1;
 		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weightpeak1 = +1;
 		    else weightpeak1 = 0;
-		    dHist_lambda_peak->Fill(loclambda_peak1, weightpeak1);
+		    dHist_lambda_peak->Fill(loclambda1, weightpeak1);
 		    double weightpeak2;
 		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weightpeak2 = +1;
 		    else weightpeak2 = 0;
-		    dHist_lambda_peak1->Fill(loclambda_peak2, weightpeak2);
+		    dHist_lambda_peak->Fill(loclambda2, weightpeak2);
 
 		    locUsedSoFar_lambda_peak.insert(locUsedThisCombo_lambda_peak);
 		  }
@@ -553,9 +553,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 
 
 	/**************************************** HISTOGRAM DECAY MATRIX ELEMENT SQUARED (LAMBDA)(WINGS, FIRST PI0) ************************/
-		//Decay matrix element squared
-	       	double loclambda_wings1 = 4/3. * fabs(locPlusCrossMinus1.Dot(locPlusCrossMinus1))/powf((1/9. * loc3Pi1P4_Measured.M2() - locPi01P4_Measured.M2()), 2.);
-	       	double loclambda_wings2 = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/powf((1/9. * loc3Pi2P4_Measured.M2() - locPi02P4_Measured.M2()), 2.);
+		//Decay matrix element squared is defined above
 		
 		//Uniqueness Tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_lambda_wings;
@@ -573,18 +571,17 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    double weightwings1;
 		    if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weightwings1 = +1;
 		    else weightwings1 = 0;
-		    dHist_lambda_wings->Fill(loclambda_wings1, weightwings1);
+		    dHist_lambda_wings->Fill(loclambda1, weightwings1);
 		    double weightwings2;
 		    if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weightwings2 = +1;
 		    else weightwings2 = 0;
-		    dHist_lambda_wings->Fill(loclambda_wings2, weightwings2);
+		    dHist_lambda_wings->Fill(loclambda2, weightwings2);
 
 		    locUsedSoFar_lambda_wings.insert(locUsedThisCombo_lambda_wings);
 		  }
 		
 		/*********************************** HISTOGRAM AN UNCUT LAMBDA **************************************************/
-		//Decay matrix element squared
-	       	double loclambda_uncut = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/powf((1/9. * loc3Pi2P4_Measured.M2() - locPi02P4_Measured.M2()), 2.);
+		//Decay matrix element squared is defined above
 		
 		//Uniqueness Tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_lambda_uncut;
@@ -597,7 +594,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_lambda_uncut.find(locUsedThisCombo_lambda_uncut) == locUsedSoFar_lambda_uncut.end())
 		  {
 		    //unique lambda combo: histogram it, and register this combo of particles
-		    dHist_lambda_uncut->Fill(loclambda_uncut);
+		    dHist_lambda_uncut->Fill(loclambda1);
+		    dHist_lambda_uncut->Fill(loclambda2);
 		    locUsedSoFar_lambda_uncut.insert(locUsedThisCombo_lambda_uncut);
 		  }
 
@@ -622,7 +620,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  }
 
 		/*********************************** HISTOGRAM OMEGAPI0 MASS SPECTRUM **************************************************/
-		double locOmegaPiMass = loc4PiP4_Measured.M();
+		//OmegaPi mass is 4Pi mass, with mass cuts
 		
 		//Uniqueness tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_OmegaPiMass;
@@ -636,25 +634,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		//compare to what's been used so far
 		if(locUsedSoFar_OmegaPiMass.find(locUsedThisCombo_OmegaPiMass) == locUsedSoFar_OmegaPiMass.end())
 		  {
-		    //unique missing mass combo: histogram it, and register this combo of particles
-		    //Assign weight for first omega combo
-		    double omega1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) omega1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) omega1 = -1;
-		    else omega1 = 0;
-		    dHist_OmegaPiMass->Fill(locOmegaPiMass, omega1);
-
-		    //Assign weight for second omega combo
-		    double omega2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) omega2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) omega2 = -1;
-		    else omega2 = 0;
-		    dHist_OmegaPiMass->Fill(locOmegaPiMass, omega2);
+		    //unique combo: histogram it, and register this combo of particles
+		    dHist_OmegaPiMass->Fill(loc4PiMass, weight1);
+		    dHist_OmegaPiMass->Fill(loc4PiMass, weight2);
 		    locUsedSoFar_OmegaPiMass.insert(locUsedThisCombo_OmegaPiMass);
 		  }
 		
 		/************************************* HISTOGRAM 3PION MASS VS 4PION MASS ***************************/
-		//I think we've already declared loc4PiMass etc. Let's see if it works
+		//3 Pion and 4 Pion masses have been declared previously
 		//Uniqueness tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_3vs4;
 		locUsedThisCombo_3vs4[Gamma].insert(locPhoton1NeutralID);
@@ -669,6 +656,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  {
 		    //unique combo: histogram it, and register this combo of particles
 		    dHist_3vs4->Fill(loc3PiMass1_Measured, loc4PiMass);
+		    dHist_3vs4->Fill(loc3PiMass2_Measured, loc4PiMass);
 		    locUsedSoFar_3vs4.insert(locUsedThisCombo_3vs4);
 		  }
 		
@@ -689,19 +677,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_Man_t.find(locUsedThisCombo_Man_t) == locUsedSoFar_Man_t.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //Assign weight for first 3Pi combo
-		    double weightt1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weightt1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weightt1 = -1;
-		    else weightt1 = 0;
-		    dHist_Man_t->Fill(locMan_t, weightt1);
-		  
-		    //Assign weight for second 3Pi combo
-		    double weightt2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weightt2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weightt2 = -1;
-		    else weightt2 = 0;
-		    dHist_Man_t->Fill(locMan_t, weightt2);
+		    dHist_Man_t->Fill(locMan_t, weight1);
+		    dHist_Man_t->Fill(locMan_t, weight2);
 		    locUsedSoFar_Man_t.insert(locUsedThisCombo_Man_t);
 		  }
 
@@ -742,16 +719,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  {
 		    //unique combo: histogram it, and register this combo of particles
 		    //Apply omega mass cuts
-		    double thetaweight1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) thetaweight1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) thetaweight1 = -1;
-		    else thetaweight1 = 0;
-		    dHist_costheta->Fill(loccostheta1, thetaweight1);
-		    double thetaweight2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) thetaweight2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) thetaweight2 = -1;
-		    else thetaweight2 = 0;
-		    dHist_costheta->Fill(loccostheta2, thetaweight2);
+		    dHist_costheta->Fill(loccostheta1, weight1);
+		    dHist_costheta->Fill(loccostheta2, weight2);
 		    locUsedSoFar_costheta.insert(locUsedThisCombo_costheta);
 		  }
 
@@ -776,18 +745,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_phi.find(locUsedThisCombo_phi) == locUsedSoFar_phi.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //Apply omega mass cuts
-		    double phiweight1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) phiweight1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) phiweight1 = -1;
-		    else phiweight1 = 0;
-		       dHist_phi->Fill(locphi1, phiweight1);
-		    //Apply omega mass cuts
-		    double phiweight2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) phiweight2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) phiweight2 = -1;
-		    else phiweight2 = 0;
-		       dHist_phi->Fill(locphi2, phiweight2);
+		    dHist_phi->Fill(locphi1, weight1);
+		    dHist_phi->Fill(locphi2, weight2);
 		    locUsedSoFar_phi.insert(locUsedThisCombo_phi);
 		  }
 		
@@ -811,18 +770,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_costhetaH.find(locUsedThisCombo_costhetaH) == locUsedSoFar_costhetaH.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //Apply omega mass cuts
-		    double thetaHweight1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) thetaHweight1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) thetaHweight1 = -1;
-		    else thetaHweight1 = 0;
-		       dHist_costhetaH->Fill(loccosthetaH1, thetaHweight1);
-		    //Apply omega mass cuts
-		    double thetaHweight2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) thetaHweight2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) thetaHweight2 = -1;
-		    else thetaHweight2 = 0;
-		       dHist_costhetaH->Fill(loccosthetaH2, thetaHweight2);
+		    dHist_costhetaH->Fill(loccosthetaH1, weight1);
+		    dHist_costhetaH->Fill(loccosthetaH2, weight2);
 		    locUsedSoFar_costhetaH.insert(locUsedThisCombo_costhetaH);
 		  }		
 		
@@ -845,23 +794,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_phiH.find(locUsedThisCombo_phiH) == locUsedSoFar_phiH.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //Apply omega mass cuts
-		    double phiHweight1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) phiHweight1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) phiHweight1 = -1;
-		    else phiHweight1 = 0;
-		       dHist_phiH->Fill(locphiH1, phiHweight1);
-		    double phiHweight2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) phiHweight2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) phiHweight2 = -1;
-		    else phiHweight2 = 0;
-		       dHist_phiH->Fill(locphiH2, phiHweight2);
+		    dHist_phiH->Fill(locphiH1, weight1);
+		    dHist_phiH->Fill(locphiH2, weight2);
 		    locUsedSoFar_phiH.insert(locUsedThisCombo_phiH);
 		  }
 		
 
 		/************************************************* HISTOGRAM COS(THETA_H) IN MASS BINS ****************************************************************/
-		//loccosthetaH and locOmegaPiMass have already been declared
+		//loccosthetaH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaHVsMass;
@@ -878,22 +818,13 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_CosThetaHVsMass.find(locUsedThisCombo_CosThetaHVsMass) == locUsedSoFar_CosThetaHVsMass.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //apply omega mass cuts
-		    double wH1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) wH1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) wH1 = -1;
-		    else wH1 = 0;
-		    dHist_CosThetaHVsMass->Fill(loccosthetaH1,locOmegaPiMass, wH1);
-		    double wH2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) wH2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) wH2 = -1;
-		    else wH2 = 0;
-		    dHist_CosThetaHVsMass->Fill(loccosthetaH2,locOmegaPiMass, wH2);
-		      locUsedSoFar_CosThetaHVsMass.insert(locUsedThisCombo_CosThetaHVsMass);
+		    dHist_CosThetaHVsMass->Fill(loccosthetaH1,loc4PiMass, weight1);
+		    dHist_CosThetaHVsMass->Fill(loccosthetaH2,loc4PiMass, weight2);
+		    locUsedSoFar_CosThetaHVsMass.insert(locUsedThisCombo_CosThetaHVsMass);
 		  }
 
 		/************************************************* HISTOGRAM PHI_H IN MASS BINS ********************************************************/
-		//locphiH and locOmegaPiMass have already been declared
+		//locphiH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiHVsMass;
@@ -910,22 +841,13 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_PhiHVsMass.find(locUsedThisCombo_PhiHVsMass) == locUsedSoFar_PhiHVsMass.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //apply omega mass cuts
-		    double pH1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) pH1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) pH1 = -1;
-		    else pH1 = 0;
-		    dHist_PhiHVsMass->Fill(locphiH1,locOmegaPiMass, pH1);
-		    double pH2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) pH2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) pH2 = -1;
-		    else pH2 = 0;
-		    dHist_PhiHVsMass->Fill(locphiH2,locOmegaPiMass, pH2);
-		      locUsedSoFar_PhiHVsMass.insert(locUsedThisCombo_PhiHVsMass);
+		    dHist_PhiHVsMass->Fill(locphiH1,loc4PiMass, weight1);
+		    dHist_PhiHVsMass->Fill(locphiH2,loc4PiMass, weight2);
+		    locUsedSoFar_PhiHVsMass.insert(locUsedThisCombo_PhiHVsMass);
 		  }
 
 		/************************************************* HISTOGRAM COS(THETA) IN MASS BINS ****************************************************************/
-		//loccostheta and locOmegaPiMass have already been declared
+		//loccostheta and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaVsMass;
@@ -942,22 +864,13 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_CosThetaVsMass.find(locUsedThisCombo_CosThetaVsMass) == locUsedSoFar_CosThetaVsMass.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //apply omega mass cuts
-		    double w1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) w1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) w1 = -1;
-		    else w1 = 0;
-		    dHist_CosThetaVsMass->Fill(loccostheta1,locOmegaPiMass, w1);
-		    double w2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) w2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) w2 = -1;
-		    else w2 = 0;
-		    dHist_CosThetaVsMass->Fill(loccostheta2,locOmegaPiMass, w2);
-		      locUsedSoFar_CosThetaVsMass.insert(locUsedThisCombo_CosThetaVsMass);
+		    dHist_CosThetaVsMass->Fill(loccostheta1,loc4PiMass, weight1);
+		    dHist_CosThetaVsMass->Fill(loccostheta2,loc4PiMass, weight2);
+		    locUsedSoFar_CosThetaVsMass.insert(locUsedThisCombo_CosThetaVsMass);
 		  }
 
 		/************************************************* HISTOGRAM PHI IN MASS BINS ********************************************************/
-		//locphi and locOmegaPiMass have already been declared
+		//locphi and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiVsMass;
@@ -974,18 +887,9 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_PhiVsMass.find(locUsedThisCombo_PhiVsMass) == locUsedSoFar_PhiVsMass.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    //apply omega mass cuts
-		    double p1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) p1 = +1;
-		    else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) p1 = -1;
-		    else p1 = 0;
-		    dHist_PhiVsMass->Fill(locphi1,locOmegaPiMass, p1);
-		    double p2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) p2 = +1;
-		    else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) p2 = -1;
-		    else p2 = 0;
-		    dHist_PhiVsMass->Fill(locphi2,locOmegaPiMass, p2);
-		      locUsedSoFar_PhiVsMass.insert(locUsedThisCombo_PhiVsMass);
+		    dHist_PhiVsMass->Fill(locphi1,loc4PiMass, weight1);
+		    dHist_PhiVsMass->Fill(locphi2,loc4PiMass, weight2);
+		    locUsedSoFar_PhiVsMass.insert(locUsedThisCombo_PhiVsMass);
 		  }
 
 		/***************************************** HISTOGRAM COS(THETA) IN t [0.1, 0.3] BIN ***********************************************/
@@ -1009,15 +913,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_CosTheta_t1->Fill(loccostheta1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_CosTheta_t1->Fill(loccostheta2, weight2);
 			locUsedSoFar_CosTheta_t1.insert(locUsedThisCombo_CosTheta_t1);
 		      }
@@ -1044,15 +940,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_CosTheta_t2->Fill(loccostheta1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_CosTheta_t2->Fill(loccostheta2, weight2);
 			locUsedSoFar_CosTheta_t2.insert(locUsedThisCombo_CosTheta_t2);
 		      }
@@ -1079,15 +967,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_Phi_t1->Fill(locphi1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_Phi_t1->Fill(locphi2, weight2);
 			locUsedSoFar_Phi_t1.insert(locUsedThisCombo_Phi_t1);
 		      }
@@ -1114,15 +994,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_Phi_t2->Fill(locphi1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_Phi_t2->Fill(locphi2, weight2);
 			locUsedSoFar_Phi_t2.insert(locUsedThisCombo_Phi_t2);
 		      }
@@ -1149,15 +1021,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_CosThetaH_t1->Fill(loccosthetaH1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_CosThetaH_t1->Fill(loccosthetaH2, weight2);
 			locUsedSoFar_CosThetaH_t1.insert(locUsedThisCombo_CosThetaH_t1);
 		      }
@@ -1184,15 +1048,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_CosThetaH_t2->Fill(loccosthetaH1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_CosThetaH_t2->Fill(loccosthetaH2, weight2);
 			locUsedSoFar_CosThetaH_t2.insert(locUsedThisCombo_CosThetaH_t2);
 		      }
@@ -1219,15 +1075,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_PhiH_t1->Fill(locphiH1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_PhiH_t1->Fill(locphiH2, weight2);
 			locUsedSoFar_PhiH_t1.insert(locUsedThisCombo_PhiH_t1);
 		      }
@@ -1254,15 +1102,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//Apply omega mass cuts and histogram results
-			double weight1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
-			else weight1 = 0;
 			dHist_PhiH_t2->Fill(locphiH1, weight1);
-			double weight2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
-			else weight2 = 0;
 			dHist_PhiH_t2->Fill(locphiH2, weight2);
 			locUsedSoFar_PhiH_t2.insert(locUsedThisCombo_PhiH_t2);
 		      }
@@ -1271,7 +1111,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 
 		/**************************************** HISTOGRAM ANGLES VS MASS IN t[0.1, 0.3] ******************************************/
 		/************************************************* HISTOGRAM COS(THETA_H) IN MASS BINS ****************************************************************/
-		//loccosthetaH and locOmegaPiMass have already been declared
+		//loccosthetaH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaHVsMass_t1;
@@ -1291,23 +1131,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//unique combo: histogram it, and register this combo of particles
-			//apply omega mass cuts
-			double wH1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) wH1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) wH1 = -1;
-			else wH1 = 0;
-			dHist_CosThetaHVsMass_t1->Fill(loccosthetaH1,locOmegaPiMass, wH1);
-			double wH2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) wH2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) wH2 = -1;
-			else wH2 = 0;
-			dHist_CosThetaHVsMass_t1->Fill(loccosthetaH2,locOmegaPiMass, wH2);
+			dHist_CosThetaHVsMass_t1->Fill(loccosthetaH1,loc4PiMass, weight1);
+			dHist_CosThetaHVsMass_t1->Fill(loccosthetaH2,loc4PiMass, weight2);
 			locUsedSoFar_CosThetaHVsMass_t1.insert(locUsedThisCombo_CosThetaHVsMass_t1);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM PHI_H IN MASS BINS ********************************************************/
-		//locphiH and locOmegaPiMass have already been declared
+		//locphiH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiHVsMass_t1;
@@ -1328,22 +1159,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		      {
 			//unique combo: histogram it, and register this combo of particles
 			//apply omega mass cuts
-			double pH1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) pH1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) pH1 = -1;
-			else pH1 = 0;
-			dHist_PhiHVsMass_t1->Fill(locphiH1,locOmegaPiMass, pH1);
-			double pH2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) pH2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) pH2 = -1;
-			else pH2 = 0;
-			dHist_PhiHVsMass_t1->Fill(locphiH2,locOmegaPiMass, pH2);
+			dHist_PhiHVsMass_t1->Fill(locphiH1,loc4PiMass, weight1);
+			dHist_PhiHVsMass_t1->Fill(locphiH2,loc4PiMass, weight2);
 			locUsedSoFar_PhiHVsMass_t1.insert(locUsedThisCombo_PhiHVsMass_t1);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM COS(THETA) IN MASS BINS ****************************************************************/
-		//loccostheta and locOmegaPiMass have already been declared
+		//loccostheta and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaVsMass_t1;
@@ -1363,23 +1186,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//unique combo: histogram it, and register this combo of particles
-			//apply omega mass cuts
-			double w1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) w1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) w1 = -1;
-			else w1 = 0;
-			dHist_CosThetaVsMass_t1->Fill(loccostheta1,locOmegaPiMass, w1);
-			double w2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) w2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) w2 = -1;
-			else w2 = 0;
-			dHist_CosThetaVsMass_t1->Fill(loccostheta2,locOmegaPiMass, w2);
+			dHist_CosThetaVsMass_t1->Fill(loccostheta1,loc4PiMass, weight1);
+			dHist_CosThetaVsMass_t1->Fill(loccostheta2,loc4PiMass, weight2);
 			locUsedSoFar_CosThetaVsMass_t1.insert(locUsedThisCombo_CosThetaVsMass_t1);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM PHI IN MASS BINS ********************************************************/
-		//locphi and locOmegaPiMass have already been declared
+		//locphi and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiVsMass_t1;
@@ -1399,24 +1213,15 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.1 && locMan_t < 0.3)
 		      {
 			//unique combo: histogram it, and register this combo of particles
-			//apply omega mass cuts
-			double p1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) p1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) p1 = -1;
-			else p1 = 0;
-			dHist_PhiVsMass_t1->Fill(locphi1,locOmegaPiMass, p1);
-			double p2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) p2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) p2 = -1;
-			else p2 = 0;
-			dHist_PhiVsMass_t1->Fill(locphi2,locOmegaPiMass, p2);
+			dHist_PhiVsMass_t1->Fill(locphi1,loc4PiMass, weight1);
+			dHist_PhiVsMass_t1->Fill(locphi2,loc4PiMass, weight2);
 			locUsedSoFar_PhiVsMass_t1.insert(locUsedThisCombo_PhiVsMass_t1);
 		      }
 		  }
 
 		/**************************************** HISTOGRAM ANGLES VS MASS IN t[0.3, 1.0] ******************************************/
 		/************************************************* HISTOGRAM COS(THETA_H) IN MASS BINS ****************************************************************/
-		//loccosthetaH and locOmegaPiMass have already been declared
+		//loccosthetaH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaHVsMass_t2;
@@ -1437,22 +1242,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		      {
 			//unique combo: histogram it, and register this combo of particles
 			//apply omega mass cuts
-			double wH1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) wH1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) wH1 = -1;
-			else wH1 = 0;
-			dHist_CosThetaHVsMass_t2->Fill(loccosthetaH1,locOmegaPiMass, wH1);
-			double wH2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) wH2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) wH2 = -1;
-			else wH2 = 0;
-			dHist_CosThetaHVsMass_t2->Fill(loccosthetaH2,locOmegaPiMass, wH2);
+			dHist_CosThetaHVsMass_t2->Fill(loccosthetaH1,loc4PiMass, weight1);
+			dHist_CosThetaHVsMass_t2->Fill(loccosthetaH2,loc4PiMass, weight2);
 			locUsedSoFar_CosThetaHVsMass_t2.insert(locUsedThisCombo_CosThetaHVsMass_t2);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM PHI_H IN MASS BINS ********************************************************/
-		//locphiH and locOmegaPiMass have already been declared
+		//locphiH and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiHVsMass_t2;
@@ -1472,23 +1269,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//unique combo: histogram it, and register this combo of particles
-			//apply omega mass cuts
-			double pH1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) pH1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) pH1 = -1;
-			else pH1 = 0;
-			dHist_PhiHVsMass_t2->Fill(locphiH1,locOmegaPiMass, pH1);
-			double pH2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) pH2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) pH2 = -1;
-			else pH2 = 0;
-			dHist_PhiHVsMass_t2->Fill(locphiH2,locOmegaPiMass, pH2);
+			dHist_PhiHVsMass_t2->Fill(locphiH1,loc4PiMass, weight1);
+			dHist_PhiHVsMass_t2->Fill(locphiH2,loc4PiMass, weight2);
 			locUsedSoFar_PhiHVsMass_t2.insert(locUsedThisCombo_PhiHVsMass_t2);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM COS(THETA) IN MASS BINS ****************************************************************/
-		//loccostheta and locOmegaPiMass have already been declared
+		//loccostheta and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_CosThetaVsMass_t2;
@@ -1509,22 +1297,14 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		      {
 			//unique combo: histogram it, and register this combo of particles
 			//apply omega mass cuts
-			double w1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) w1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) w1 = -1;
-			else w1 = 0;
-			dHist_CosThetaVsMass_t2->Fill(loccostheta1,locOmegaPiMass, w1);
-			double w2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) w2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) w2 = -1;
-			else w2 = 0;
-			dHist_CosThetaVsMass_t2->Fill(loccostheta2,locOmegaPiMass, w2);
+			dHist_CosThetaVsMass_t2->Fill(loccostheta1,loc4PiMass, weight1);
+			dHist_CosThetaVsMass_t2->Fill(loccostheta2,loc4PiMass, weight2);
 			locUsedSoFar_CosThetaVsMass_t2.insert(locUsedThisCombo_CosThetaVsMass_t2);
 		      }
 		  }
 
 		/************************************************* HISTOGRAM PHI IN MASS BINS ********************************************************/
-		//locphi and locOmegaPiMass have already been declared
+		//locphi and loc4PiMass have already been declared
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_PhiVsMass_t2;
@@ -1544,17 +1324,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		    if(locMan_t > 0.3 && locMan_t < 1.0)
 		      {
 			//unique combo: histogram it, and register this combo of particles
-			//apply omega mass cuts
-			double p1;
-			if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) p1 = +1;
-			else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) p1 = -1;
-			else p1 = 0;
-			dHist_PhiVsMass_t2->Fill(locphi1,locOmegaPiMass, p1);
-			double p2;
-			if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) p2 = +1;
-			else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) p2 = -1;
-			else p2 = 0;
-			dHist_PhiVsMass_t2->Fill(locphi2,locOmegaPiMass, p2);
+			dHist_PhiVsMass_t2->Fill(locphi1,loc4PiMass, weight1);
+			dHist_PhiVsMass_t2->Fill(locphi2,loc4PiMass, weight2);
 			locUsedSoFar_PhiVsMass_t2.insert(locUsedThisCombo_PhiVsMass_t2);
 		      }
 		  }

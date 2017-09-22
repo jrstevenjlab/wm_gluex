@@ -9,6 +9,8 @@
 
 #include "TH1I.h"
 #include "TH2I.h"
+#include "TH1F.h"
+#include "TH2F.h"
 
 class DSelector_pomegapi : public DSelector
 {
@@ -53,41 +55,41 @@ class DSelector_pomegapi : public DSelector
 
 		// DEFINE YOUR HISTOGRAMS HERE
 		// EXAMPLES:
-		TH1I* dHist_MissingMassSquared;
-		TH1I* dHist_BeamEnergy;
-		TH1I* dHist_3PiMass_Measured;
-		TH1I* dHist_MM2_Weighted;
-		TH1I* dHist_lambda_peak;
-		TH1I* dHist_lambda_wings;
-		TH1I* dHist_lambda_uncut;
-		TH1I* dHist_4PiMass;
-		TH1I* dHist_OmegaPiMass;
-		TH2I* dHist_3vs4;
-		TH1I* dHist_Man_t;
-		TH1I* dHist_costheta;
-		TH1I* dHist_phi;
-		TH1I* dHist_costhetaH;
-		TH1I* dHist_phiH;
-		TH2I* dHist_CosThetaVsMass;
-		TH2I* dHist_PhiVsMass;
-		TH2I* dHist_CosThetaHVsMass;
-		TH2I* dHist_PhiHVsMass;
-		TH1I* dHist_CosTheta_t1;
-		TH1I* dHist_Phi_t1;
-		TH1I* dHist_CosThetaH_t1;
-		TH1I* dHist_PhiH_t1;
-		TH1I* dHist_CosTheta_t2;
-		TH1I* dHist_Phi_t2;
-		TH1I* dHist_CosThetaH_t2;
-		TH1I* dHist_PhiH_t2;
-		TH2I* dHist_CosThetaVsMass_t1;
-		TH2I* dHist_PhiVsMass_t1;
-		TH2I* dHist_CosThetaHVsMass_t1;
-		TH2I* dHist_PhiHVsMass_t1;
-		TH2I* dHist_CosThetaVsMass_t2;
-		TH2I* dHist_PhiVsMass_t2;
-		TH2I* dHist_CosThetaHVsMass_t2;
-		TH2I* dHist_PhiHVsMass_t2;
+		TH1F* dHist_MissingMassSquared;
+		TH1F* dHist_BeamEnergy;
+		TH1F* dHist_3PiMass_Measured;
+		TH1F* dHist_MM2_Weighted;
+		TH1F* dHist_lambda_peak;
+		TH1F* dHist_lambda_wings;
+		TH1F* dHist_lambda_uncut;
+		TH1F* dHist_4PiMass;
+		TH1F* dHist_OmegaPiMass;
+		TH2F* dHist_3vs4;
+		TH1F* dHist_Man_t;
+		TH1F* dHist_costheta;
+		TH1F* dHist_phi;
+		TH1F* dHist_costhetaH;
+		TH1F* dHist_phiH;
+		TH2F* dHist_CosThetaVsMass;
+		TH2F* dHist_PhiVsMass;
+		TH2F* dHist_CosThetaHVsMass;
+		TH2F* dHist_PhiHVsMass;
+		TH1F* dHist_CosTheta_t1;
+		TH1F* dHist_Phi_t1;
+		TH1F* dHist_CosThetaH_t1;
+		TH1F* dHist_PhiH_t1;
+		TH1F* dHist_CosTheta_t2;
+		TH1F* dHist_Phi_t2;
+		TH1F* dHist_CosThetaH_t2;
+		TH1F* dHist_PhiH_t2;
+		TH2F* dHist_CosThetaVsMass_t1;
+		TH2F* dHist_PhiVsMass_t1;
+		TH2F* dHist_CosThetaHVsMass_t1;
+		TH2F* dHist_PhiHVsMass_t1;
+		TH2F* dHist_CosThetaVsMass_t2;
+		TH2F* dHist_PhiVsMass_t2;
+		TH2F* dHist_CosThetaHVsMass_t2;
+		TH2F* dHist_PhiHVsMass_t2;
 
 	ClassDef(DSelector_pomegapi, 0);
 };

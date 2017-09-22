@@ -29,7 +29,7 @@ void runSelector(TString runNumber = "11366", TString myPath = "/sciclone/data10
 	  // loop over files
 	  while ((file=(TSystemFile*)next())) {
 		  fileName = file->GetName();
-		  if(fileName.Contains(runNumber)) {
+		  if(fileName.Contains(runNumber) && fileName.Contains("tree")) {
 			  cout<<fileName.Data()<<endl;
 			  
 			  // check if file corrupted
@@ -50,7 +50,7 @@ void runSelector(TString runNumber = "11366", TString myPath = "/sciclone/data10
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_ppipkskm.C+", Proof_Nthreads, Form("hist_ppipkskm_%s.acc.root", runNumber.Data()));
+	  DPROOFLiteManager::Process_Chain(chain, "DSelector_ppipkskm.C+", Proof_Nthreads, Form("hist_ppipkskm_%s.acc.root", runNumber.Data()), Form("tree_ppipkskm_%s.acc.root", runNumber.Data()));
   }
 
   return;

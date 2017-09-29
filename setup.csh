@@ -1,8 +1,11 @@
 #!/bin/tcsh
 
 setenv WM_GLUEX $HOME/wm_gluex
-source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version.xml
+source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version_custom.xml
 #source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version_recon-2017_01-ver01-batch01-mcsmear-ver1.0.xml
+
+setenv HALLD_MY /sciclone/home10/jrstevens01/builds/plugins/
+setenv JANA_PLUGIN_PATH /sciclone/home10/jrstevens01/builds/plugins/
 
 setenv PYTHONPATH $ROOTSYS/lib:${PYTHONPATH}
 

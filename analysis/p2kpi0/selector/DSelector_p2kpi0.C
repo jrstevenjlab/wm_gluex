@@ -9,8 +9,6 @@ void DSelector_p2kpi0::Init(TTree *locTree)
 	//SET OUTPUT FILE NAME //can be overriden by user in PROOF
 	dOutputFileName = "2kpi0.root"; //"" for none
 	dOutputTreeFileName = ""; //"" for none
-	dFlatTreeFileName = ""; //"" for none
-	dFlatTreeName = "flat_pi0kpkm";
 
 	//DO THIS NEXT
 	//Because this function gets called for each TTree in the TChain, we must be careful:
@@ -85,20 +83,6 @@ void DSelector_p2kpi0::Init(TTree *locTree)
         dHist_2kpiMass_Egamma_SB = new TH2I("h2kpiMass_Egamma_SB", "2kpiMass_Egamma_SB", 200, 0., 12., n2kpi, min2kpi, max2kpi);
 
         dHist_BeamEnergy = new TH1I("BeamEnergy", ";Beam Energy (GeV)", 600, 0.0, 12.0);
-
-	/************************** EXAMPLE USER INITIALIZATION: CUSTOM OUTPUT BRANCHES - FLAT TREE *************************/
-
-	//EXAMPLE FLAT TREE CUSTOM BRANCHES (OUTPUT ROOT FILE NAME MUST FIRST BE GIVEN!!!! (ABOVE: TOP))
-	dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("t");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Egamma");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mkpkm");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mpi0km");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mpi0kp");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mpi0kpkm");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mprotonpi0");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Mprotonkm");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("kinFitCL");
-        dFlatTreeInterface->Create_Branch_Fundamental<Double_t>("Weight");
 
 	/***************************************** ADVANCED: CHOOSE BRANCHES TO READ ****************************************/
 
@@ -290,20 +274,6 @@ Bool_t DSelector_p2kpi0::Process(Long64_t locEntry)
                 // remove any further deltaT sidebands if they exist
                  if(fabs(locBeamDeltaT) > 2.5*4.008)
                         continue;
-
-		dFlatTreeInterface->Fill_Fundamental<Double_t>("t", t);
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Egamma", locBeamP4_Measured.E());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mkpkm", loc2kP4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mpi0km", lockmpi0P4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mpi0kp", lockppi0P4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mpi0kpkm", loc2kpi0P4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mprotonpi0", locProtonPi0P4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Mprotonkm", locProtonKMinusP4.M());
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("kinFitCL", locKinFitCL);
-                dFlatTreeInterface->Fill_Fundamental<Double_t>("Weight", weight);
-
-                //FILL FLAT TREE
-                Fill_FlatTree(); //for the active combo
 
 		/**************************************** EXAMPLE: HISTOGRAM BEAM ENERGY *****************************************/
 

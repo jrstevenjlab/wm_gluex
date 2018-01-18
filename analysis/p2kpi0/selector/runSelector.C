@@ -6,7 +6,7 @@
 #include "TString.h"
 #include "TSystem.h"
    
-void runSelector(TString runNumber = "31057", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0kpkm__B3/merged/") 
+void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0kpkm__B3/merged/") 
 {
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
@@ -50,7 +50,7 @@ void runSelector(TString runNumber = "31057", TString myPath = "/sciclone/data10
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_p2kpi0.C+", Proof_Nthreads, Form("hist_p2kpi0_%s.acc.root", runNumber.Data()), "", Form("tree_flat_p2kpi0_%s.acc.root", runNumber.Data()), "flat_empty");
+	  DPROOFLiteManager::Process_Chain(chain, "DSelector_p2kpi0.C+", Proof_Nthreads, Form("hist_p2kpi0_%s.acc.root", runNumber.Data()));
   }
 
   return;

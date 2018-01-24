@@ -10,6 +10,8 @@
 #include "TH1I.h"
 #include "TH2I.h"
 
+#include "TMVA/Reader.h"
+
 class DSelector_tcs : public DSelector
 {
 	public:
@@ -39,7 +41,6 @@ class DSelector_tcs : public DSelector
 
 		//Step 1
 		DParticleComboStep* dStep1Wrapper;
-		DKinematicData* dDecayingJpsiWrapper;
 		DChargedTrackHypothesis* dElectronWrapper;
 		DChargedTrackHypothesis* dPositronWrapper;
 
@@ -60,6 +61,12 @@ class DSelector_tcs : public DSelector
 		TH2I *dHist_SigTrans_SigLong_Jpsi[2], *dHist_SigTrans_SigLong_Bkgd[2];
 		TH2I *dHist_SigLong_SigTheta_Jpsi[2], *dHist_SigLong_SigTheta_Bkgd[2];
 
+		TH2I *dHist_EleBDT_PosBDT, *dHist_Mee_BDT;
+		TH1I *dHist_Mee_1BCAL, *dHist_Mee_2BCAL, *dHist_Mee_1BDT, *dHist_Mee_2BDT;
+
+		TMVA::Reader *reader;
+		Float_t E2p, Epre, p, theta, dEdx, sigLong, sigTrans, sigTheta, deltaT;
+
 	ClassDef(DSelector_tcs, 0);
 };
 
@@ -72,7 +79,6 @@ void DSelector_tcs::Get_ComboWrappers(void)
 
 	//Step 1
 	dStep1Wrapper = dComboWrapper->Get_ParticleComboStep(1);
-	dDecayingJpsiWrapper = dStep1Wrapper->Get_InitialParticle();
 	dElectronWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(0));
 	dPositronWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
 }

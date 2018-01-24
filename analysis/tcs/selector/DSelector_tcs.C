@@ -181,15 +181,8 @@ void DSelector_tcs::Init(TTree *locTree)
                 dHistBCALDeltaT_P_Bkgd[loc_i] = new TH2I(Form("%sBCAL_DeltaT_P_Bkgd",locParticleLabel[loc_i].Data()), Form("; %s p (GeV); %s BCAL #Delta T (ns)", locParticleLabel[loc_i].Data(), locParticleLabel[loc_i].Data()), 100, 0., 5.0, 100, locMinDeltaT, locMaxDeltaT);
                 dHistTOFDeltaT_P_Bkgd[loc_i] = new TH2I(Form("%sTOF_DeltaT_P_Bkgd",locParticleLabel[loc_i].Data()), Form("; %s p (GeV); %s TOF #Delta T (ns)", locParticleLabel[loc_i].Data(), locParticleLabel[loc_i].Data()), 100, 0., 5.0, 100, locMinDeltaT, locMaxDeltaT);
 	}
-
-	locDir->cd();
-	dHist_EleBDT_PosBDT = new TH2I("EleBDT_PosBDT", "; Positron BDT; Electron BDT", 100, -1., 1., 100, -1., 1.);
-	dHist_Mee_BDT = new TH2I("Mee_BDT", "; e^{#pm} BDT; Mass e^{+}e^{-} (GeV/c^{2})", 100, -1., 1., 400, locMinMee, locMaxMee);
-	dHist_Mee_1BCAL = new TH1I("Mee_1BCAL", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
-	dHist_Mee_2BCAL = new TH1I("Mee_2BCAL", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
-	dHist_Mee_1BDT = new TH1I("Mee_1BDT", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
-	dHist_Mee_2BDT = new TH1I("Mee_2BDT", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
-
+	
+	
 	/***************************************** ADVANCED: CHOOSE BRANCHES TO READ ****************************************/
 
 	//TO SAVE PROCESSING TIME
@@ -200,21 +193,6 @@ void DSelector_tcs::Init(TTree *locTree)
 
 	//dTreeInterface->Clear_GetEntryBranches(); //now get none
 	//dTreeInterface->Register_GetEntryBranch("Proton__P4"); //manually set the branches you want
-
-	reader = new TMVA::Reader( "!Color:!Silent" );
-
-	reader->AddVariable( "pos_E2p := pos_E/pos_p", &E2p);
-	reader->AddVariable( "pos_Epre", &Epre );
-	reader->AddVariable( "pos_p", &p );
-	reader->AddVariable( "pos_theta", &theta );
-	reader->AddVariable( "pos_dEdx", &dEdx );
-	reader->AddVariable( "pos_sigLong", &sigLong );
-	reader->AddVariable( "pos_sigTrans", &sigTrans );
-	reader->AddVariable( "pos_sigTheta", &sigTheta );
-	reader->AddVariable( "pos_deltaT",  &deltaT );
-
-	reader->BookMVA( "BDT method", "/sciclone/home10/jrstevens01/2016-spring-ana/analysis/tcs/selector/dataset/weights/TMVAClassification_BDT.weights.xml" );
-
 }
 
 Bool_t DSelector_tcs::Process(Long64_t locEntry)
@@ -303,7 +281,6 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
 		//Step 1
 		TLorentzVector locElectronP4 = dElectronWrapper->Get_P4();
 		TLorentzVector locPositronP4 = dPositronWrapper->Get_P4();
-		TLorentzVector locDecayingJpsiP4 = locElectronP4 + locPositronP4;
 
 		// Get Measured P4's:
 		//Step 0
@@ -388,33 +365,6 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
 		double locMaxBkgdMee = 3.0;
 		double locMinJpsiMee = 3.07;
 		double locMaxJpsiMee = 3.12;
-
-		// evaluate MVA
-		E2p=locElectronEOverP, Epre=locElectronBCALPreshowerE, p=locElectronP, theta=locElectronTheta, dEdx=locElectronCDCdEdx, sigLong=locElectronSigLongBCALShower, sigTrans=locElectronSigTransBCALShower, sigTheta=locElectronSigThetaBCALShower, deltaT=locElectronDeltaT;
-		double locElectronBDT = 1.0; //reader->EvaluateMVA("BDT method");
-
-		E2p=locPositronEOverP, Epre=locPositronBCALPreshowerE, p=locPositronP, theta=locPositronTheta, dEdx=locPositronCDCdEdx, sigLong=locPositronSigLongBCALShower, sigTrans=locPositronSigTransBCALShower, sigTheta=locPositronSigThetaBCALShower, deltaT=locPositronDeltaT;
-		double locPositronBDT = 1.0; //reader->EvaluateMVA("BDT method");
-
-		if(locPositronBCALE > 0. || locElectronBCALE > 0.) {
-			dHist_Mee_1BCAL->Fill(locMee);
-			if(locPositronBCALE > 0. && locElectronEOverP > 0.8) 
-				dHist_Mee_BDT->Fill(locPositronBDT, locMee);
-			if(locElectronBCALE > 0. && locPositronEOverP > 0.8) 
-				dHist_Mee_BDT->Fill(locElectronBDT, locMee);
-		}
-		if(locPositronBCALE > 0. && locElectronBCALE > 0.) {
-			dHist_Mee_2BCAL->Fill(locMee);
-			dHist_EleBDT_PosBDT->Fill(locPositronBDT, locElectronBDT);
-		}
-
-		// mass distributions with both tagged
-		if((locPositronBDT > 0.1 && locElectronEOverP > 0.8) || (locElectronBDT > 0.1 && locPositronEOverP > 0.8))
-			dHist_Mee_1BDT->Fill(locMee);
-		if(locPositronBDT > 0.1 && locElectronBDT > 0.1)
-			dHist_Mee_2BDT->Fill(locMee);
-
-		// add J/psi and BH mass regions to check on selection...
 
 		// fill histograms
 		dHist_EOverP_Mee[0]->Fill(locMee, locElectronEOverP);

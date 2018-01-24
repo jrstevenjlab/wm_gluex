@@ -279,7 +279,6 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
 		TLorentzVector locBeamP4 = dComboBeamWrapper->Get_P4();
 		TLorentzVector locProtonP4 = dProtonWrapper->Get_P4();
 		//Step 1
-		TLorentzVector locDecayingJpsiP4 = dDecayingJpsiWrapper->Get_P4();
 		TLorentzVector locElectronP4 = dElectronWrapper->Get_P4();
 		TLorentzVector locPositronP4 = dPositronWrapper->Get_P4();
 

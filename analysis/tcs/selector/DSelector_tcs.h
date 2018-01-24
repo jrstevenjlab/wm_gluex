@@ -39,7 +39,6 @@ class DSelector_tcs : public DSelector
 
 		//Step 1
 		DParticleComboStep* dStep1Wrapper;
-		DKinematicData* dDecayingJpsiWrapper;
 		DChargedTrackHypothesis* dElectronWrapper;
 		DChargedTrackHypothesis* dPositronWrapper;
 
@@ -72,7 +71,6 @@ void DSelector_tcs::Get_ComboWrappers(void)
 
 	//Step 1
 	dStep1Wrapper = dComboWrapper->Get_ParticleComboStep(1);
-	dDecayingJpsiWrapper = dStep1Wrapper->Get_InitialParticle();
 	dElectronWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(0));
 	dPositronWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
 }

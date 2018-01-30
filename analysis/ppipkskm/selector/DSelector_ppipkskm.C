@@ -65,7 +65,7 @@ void DSelector_ppipkskm::Init(TTree *locTree)
 
 	//CUT KSHORT MASS
 	dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, false, KShort, 0.3, 0.7));
-	dAnalysisActions.push_back(new DHistogramAction_2DInvariantMass(dComboWrapper, true, 0, locKstarMPIDs, locXPIDs, 100, 0.5, 2.5, 100, 1.0, 3.0, "2D_KShortCut"));
+	//dAnalysisActions.push_back(new DHistogramAction_2DInvariantMass(dComboWrapper, true, 0, locKstarMPIDs, locXPIDs, 100, 0.5, 2.5, 100, 1.0, 3.0, "2D_KShortCut"));
 	dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false, "Kshort_Cut"));
 
 	//KINEMATICS

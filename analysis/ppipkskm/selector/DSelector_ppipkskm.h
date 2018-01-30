@@ -9,6 +9,7 @@
 
 #include "TH1I.h"
 #include "TH2I.h"
+#include "TH3I.h"
 
 class DSelector_ppipkskm : public DSelector
 {
@@ -60,14 +61,13 @@ void DSelector_ppipkskm::Get_ComboWrappers(void)
 	dStep0Wrapper = dComboWrapper->Get_ParticleComboStep(0);
 	dComboBeamWrapper = static_cast<DBeamParticle*>(dStep0Wrapper->Get_InitialParticle());
 	dPiPlus1Wrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(0));
-	dKMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(2));
+	dKMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(1));
 	dProtonWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(3));
 
 	//Step 1
 	dStep1Wrapper = dComboWrapper->Get_ParticleComboStep(1);
-	dDecayingKShortWrapper = dStep1Wrapper->Get_InitialParticle();
-	dPiPlus2Wrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(0));
-	dPiMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
+	dPiPlus2Wrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
+	dPiMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep1Wrapper->Get_FinalParticle(0));
 }
 
 #endif // DSelector_ppipkskm_h

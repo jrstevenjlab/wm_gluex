@@ -57,11 +57,11 @@ void DSelector_ppipkskm::Init(TTree *locTree)
 
         //CUT MISSING MASS
         dAnalysisActions.push_back(new DCutAction_MissingMassSquared(dComboWrapper, false, -0.05, 0.05));
-        dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 1e-10));
-	dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, false, KShort, 100, 0.3, 0.7, "Kshort_Kin0.0001"));
+        dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 0.001));
+	dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, false, KShort, 100, 0.3, 0.7, "Kshort_Kin0.001"));
 
-	//dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 0.01));
-	//dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, false, KShort, 100, 0.3, 0.7, "Kshort_Kin0.01"));
+	dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 0.01));
+	dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, false, KShort, 100, 0.3, 0.7, "Kshort_Kin0.01"));
 
 	//CUT KSHORT MASS
 	dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, false, KShort, 0.3, 0.7));

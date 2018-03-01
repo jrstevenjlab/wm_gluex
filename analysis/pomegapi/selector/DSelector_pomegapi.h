@@ -90,6 +90,36 @@ class DSelector_pomegapi : public DSelector
 		TH2F* dHist_PhiVsMass_t2;
 		TH2F* dHist_CosThetaHVsMass_t2;
 		TH2F* dHist_PhiHVsMass_t2;
+		//Moment sums for all t
+		TH1F* dHist_H0000;
+		TH1F* dHist_H0020;
+		TH1F* dHist_H0021;
+		TH1F* dHist_H0022;
+		TH1F* dHist_H2000;
+		TH1F* dHist_H2020;
+		TH1F* dHist_H2021;
+		TH1F* dHist_H2022;
+		TH1F* dHist_H2120;
+		TH1F* dHist_H2121_plus;
+		TH1F* dHist_H2122_plus;
+		TH1F* dHist_H2220;
+		TH1F* dHist_H2221_plus;
+		TH1F* dHist_H2222_plus;
+		TH1F* dHist_H2111_plus;
+		TH1F* dHist_H0010;
+		TH1F* dHist_H0011;
+		TH1F* dHist_H2110;
+		TH1F* dHist_H2111_minus;
+		TH1F* dHist_H2121_minus;
+		TH1F* dHist_H2122_minus;
+		TH1F* dHist_H2221_minus;
+		TH1F* dHist_H2222_minus;
+		TH1F* dHist_H2010;
+		TH1F* dHist_H2011;
+		//Moment sums in t bins
+		TH1F* dHist_HlmLM_t[25][5];
+
+
 
 	ClassDef(DSelector_pomegapi, 0);
 };

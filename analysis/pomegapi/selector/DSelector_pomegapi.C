@@ -137,6 +137,50 @@ void DSelector_pomegapi::Init(TTree *locTree)
 	dHist_CosThetaHVsMass_t2 = new TH2F("CosThetaHVsMass_t2", ";Cos(theta_H) vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0, 1.0, 20, 1.0, 3.0);
 	dHist_PhiHVsMass_t2 = new TH2F("PhiHVsMass_t2", ";Phi_H vs Omega Pi Mass with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
 	
+	//Moment Sums (for all t)
+	dHist_H0000 = new TH1F("H0000", ";Moment sum H^{+}(0000) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H0020 = new TH1F("H0020", ";Moment sum H^{+}(0020) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H0021 = new TH1F("H0021", ";Moment sum H^{+}(0021) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H0022 = new TH1F("H0022", ";Moment sum H^{+}(0022) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2000 = new TH1F("H2000", ";Moment sum H^{+}(2000) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2020 = new TH1F("H2020", ";Moment sum H^{+}(2020) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2021 = new TH1F("H2021", ";Moment sum H^{+}(2021) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2022 = new TH1F("H2022", ";Moment sum H^{+}(2022) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2120 = new TH1F("H2120", ";Moment sum H^{+}(2120) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2121_plus = new TH1F("H2121_plus", ";Moment sum H^{+}(2121) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2122_plus = new TH1F("H2122_plus", ";Moment sum H^{+}(2122) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2220 = new TH1F("H2220", ";Moment sum H^{+}(2220) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2221_plus = new TH1F("H2221_plus", ";Moment sum H^{+}(2221) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2222_plus = new TH1F("H2222_plus", ";Moment sum H^{+}(2222) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2111_plus = new TH1F("H2111_plus", ";Moment sum H^{+}(2111) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H0010 = new TH1F("H0010", ";Moment sum H^{-}(0010) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H0011 = new TH1F("H0011", ";Moment sum H^{-}(0011) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2110 = new TH1F("H2110", ";Moment sum H^{-}(2110) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2111_minus = new TH1F("H2111_minus", ";Moment sum H^{-}(2111) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2121_minus = new TH1F("H2121_minus", ";Moment sum H^{-}(2121) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2122_minus = new TH1F("H2122_minus", ";Moment sum H^{-}(2122) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2221_minus = new TH1F("H2221_minus", ";Moment sum H^{-}(2221) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2222_minus = new TH1F("H2222_minus", ";Moment sum H^{-}(2222) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2010 = new TH1F("H2010", ";Moment sum H^{-}(2010) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	dHist_H2011 = new TH1F("H2011", ";Moment sum H^{-}(2011) as a function of OmegaPi Mass", 30, 0.9, 1.9);
+	
+	TString hname[25] = {"H0000", "H0020", "H0021", "H0022", "H2000", "H2020", "H2021", "H2022", "H2120", "H2121_plus", "H2122_plus", "H2220", "H2221_plus", "H2222_plus", "H2111_plus", "H0010", "H0011", "H2110", "H2111_minus", "H2121_minus", "H2122_minus", "H2221_minus", "H2222_minus", "H2010", "H2011"};
+
+	for (int i = 0; i < 25; i++) { //loop over 25 moments
+	  for (int j = 0; j < 5; j++) { //loop over 5 t bins
+	    TString fullname = hname[i];
+	    fullname += "_t";
+	    fullname += j+1;
+	    TString htitle = "Moment sum ";
+	    htitle += hname[i];
+	    htitle += " in ";
+	    htitle += j+1;
+	    htitle += "th t bin";
+	    dHist_HlmLM_t[i][j] = new TH1F(fullname, htitle, 30, 0.9, 1.9);
+	  }
+	}
+	
+	
 
 	/***************************************** ADVANCED: CHOOSE BRANCHES TO READ ****************************************/
 
@@ -232,6 +276,33 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 	set<map<Particle_t, set<Int_t> > > locUsedSoFar_PhiVsMass_t2;
 	set<map<Particle_t, set<Int_t> > > locUsedSoFar_CosThetaHVsMass_t2;
 	set<map<Particle_t, set<Int_t> > > locUsedSoFar_PhiHVsMass_t2;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0000;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0020;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0021;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0022;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2000;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2020;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2021;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2022;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2120;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2121_plus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2122_plus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2220;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2221_plus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2222_plus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2111_plus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0010;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H0011;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2110;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2111_minus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2121_minus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2122_minus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2221_minus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2222_minus;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2010;
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_H2011;
+	
+	set<map<Particle_t, set<Int_t> > > locUsedSoFar_HlmLM_t[25][5];
 
 
 	
@@ -686,13 +757,13 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		//double loccostheta1 = (locOmega1P3.Dot(locz)) / (locOmega1P3.Mag());
 		//double loccostheta2 = (locOmega2P3.Dot(locz)) / (locOmega2P3.Mag());
 
-		//need proton momentum in omega rest frame
+		//need proton momentum in omega-pi rest frame
 		TLorentzVector locProtonP4_OmegaPiCM = locProtonP4_Measured;
 		locProtonP4_OmegaPiCM.Boost(-1.0*locGammapBoost);
 		locProtonP4_OmegaPiCM.Boost(-1.0*locOmegapiBoost);
 		TVector3 locProtonP3_OmegaPiCM = locProtonP4_OmegaPiCM.Vect();
 
-		//Boost helicity unit vectors to omega rf
+		//Boost helicity unit vectors to omega-pi rf
 		TVector3 locHelicityZAxis_OmegaPiCM = -1.0*locProtonP3_OmegaPiCM.Unit();
 		TVector3 locHelicityYAxis_OmegaPiCM = -1.0*locBeamP4_gpRest.Vect().Cross(locProtonP3_OmegaPiCM).Unit();
 		TVector3 locHelicityXAxis_OmegaPiCM = locHelicityYAxis_OmegaPiCM.Cross(locHelicityZAxis_OmegaPiCM).Unit();
@@ -752,9 +823,15 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		
 		
 		/****************************************** HISTOGRAM COS(THETA_H) *****************************************************/
-		double loccosthetaH1 = locnormal1.Dot(loczH1);
-		double loccosthetaH2 = locnormal2.Dot(loczH2);
+		//double loccosthetaH1 = locnormal1.Dot(loczH1);
+		//double loccosthetaH2 = locnormal2.Dot(loczH2);
+
+		TVector3 locNormal1P3_Angles(locnormal1.Dot(locxH1), locnormal1.Dot(locyH1), locnormal1.Dot(loczH1));
+		TVector3 locNormal2P3_Angles(locnormal2.Dot(locxH2), locnormal2.Dot(locyH2), locnormal2.Dot(loczH2));
 		
+		double loccosthetaH1 = locNormal1P3_Angles.CosTheta();
+		double loccosthetaH2 = locNormal2P3_Angles.CosTheta();
+
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_costhetaH;
 		locUsedThisCombo_costhetaH[Gamma].insert(locPhoton1NeutralID);
@@ -1329,6 +1406,671 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 			locUsedSoFar_PhiVsMass_t2.insert(locUsedThisCombo_PhiVsMass_t2);
 		      }
 		  }
+
+		
+		/******************************************* BEGIN HISTOGRAMS OF MOMENT SUMS **********************************************************/
+		//Define sines of thetas (this saves time later)
+		double loctheta1 = locOmega1P3_Angles.Theta();
+		double loctheta2 = locOmega2P3_Angles.Theta();
+		double locsintheta1 = TMath::Sin(loctheta1);
+		double locsintheta2 = TMath::Sin(loctheta2);
+		//double locsinthetaH1 = TMath::Sin(TMath::ACos(loccosthetaH1));
+		//double locsinthetaH2 = TMath::Sin(TMath::ACos(loccosthetaH2));
+		double locthetaH1 = locNormal1P3_Angles.Theta();
+		double locthetaH2 = locNormal2P3_Angles.Theta();
+		double locsinthetaH1 = TMath::Sin(locthetaH1);
+		double locsinthetaH2 = TMath::Sin(locthetaH2);
+		
+
+		/******************************************* HISTOGRAM H+(0000) ***********************************************************************/
+		//Define weights
+		double locH0000_1 = 1.0;
+		double locH0000_2 = 1.0;
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0000;
+		locUsedThisCombo_H0000[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0000[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0000[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0000[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0000[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0000[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0000[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0000[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0000.find(locUsedThisCombo_H0000) == locUsedSoFar_H0000.end())
+		  {
+		    dHist_H0000->Fill(loc4PiMass, locH0000_1 * weight1);
+		    dHist_H0000->Fill(loc4PiMass, locH0000_2 * weight2);
+		    locUsedSoFar_H0000.insert(locUsedThisCombo_H0000);
+		  }
+
+		/******************************************* HISTOGRAM H+(0020) ***********************************************************************/
+		//Define weights
+		double locH0020_1 = 0.5 * (3.0*TMath::Power(loccostheta1, 2.0) - 1.0);
+		double locH0020_2 = 0.5 * (3.0*TMath::Power(loccostheta2, 2.0) - 1.0);;
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0020;
+		locUsedThisCombo_H0020[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0020[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0020[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0020[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0020[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0020[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0020[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0020[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0020.find(locUsedThisCombo_H0020) == locUsedSoFar_H0020.end())
+		  {
+		    dHist_H0020->Fill(loc4PiMass, locH0020_1 * weight1);
+		    dHist_H0020->Fill(loc4PiMass, locH0020_2 * weight2);
+		    locUsedSoFar_H0020.insert(locUsedThisCombo_H0020);
+		  }
+
+		/*********************************************** HISTOGRAM H+(0021) *****************************************************/
+		//Define weights
+		double locH0021_1 = -1.0*TMath::Sqrt(3.0/2.0)*locsintheta1*loccostheta1*TMath::Cos(locphi1);
+		double locH0021_2 = -1.0*TMath::Sqrt(3.0/2.0)*locsintheta2*loccostheta2*TMath::Cos(locphi2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0021;
+		locUsedThisCombo_H0021[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0021[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0021[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0021[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0021[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0021[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0021[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0021[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0021.find(locUsedThisCombo_H0021) == locUsedSoFar_H0021.end())
+		  {
+		    dHist_H0021->Fill(loc4PiMass, locH0021_1 * weight1);
+		    dHist_H0021->Fill(loc4PiMass, locH0021_2 * weight2);
+		    locUsedSoFar_H0021.insert(locUsedThisCombo_H0021);
+		  }
+
+
+		/*********************************************** HISTOGRAM H+(0022) *****************************************************/
+		//Define weights
+		double locH0022_1 = TMath::Sqrt(3.0/2.0)*TMath::Power(locsintheta1, 2.0)*TMath::Cos(2.0*locphi1);
+		double locH0022_2 = TMath::Sqrt(3.0/2.0)*TMath::Power(locsintheta2, 2.0)*TMath::Cos(2.0*locphi2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0022;
+		locUsedThisCombo_H0022[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0022[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0022[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0022[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0022[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0022[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0022[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0022[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0022.find(locUsedThisCombo_H0022) == locUsedSoFar_H0022.end())
+		  {
+		    dHist_H0022->Fill(loc4PiMass, locH0022_1 * weight1);
+		    dHist_H0022->Fill(loc4PiMass, locH0022_2 * weight2);
+		    locUsedSoFar_H0022.insert(locUsedThisCombo_H0022);
+		  }
+		
+
+
+		/*********************************************** HISTOGRAM H+(2000) *****************************************************/
+		//Define weights
+		double locH2000_1 = 0.5 * (3.0 * TMath::Power(loccosthetaH1, 2) - 1.0);
+		double locH2000_2 = 0.5 * (3.0 * TMath::Power(loccosthetaH2, 2) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2000;
+		locUsedThisCombo_H2000[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2000[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2000[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2000[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2000[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2000[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2000[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2000[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2000.find(locUsedThisCombo_H2000) == locUsedSoFar_H2000.end())
+		  {
+		    dHist_H2000->Fill(loc4PiMass, locH2000_1 * weight1);
+		    dHist_H2000->Fill(loc4PiMass, locH2000_2 * weight2);
+		    locUsedSoFar_H2000.insert(locUsedThisCombo_H2000);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2020) *****************************************************/
+		//Define weights
+		double locH2020_1 = 0.25 * (3.0 * TMath::Power(loccosthetaH1, 2) - 1.0) * (3.0 * TMath::Power(loccostheta1, 2) - 1.0);
+		double locH2020_2 = 0.25 * (3.0 * TMath::Power(loccosthetaH2, 2) - 1.0) * (3.0 * TMath::Power(loccostheta2, 2) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2020;
+		locUsedThisCombo_H2020[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2020[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2020[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2020[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2020[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2020[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2020[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2020[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2020.find(locUsedThisCombo_H2020) == locUsedSoFar_H2020.end())
+		  {
+		    dHist_H2020->Fill(loc4PiMass, locH2020_1 * weight1);
+		    dHist_H2020->Fill(loc4PiMass, locH2020_2 * weight2);
+		    locUsedSoFar_H2020.insert(locUsedThisCombo_H2020);
+		  }
+
+
+		/*********************************************** HISTOGRAM H+(2021) *****************************************************/
+		//Define weights
+		double locH2021_1 = -0.5 * TMath::Sqrt(1.5) * locsintheta1 * loccostheta1 * TMath::Cos(locphi1) * (3.0 * TMath::Power(loccosthetaH1, 2.0) - 1.0);
+		double locH2021_2 = -0.5 * TMath::Sqrt(1.5) * locsintheta2 * loccostheta2 * TMath::Cos(locphi2) * (3.0 * TMath::Power(loccosthetaH2, 2.0) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2021;
+		locUsedThisCombo_H2021[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2021[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2021[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2021[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2021[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2021[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2021[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2021[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2021.find(locUsedThisCombo_H2021) == locUsedSoFar_H2021.end())
+		  {
+		    dHist_H2021->Fill(loc4PiMass, locH2021_1 * weight1);
+		    dHist_H2021->Fill(loc4PiMass, locH2021_2 * weight2);
+		    locUsedSoFar_H2021.insert(locUsedThisCombo_H2021);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2022) *****************************************************/
+		//Define weights
+		double locH2022_1 = TMath::Sqrt(0.75) * TMath::Power(locsintheta1, 2.0) * TMath::Cos(2.0 * locphi1) * (3.0 * TMath::Power(loccosthetaH1, 2.0) - 1.0); 
+		double locH2022_2 = TMath::Sqrt(0.75) * TMath::Power(locsintheta2, 2.0) * TMath::Cos(2.0 * locphi2) * (3.0 * TMath::Power(loccosthetaH2, 2.0) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2022;
+		locUsedThisCombo_H2022[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2022[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2022[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2022[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2022[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2022[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2022[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2022[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2022.find(locUsedThisCombo_H2022) == locUsedSoFar_H2022.end())
+		  {
+		    dHist_H2022->Fill(loc4PiMass, locH2022_1 * weight1);
+		    dHist_H2022->Fill(loc4PiMass, locH2022_2 * weight2);
+		    locUsedSoFar_H2022.insert(locUsedThisCombo_H2022);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2120) *****************************************************/
+		//Define weights
+		double locH2120_1 = -1.5 * locsintheta1 * loccostheta1 * locsinthetaH1 * loccosthetaH1 * TMath::Cos(locphiH1);
+		double locH2120_2 = -1.5 * locsintheta2 * loccostheta2 * locsinthetaH2 * loccosthetaH2 * TMath::Cos(locphiH2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2120;
+		locUsedThisCombo_H2120[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2120[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2120[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2120[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2120[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2120[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2120[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2120[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2120.find(locUsedThisCombo_H2120) == locUsedSoFar_H2120.end())
+		  {
+		    dHist_H2120->Fill(loc4PiMass, locH2120_1 * weight1);
+		    dHist_H2120->Fill(loc4PiMass, locH2120_2 * weight2);
+		    locUsedSoFar_H2120.insert(locUsedThisCombo_H2120);
+		  }
+
+
+		/*********************************************** HISTOGRAM H+(2121) *****************************************************/
+		//Define weights
+		double locH2121_plus_1 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH1 * loccosthetaH1 * ((1.0 + loccostheta1)*(2.0 * loccostheta1 - 1.0)*TMath::Cos(locphi1 + locphiH1) - (1.0 - loccostheta1)*(2.0 * loccostheta1 + 1.0)*TMath::Cos(locphiH1 - locphi1));
+		double locH2121_plus_2 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH2 * loccosthetaH2 * ((1.0 + loccostheta2)*(2.0 * loccostheta2 - 1.0)*TMath::Cos(locphi2 + locphiH2) - (1.0 - loccostheta2)*(2.0 * loccostheta2 + 1.0)*TMath::Cos(locphiH2 - locphi2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2121_plus;
+		locUsedThisCombo_H2121_plus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2121_plus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2121_plus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2121_plus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2121_plus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2121_plus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2121_plus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2121_plus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2121_plus.find(locUsedThisCombo_H2121_plus) == locUsedSoFar_H2121_plus.end())
+		  {
+		    dHist_H2121_plus->Fill(loc4PiMass, locH2121_plus_1 * weight1);
+		    dHist_H2121_plus->Fill(loc4PiMass, locH2121_plus_2 * weight2);
+		    locUsedSoFar_H2121_plus.insert(locUsedThisCombo_H2121_plus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H+(2122) *****************************************************/
+		//Define weights
+		double locH2122_plus_1 = 0.25 * TMath::Sqrt(1.5) * locsintheta1 * locsinthetaH1 * loccosthetaH1 * ((1.0 + loccostheta1) * TMath::Cos(2.0 * locphi1 + locphiH1) - (1.0 - loccostheta1) * TMath::Cos(2.0 * locphi1 - locphiH1));
+		double locH2122_plus_2 = 0.25 * TMath::Sqrt(1.5) * locsintheta2 * locsinthetaH2 * loccosthetaH2 * ((1.0 + loccostheta2) * TMath::Cos(2.0 * locphi2 + locphiH2) - (1.0 - loccostheta2) * TMath::Cos(2.0 * locphi2 - locphiH2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2122_plus;
+		locUsedThisCombo_H2122_plus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2122_plus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2122_plus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2122_plus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2122_plus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2122_plus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2122_plus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2122_plus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2122_plus.find(locUsedThisCombo_H2122_plus) == locUsedSoFar_H2122_plus.end())
+		  {
+		    dHist_H2122_plus->Fill(loc4PiMass, locH2122_plus_1 * weight1);
+		    dHist_H2122_plus->Fill(loc4PiMass, locH2122_plus_2 * weight2);
+		    locUsedSoFar_H2122_plus.insert(locUsedThisCombo_H2122_plus);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2220) *****************************************************/
+		//Define weights
+		double locH2220_1 = 0.375 * TMath::Power(locsintheta1, 2.0) * TMath::Power(locsinthetaH1, 2.0) * TMath::Cos(2.0 * locphiH1);
+		double locH2220_2 = 0.375 * TMath::Power(locsintheta2, 2.0) * TMath::Power(locsinthetaH2, 2.0) * TMath::Cos(2.0 * locphiH2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2220;
+		locUsedThisCombo_H2220[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2220[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2220[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2220[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2220[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2220[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2220[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2220[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2220.find(locUsedThisCombo_H2220) == locUsedSoFar_H2220.end())
+		  {
+		    dHist_H2220->Fill(loc4PiMass, locH2220_1 * weight1);
+		    dHist_H2220->Fill(loc4PiMass, locH2220_2 * weight2);
+		    locUsedSoFar_H2220.insert(locUsedThisCombo_H2220);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2221) *****************************************************/
+		//Define weights
+		double locH2221_plus_1 = 0.25 * TMath::Sqrt(0.375) * locsintheta1 * TMath::Power(locsinthetaH1, 2.0) * ((1.0 + loccostheta1) * TMath::Cos(2.0 * locphiH1 + locphi1) - (1.0 - loccostheta1) * TMath::Cos(2.0 * locphiH1 - locphi1));
+		double locH2221_plus_2 = 0.25 * TMath::Sqrt(0.375) * locsintheta2 * TMath::Power(locsinthetaH2, 2.0) * ((1.0 + loccostheta2) * TMath::Cos(2.0 * locphiH2 + locphi2) - (1.0 - loccostheta2) * TMath::Cos(2.0 * locphiH2 - locphi2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2221_plus;
+		locUsedThisCombo_H2221_plus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2221_plus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2221_plus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2221_plus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2221_plus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2221_plus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2221_plus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2221_plus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2221_plus.find(locUsedThisCombo_H2221_plus) == locUsedSoFar_H2221_plus.end())
+		  {
+		    dHist_H2221_plus->Fill(loc4PiMass, locH2221_plus_1 * weight1);
+		    dHist_H2221_plus->Fill(loc4PiMass, locH2221_plus_2 * weight2);
+		    locUsedSoFar_H2221_plus.insert(locUsedThisCombo_H2221_plus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H+(2222) *****************************************************/
+		//Define weights
+		double locH2222_plus_1 = 0.125 * TMath::Sqrt(0.375) * TMath::Power(locsinthetaH1, 2.0) * (TMath::Power((1.0 + loccostheta1), 2.0) * TMath::Cos(2.0 * (locphi1 + locphiH1)) + TMath::Power((1.0 - loccostheta1), 2.0) * TMath::Cos(2.0 * (locphi1 - locphiH1)));
+		double locH2222_plus_2 = 0.125 * TMath::Sqrt(0.375) * TMath::Power(locsinthetaH2, 2.0) * (TMath::Power((1.0 + loccostheta2), 2.0) * TMath::Cos(2.0 * (locphi2 + locphiH2)) + TMath::Power((1.0 - loccostheta2), 2.0) * TMath::Cos(2.0 * (locphi2 - locphiH2)));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2222_plus;
+		locUsedThisCombo_H2222_plus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2222_plus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2222_plus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2222_plus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2222_plus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2222_plus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2222_plus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2222_plus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2222_plus.find(locUsedThisCombo_H2222_plus) == locUsedSoFar_H2222_plus.end())
+		  {
+		    dHist_H2222_plus->Fill(loc4PiMass, locH2222_plus_1 * weight1);
+		    dHist_H2222_plus->Fill(loc4PiMass, locH2222_plus_2 * weight2);
+		    locUsedSoFar_H2222_plus.insert(locUsedThisCombo_H2222_plus);
+		  }
+
+		/*********************************************** HISTOGRAM H+(2111) *****************************************************/
+		//Define weights
+		double locH2111_plus_1 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH1 * loccosthetaH1 * ((1.0 + loccostheta1) * TMath::Cos(locphi1 + locphiH1) + (1.0 - loccostheta1) * TMath::Cos(locphi1 - locphiH1));
+		double locH2111_plus_2 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH2 * loccosthetaH2 * ((1.0 + loccostheta2) * TMath::Cos(locphi2 + locphiH2) + (1.0 - loccostheta2) * TMath::Cos(locphi2 - locphiH2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2111_plus;
+		locUsedThisCombo_H2111_plus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2111_plus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2111_plus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2111_plus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2111_plus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2111_plus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2111_plus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2111_plus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2111_plus.find(locUsedThisCombo_H2111_plus) == locUsedSoFar_H2111_plus.end())
+		  {
+		    dHist_H2111_plus->Fill(loc4PiMass, locH2111_plus_1 * weight1);
+		    dHist_H2111_plus->Fill(loc4PiMass, locH2111_plus_2 * weight2);
+		    locUsedSoFar_H2111_plus.insert(locUsedThisCombo_H2111_plus);
+		  }
+
+		/*********************************************** HISTOGRAM H-(0010) *****************************************************/
+		//Define weights
+		double locH0010_1 = loccostheta1;
+		double locH0010_2 = loccostheta2;
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0010;
+		locUsedThisCombo_H0010[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0010[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0010[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0010[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0010[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0010[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0010[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0010[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0010.find(locUsedThisCombo_H0010) == locUsedSoFar_H0010.end())
+		  {
+		    dHist_H0010->Fill(loc4PiMass, locH0010_1 * weight1);
+		    dHist_H0010->Fill(loc4PiMass, locH0010_2 * weight2);
+		    locUsedSoFar_H0010.insert(locUsedThisCombo_H0010);
+		  }
+
+		/*********************************************** HISTOGRAM H-(0011) *****************************************************/
+		//Define weights
+		double locH0011_1 = -1.0*TMath::Sqrt(0.5) * locsintheta1 * TMath::Cos(locphi1);
+		double locH0011_2 = -1.0*TMath::Sqrt(0.5) * locsintheta2 * TMath::Cos(locphi2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H0011;
+		locUsedThisCombo_H0011[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H0011[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H0011[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H0011[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H0011[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H0011[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H0011[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H0011[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H0011.find(locUsedThisCombo_H0011) == locUsedSoFar_H0011.end())
+		  {
+		    dHist_H0011->Fill(loc4PiMass, locH0011_1 * weight1);
+		    dHist_H0011->Fill(loc4PiMass, locH0011_2 * weight2);
+		    locUsedSoFar_H0011.insert(locUsedThisCombo_H0011);
+		  }
+
+		/*********************************************** HISTOGRAM H-(2110) *****************************************************/
+		//Define weights
+		double locH2110_1 = -0.5*TMath::Sqrt(3.0) * locsintheta1 * locsinthetaH1 * loccosthetaH1 * TMath::Cos(locphiH1);
+		double locH2110_2 = -0.5*TMath::Sqrt(3.0) * locsintheta2 * locsinthetaH2 * loccosthetaH2 * TMath::Cos(locphiH2);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2110;
+		locUsedThisCombo_H2110[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2110[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2110[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2110[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2110[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2110[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2110[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2110[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2110.find(locUsedThisCombo_H2110) == locUsedSoFar_H2110.end())
+		  {
+		    dHist_H2110->Fill(loc4PiMass, locH2110_1 * weight1);
+		    dHist_H2110->Fill(loc4PiMass, locH2110_2 * weight2);
+		    locUsedSoFar_H2110.insert(locUsedThisCombo_H2110);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2111) *****************************************************/
+		//Define weights
+		double locH2111_minus_1 = 0.25*TMath::Sqrt(1.5) * locsinthetaH1 * loccosthetaH1 * ((1.0 - loccostheta1)*TMath::Cos(locphi1 - locphiH1) - (1.0 + loccostheta1) * TMath::Cos(locphi1 + locphiH1));
+		double locH2111_minus_2 = 0.25*TMath::Sqrt(1.5) * locsinthetaH2 * loccosthetaH2 * ((1.0 - loccostheta2)*TMath::Cos(locphi2 - locphiH2) - (1.0 + loccostheta2) * TMath::Cos(locphi2 + locphiH2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2111_minus;
+		locUsedThisCombo_H2111_minus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2111_minus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2111_minus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2111_minus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2111_minus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2111_minus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2111_minus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2111_minus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2111_minus.find(locUsedThisCombo_H2111_minus) == locUsedSoFar_H2111_minus.end())
+		  {
+		    dHist_H2111_minus->Fill(loc4PiMass, locH2111_minus_1 * weight1);
+		    dHist_H2111_minus->Fill(loc4PiMass, locH2111_minus_2 * weight2);
+		    locUsedSoFar_H2111_minus.insert(locUsedThisCombo_H2111_minus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2121) *****************************************************/
+		//Define weights
+		double locH2121_minus_1 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH1 * loccosthetaH1 * ((1.0 + loccostheta1) * (2.0 * loccostheta1 -1.0) * TMath::Cos(locphi1 + locphiH1) + (1.0 - loccostheta1) * (2.0 * loccostheta1 + 1.0) * TMath::Cos(locphi1 - locphiH1));
+		double locH2121_minus_2 = -0.25 * TMath::Sqrt(1.5) * locsinthetaH2 * loccosthetaH2 * ((1.0 + loccostheta2) * (2.0 * loccostheta2 -1.0) * TMath::Cos(locphi2 + locphiH2) + (1.0 - loccostheta2) * (2.0 * loccostheta2 + 1.0) * TMath::Cos(locphi2 - locphiH2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2121_minus;
+		locUsedThisCombo_H2121_minus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2121_minus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2121_minus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2121_minus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2121_minus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2121_minus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2121_minus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2121_minus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2121_minus.find(locUsedThisCombo_H2121_minus) == locUsedSoFar_H2121_minus.end())
+		  {
+		    dHist_H2121_minus->Fill(loc4PiMass, locH2121_minus_1 * weight1);
+		    dHist_H2121_minus->Fill(loc4PiMass, locH2121_minus_2 * weight2);
+		    locUsedSoFar_H2121_minus.insert(locUsedThisCombo_H2121_minus);
+		  }
+
+
+
+		/*********************************************** HISTOGRAM H-(2122) *****************************************************/
+		//Define weights
+		double locH2122_minus_1 = 0.25 * TMath::Sqrt(1.5) * locsintheta1 * locsinthetaH1 * loccosthetaH1 * ((1.0 + loccostheta1) * TMath::Cos(2.0 * locphi1 + locphiH1) + (1.0 - loccostheta1) * TMath::Cos(2.0*locphi1 - locphiH1));
+		double locH2122_minus_2 = 0.25 * TMath::Sqrt(1.5) * locsintheta2 * locsinthetaH2 * loccosthetaH2 * ((1.0 + loccostheta2) * TMath::Cos(2.0 * locphi2 + locphiH2) + (1.0 - loccostheta2) * TMath::Cos(2.0*locphi2 - locphiH2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2122_minus;
+		locUsedThisCombo_H2122_minus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2122_minus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2122_minus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2122_minus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2122_minus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2122_minus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2122_minus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2122_minus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2122_minus.find(locUsedThisCombo_H2122_minus) == locUsedSoFar_H2122_minus.end())
+		  {
+		    dHist_H2122_minus->Fill(loc4PiMass, locH2122_minus_1 * weight1);
+		    dHist_H2122_minus->Fill(loc4PiMass, locH2122_minus_2 * weight2);
+		    locUsedSoFar_H2122_minus.insert(locUsedThisCombo_H2122_minus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2221) *****************************************************/
+		//Define weights
+		double locH2221_minus_1 = 0.25*TMath::Sqrt(0.375) * locsintheta1 * TMath::Power(locsinthetaH1, 2.0) * ((1.0 + loccostheta1) * TMath::Cos(2.0*locphiH1 + locphi1) + (1.0 - loccostheta1) * TMath::Cos(2.0*locphiH1 - locphi1));
+		double locH2221_minus_2 = 0.25*TMath::Sqrt(0.375) * locsintheta2 * TMath::Power(locsinthetaH2, 2.0) * ((1.0 + loccostheta2) * TMath::Cos(2.0*locphiH2 + locphi2) + (1.0 - loccostheta2) * TMath::Cos(2.0*locphiH2 - locphi2));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2221_minus;
+		locUsedThisCombo_H2221_minus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2221_minus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2221_minus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2221_minus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2221_minus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2221_minus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2221_minus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2221_minus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2221_minus.find(locUsedThisCombo_H2221_minus) == locUsedSoFar_H2221_minus.end())
+		  {
+		    dHist_H2221_minus->Fill(loc4PiMass, locH2221_minus_1 * weight1);
+		    dHist_H2221_minus->Fill(loc4PiMass, locH2221_minus_2 * weight2);
+		    locUsedSoFar_H2221_minus.insert(locUsedThisCombo_H2221_minus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2222) *****************************************************/
+		//Define weights
+		double locH2222_minus_1 = 0.125*TMath::Sqrt(0.375)*TMath::Power(locsinthetaH1, 2.0)*(TMath::Power((1.0 + loccostheta1), 2.0)*TMath::Cos(2.0*(locphi1 + locphiH1)) - TMath::Power((1.0 - loccostheta1), 2.0)*TMath::Cos(2.0*(locphi1 - locphiH1)));
+		double locH2222_minus_2 = 0.125*TMath::Sqrt(0.375)*TMath::Power(locsinthetaH2, 2.0)*(TMath::Power((1.0 + loccostheta2), 2.0)*TMath::Cos(2.0*(locphi2 + locphiH2)) - TMath::Power((1.0 - loccostheta2), 2.0)*TMath::Cos(2.0*(locphi2 - locphiH2)));
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2222_minus;
+		locUsedThisCombo_H2222_minus[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2222_minus[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2222_minus[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2222_minus[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2222_minus[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2222_minus[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2222_minus[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2222_minus[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2222_minus.find(locUsedThisCombo_H2222_minus) == locUsedSoFar_H2222_minus.end())
+		  {
+		    dHist_H2222_minus->Fill(loc4PiMass, locH2222_minus_1 * weight1);
+		    dHist_H2222_minus->Fill(loc4PiMass, locH2222_minus_2 * weight2);
+		    locUsedSoFar_H2222_minus.insert(locUsedThisCombo_H2222_minus);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2010) *****************************************************/
+		//Define weights
+		double locH2010_1 = 0.5 * loccostheta1 * (3.0*TMath::Power(loccosthetaH1, 2.0) - 1.0);
+		double locH2010_2 = 0.5 * loccostheta2 * (3.0*TMath::Power(loccosthetaH2, 2.0) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2010;
+		locUsedThisCombo_H2010[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2010[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2010[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2010[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2010[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2010[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2010[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2010[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2010.find(locUsedThisCombo_H2010) == locUsedSoFar_H2010.end())
+		  {
+		    dHist_H2010->Fill(loc4PiMass, locH2010_1 * weight1);
+		    dHist_H2010->Fill(loc4PiMass, locH2010_2 * weight2);
+		    locUsedSoFar_H2010.insert(locUsedThisCombo_H2010);
+		  }
+
+
+		/*********************************************** HISTOGRAM H-(2011) *****************************************************/
+		//Define weights
+		double locH2011_1 = -0.5 * TMath::Sqrt(0.5) * locsintheta1 * TMath::Cos(locphi1) * (3.0*TMath::Power(loccosthetaH1, 2.0) - 1.0);
+		double locH2011_2 = -0.5 * TMath::Sqrt(0.5) * locsintheta2 * TMath::Cos(locphi2) * (3.0*TMath::Power(loccosthetaH2, 2.0) - 1.0);
+
+		//Uniqueness tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_H2011;
+		locUsedThisCombo_H2011[Unknown].insert(locBeamID); //beam
+		locUsedThisCombo_H2011[PiPlus].insert(locPiPlusTrackID);
+		locUsedThisCombo_H2011[PiMinus].insert(locPiMinusTrackID);
+		locUsedThisCombo_H2011[Proton].insert(locProtonTrackID);
+		locUsedThisCombo_H2011[Gamma].insert(locPhoton1NeutralID);
+		locUsedThisCombo_H2011[Gamma].insert(locPhoton2NeutralID);
+		locUsedThisCombo_H2011[Gamma].insert(locPhoton3NeutralID);
+		locUsedThisCombo_H2011[Gamma].insert(locPhoton4NeutralID);
+
+		//Compare to what's been used so far
+		if(locUsedSoFar_H2011.find(locUsedThisCombo_H2011) == locUsedSoFar_H2011.end())
+		  {
+		    dHist_H2011->Fill(loc4PiMass, locH2011_1 * weight1);
+		    dHist_H2011->Fill(loc4PiMass, locH2011_2 * weight2);
+		    locUsedSoFar_H2011.insert(locUsedThisCombo_H2011);
+		  }
+
+		/***************************************** HISTOGRAM H(lmLM)(IN t BINS) (IN AN ARRAY) *****************************************/
+		//Define an array of weights:
+		double locHlmLM_1[25] = {locH0000_1, locH0020_1, locH0021_1, locH0022_1, locH2000_1, locH2020_1, locH2021_1, locH2022_1, locH2120_1, locH2121_plus_1, locH2122_plus_1, locH2220_1, locH2221_plus_1, locH2222_plus_1, locH2111_plus_1, locH0010_1, locH0011_1, locH2110_1, locH2111_minus_1, locH2121_minus_1, locH2122_minus_1, locH2221_minus_1, locH2222_minus_1, locH2010_1, locH2011_1};
+		double locHlmLM_2[25] = {locH0000_2, locH0020_2, locH0021_2, locH0022_2, locH2000_2, locH2020_2, locH2021_2, locH2022_2, locH2120_2, locH2121_plus_2, locH2122_plus_2, locH2220_2, locH2221_plus_2, locH2222_plus_2, locH2111_plus_2, locH0010_2, locH0011_2, locH2110_2, locH2111_minus_2, locH2121_minus_2, locH2122_minus_2, locH2221_minus_2, locH2222_minus_2, locH2010_2, locH2011_2};
+		
+		double man_tmin[5] = {0.0, 0.14, 0.22, 0.3, 0.44};
+		double man_tmax[5] = {0.14, 0.22, 0.3, 0.44, 1.0};
+
+		//Uniqueness Tracking
+		map<Particle_t, set<Int_t> > locUsedThisCombo_HlmLM_t[25][5];
+		for (int i = 0; i < 25; i++) {
+		  for (int j = 0; j < 5; j++) {
+		    locUsedThisCombo_HlmLM_t[i][j][Unknown].insert(locBeamID);
+		    locUsedThisCombo_HlmLM_t[i][j][PiPlus].insert(locPiPlusTrackID);
+		    locUsedThisCombo_HlmLM_t[i][j][PiMinus].insert(locPiMinusTrackID);
+		    locUsedThisCombo_HlmLM_t[i][j][Proton].insert(locProtonTrackID);
+		    locUsedThisCombo_HlmLM_t[i][j][Gamma].insert(locPhoton1NeutralID);
+		    locUsedThisCombo_HlmLM_t[i][j][Gamma].insert(locPhoton2NeutralID);
+		    locUsedThisCombo_HlmLM_t[i][j][Gamma].insert(locPhoton3NeutralID);
+		    locUsedThisCombo_HlmLM_t[i][j][Gamma].insert(locPhoton4NeutralID);
+
+		    //Compare to what's been used so far
+		    if(locUsedSoFar_HlmLM_t[i][j].find(locUsedThisCombo_HlmLM_t[i][j]) == locUsedSoFar_HlmLM_t[i][j].end()) {
+		      if(locMan_t > man_tmin[j] && locMan_t < man_tmax[j]) { 
+			dHist_HlmLM_t[i][j]->Fill(loc4PiMass, locHlmLM_1[i] * weight1);
+			dHist_HlmLM_t[i][j]->Fill(loc4PiMass, locHlmLM_2[i] * weight2);
+			locUsedSoFar_HlmLM_t[i][j].insert(locUsedThisCombo_HlmLM_t[i][j]);
+		      }
+		    }
+		  }
+		}
+
+
+
 
 
 	} // end of combo loop

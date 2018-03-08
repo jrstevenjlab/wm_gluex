@@ -38,4 +38,4 @@ An introduction to the GlueX analysis software is provided through a workshop co
 `cd $WM_GLUEX/tutorials/physics_workshop_2016`
 `source setup.csh`
 
-You should complete the excercises from session: 3a, 3b, and 5b.
+You should complete the excercises from session: 3a, 3b, and 5b. 

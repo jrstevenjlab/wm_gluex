@@ -9,6 +9,8 @@ void DSelector_ppipkskm::Init(TTree *locTree)
 	//SET OUTPUT FILE NAME //can be overriden by user in PROOF
 	dOutputFileName = "ppipkskm.root"; //"" for none
 	dOutputTreeFileName = ""; //"" for none
+	dFlatTreeFileName = ""; //output flat tree (one combo per tree entry), "" for none
+        dFlatTreeName = ""; //if blank, default name will be chosen
 
 	//DO THIS NEXT
 	//Because this function gets called for each TTree in the TChain, we must be careful:
@@ -62,8 +64,8 @@ void DSelector_ppipkskm::Init(TTree *locTree)
 	dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, false, KShort, 100, 0.3, 0.7, "Kshort_Kin0.01"));
 
 	//CUT KSHORT MASS
-	dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, false, KShort, 0.48, 0.52));
-	dAnalysisActions.push_back(new DHistogramAction_2DInvariantMass(dComboWrapper, true, 0, locKstarMPIDs, locXPIDs, 100, 0.5, 2.5, 100, 1.0, 3.0, "2D_KShortCut"));
+	dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, false, KShort, 0.3, 0.7));
+	//dAnalysisActions.push_back(new DHistogramAction_2DInvariantMass(dComboWrapper, true, 0, locKstarMPIDs, locXPIDs, 100, 0.5, 2.5, 100, 1.0, 3.0, "2D_KShortCut"));
 	dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false, "Kshort_Cut"));
 
 	//KINEMATICS
@@ -74,7 +76,6 @@ void DSelector_ppipkskm::Init(TTree *locTree)
 	Initialize_Actions();
 
 	/******************************** EXAMPLE USER INITIALIZATION: STAND-ALONE HISTOGRAMS *******************************/
-
 	int n2pi = 200; double min2pi = 0.3; double max2pi = 0.7;
         int nkpi = 150; double minkpi = 0.5; double maxkpi = 2.0;
         int n2kpi = 100; double min2kpi = 1.0; double max2kpi = 3.0;
@@ -185,7 +186,7 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		Int_t locPiMinusTrackID = dPiMinusWrapper->Get_TrackID();
 
 		/*********************************************** GET FOUR-MOMENTUM **********************************************/
-
+		
 		// Get P4's: //is kinfit if kinfit performed, else is measured
 		//dTargetP4 is target p4
 		//Step 0
@@ -194,7 +195,6 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		TLorentzVector locPiPlus1P4 = dPiPlus1Wrapper->Get_P4();
 		TLorentzVector locProtonP4 = dProtonWrapper->Get_P4();
 		//Step 1
-		TLorentzVector locDecayingKShortP4 = dDecayingKShortWrapper->Get_P4();
 		TLorentzVector locPiPlus2P4 = dPiPlus2Wrapper->Get_P4();
 		TLorentzVector locPiMinusP4 = dPiMinusWrapper->Get_P4();
 
@@ -207,6 +207,12 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		//Step 1
 		TLorentzVector locPiPlus2P4_Measured = dPiPlus2Wrapper->Get_P4_Measured();
 		TLorentzVector locPiMinusP4_Measured = dPiMinusWrapper->Get_P4_Measured();
+
+		/*********************************************** GET Space-Time **********************************************/
+		TLorentzVector locBeam_X4_Measured = dComboBeamWrapper->Get_X4_Measured();
+                TLorentzVector locProton_X4_Measured = dProtonWrapper->Get_X4_Measured();
+
+		double locKinFitCL = dComboWrapper->Get_ConfidenceLevel_KinFit();
 
 		/******************************************** EXECUTE ANALYSIS ACTIONS *******************************************/
 
@@ -222,12 +228,17 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
                 TLorentzVector loc2piP4_Measured = locPiMinusP4_Measured + locPiPlus2P4_Measured;
 
 		TLorentzVector lockppimP4 = locKMinusP4 + locPiPlus1P4;
+		TLorentzVector locDecayingKShortP4 = locPiMinusP4 + locPiPlus2P4;
+		TLorentzVector lockspimP4 = locDecayingKShortP4 + locPiPlus1P4;
                 TLorentzVector loc2kpiP4 = locKMinusP4 + locPiPlus1P4 + locDecayingKShortP4;
 
 		TLorentzVector loc2piX4_Measured = dPiPlus2Wrapper->Get_X4_Measured() + dPiMinusWrapper->Get_X4_Measured();
                 loc2piX4_Measured *= 0.5;
                 TLorentzVector locProtonX4_Measured = dProtonWrapper->Get_X4_Measured();
                 TLorentzVector locDeltaX4_Measured = loc2piX4_Measured - locProtonX4_Measured;
+
+		TLorentzVector locProtonPiPlusP4 = locProtonP4 + locPiPlus1P4;
+		TLorentzVector locProtonKMinusP4 = locProtonP4 + locKMinusP4;
 
 		// AFTER KINFIT CL CUT
                 dHist_2piMass_deltaR->Fill(locDeltaX4_Measured.Perp(), loc2piP4_Measured.M());
@@ -246,7 +257,7 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		}
 
 		// REJECT KSHORT WITH VERTEX CUT
-                if(locDeltaX4_Measured.Perp() < 0.3 && locDeltaX4_Measured.Z() < 1.5)
+                if(locDeltaX4_Measured.Perp() < 0.2 && locDeltaX4_Measured.Z() < 1.0)
                         continue;
 
 		dHist_2piMass_kppimMass_vertex->Fill(lockppimP4.M(), loc2piP4_Measured.M());
@@ -259,7 +270,6 @@ Bool_t DSelector_ppipkskm::Process(Long64_t locEntry)
 		else if(loc2piP4_Measured.M() > 0.40 && loc2piP4_Measured.M() < 0.44) {
 			dHist_2kpiMass_kppimMass_vertex_SB2->Fill(lockppimP4.M(), loc2kpiP4.M());
 		}
-
 
 	} // end of combo loop
 

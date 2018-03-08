@@ -16,8 +16,13 @@ echo $MyProcess
 MyEnv=$WM_GLUEX/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
 MyRunningDir=/sciclone/scr10/$USER/TMPDIR/$MyProcess/
+<<<<<<< HEAD
 MyDataInDir=/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0pi0pimpip__B3/merged/ #replace with your channels directory
 MyDataOutDir=/sciclone/data10/$USER/$MyProcess/
+=======
+MyDataInDir=/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0kpkm__B3/merged/ #replace with your channels directory
+MyDataOutDir=/sciclone/data10/$USER/$MyProcess/test1/
+>>>>>>> origin
 MyLogDir=$MyDataOutDir/log/
 
 mkdir -p $MyRunningDir
@@ -32,9 +37,13 @@ echo $MyLogDir
 for MyRun in ${MyDataInDir}/*; do # all run numbers in input directory
 
 MyRun=`basename ${MyRun}`
+<<<<<<< HEAD
 MyRun=${MyRun:23:5}
+=======
+MyRun=${MyRun:18:5} # get run number from filename (in this case 18 characters from the beginning of the filename: tree_pi0kpkm__B3_030496.root)
+>>>>>>> origin
 echo $MyRun
 
-qsub -l nodes=1:$MyCluster:ppn=$PPN -l walltime=00:60:00 -d $MyRunningDir -o $MyLogDir/$MyRun.out -e $MyLogDir/$MyRun.err `pwd`/runDSelector.csh -v MyRun=$MyRun,MyDataInDir=$MyDataInDir,MyDataOutDir=$MyDataOutDir,MyCodeDir=$MyCodeDir,MyEnv=$MyEnv -N ${MyProcess}_${MyRun}
+qsub -l nodes=1:$MyCluster:ppn=$PPN -l walltime=00:55:00 -d $MyRunningDir -o $MyLogDir/$MyRun.out -e $MyLogDir/$MyRun.err `pwd`/runDSelector.csh -v MyRun=$MyRun,MyDataInDir=$MyDataInDir,MyDataOutDir=$MyDataOutDir,MyCodeDir=$MyCodeDir,MyEnv=$MyEnv -N ${MyProcess}_${MyRun}
 
 done

@@ -40,6 +40,9 @@ void DSelector_p2kpi0::Init(TTree *locTree)
 
         //MISSING MASS
         dAnalysisActions.push_back(new DHistogramAction_MissingMassSquared(dComboWrapper, false, 1000, -0.1, 0.1));
+	dAnalysisActions.push_back(new DHistogramAction_Energy_UnusedShowers(dComboWrapper));
+	dAnalysisActions.push_back(new DCutAction_Energy_UnusedShowers(dComboWrapper, 0.5));
+	dAnalysisActions.push_back(new DHistogramAction_Energy_UnusedShowers(dComboWrapper, "AfterCut"));
 
 	//KINFIT RESULTS
         dAnalysisActions.push_back(new DHistogramAction_KinFitResults(dComboWrapper));
@@ -204,6 +207,12 @@ Bool_t DSelector_p2kpi0::Process(Long64_t locEntry)
 		TLorentzVector locMissingP4_Measured = locBeamP4_Measured + dTargetP4;
 		locMissingP4_Measured -= locKMinusP4_Measured + locKPlusP4_Measured + locProtonP4_Measured + locPhoton1P4_Measured + locPhoton2P4_Measured;
 
+		/*********************************************** GET Space-Time **********************************************/
+                TLorentzVector locBeam_X4_Measured = dComboBeamWrapper->Get_X4_Measured();
+                TLorentzVector locProton_X4_Measured = dProtonWrapper->Get_X4_Measured();
+		
+		double locKinFitCL = dComboWrapper->Get_ConfidenceLevel_KinFit();	
+
 		/******************************************** EXECUTE ANALYSIS ACTIONS *******************************************/
 
 		// Loop through the analysis actions, executing them in order for the active particle combo
@@ -220,6 +229,7 @@ Bool_t DSelector_p2kpi0::Process(Long64_t locEntry)
                 TLorentzVector loc2kP4 = locKPlusP4 + locKMinusP4;
                 TLorentzVector loc2kpi0P4 = locKPlusP4 + locKMinusP4 + locDecayingPi0P4;
                 TLorentzVector locProtonPi0P4 = locProtonP4 + locDecayingPi0P4;
+		TLorentzVector locProtonKMinusP4 = locProtonP4 + locKMinusP4;
 
                 double t = (dTargetP4 - locProtonP4).M2();
 
@@ -243,6 +253,27 @@ Bool_t DSelector_p2kpi0::Process(Long64_t locEntry)
 			dHist_2kpiMass_t_SB->Fill(-t, loc2kpi0P4.M());
 			dHist_2kpiMass_Egamma_SB->Fill(locBeamP4.E(), loc2kpi0P4.M());
                 }
+
+		/********************************************* RF time and Beam time **********************************************/
+		double tRF = 0.0;
+                tRF = dComboWrapper->Get_RFTime_Measured();
+
+                TLorentzVector P4_Beam = locBeamP4_Measured;
+                TLorentzVector X4_Beam = locBeam_X4_Measured;
+
+                double locBeamDeltaT = X4_Beam.T() - (tRF + (X4_Beam.Z() - dTargetCenter.Z())/29.9792458);
+
+                /****************************************** FILL FLAT TREE ******************************************/
+		//FILL ANY CUSTOM BRANCHES FIRST!!
+		double weight = 1.;
+
+                // weights for 2 deltaT sideband bins
+                Bool_t AcciWeight  = (fabs(locBeamDeltaT)<(2.5*4.008)&&fabs(locBeamDeltaT)>(0.5*4.008)) ? true : false;
+                if(AcciWeight) weight = -1/2.;
+
+                // remove any further deltaT sidebands if they exist
+                 if(fabs(locBeamDeltaT) > 2.5*4.008)
+                        continue;
 
 		/**************************************** EXAMPLE: HISTOGRAM BEAM ENERGY *****************************************/
 

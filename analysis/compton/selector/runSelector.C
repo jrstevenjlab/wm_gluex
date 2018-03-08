@@ -6,19 +6,19 @@
 #include "TString.h"
 #include "TSystem.h"
   
-void runSelector(TString runNumber = "11366", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2016-02/analysis/private-2017-05-30/compton/") 
+void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_g__F0_B3/merged/") 
 {
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
   
-  int Proof_Nthreads = 2;
+  int Proof_Nthreads = 8;
 
   // process signal 
   TString sampleDir = myPath;
-  sampleDir += Form("0%s/", runNumber.Data());
+  //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("compton_Tree");
+  TChain *chain = new TChain("g__F0_B3_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   if(files) {

@@ -22,7 +22,7 @@ void runDSelector(string sample = "sim1", bool proof = 1, string path = "$DATA/s
 		chain->Add(fileName);
 		string outputHistFileName = Form("hist_p2gamma_%s.acc.root", sample.data());
 		string outputTreeFileName = ""; // don't need output tree
-		DPROOFLiteManager::Process_Chain(chain, "DSelector_p2gamma_workshop.C+", proof_Nthreads, outputHistFileName, outputTreeFileName, options);
+		DPROOFLiteManager::Process_Chain(chain, "DSelector_p2gamma_workshop.C+", outputHistFileName, outputTreeFileName, options, proof_Nthreads);
 	}
 	else { // get TTree and use standard TTree::Process
 		TFile *f = TFile::Open(fileName);

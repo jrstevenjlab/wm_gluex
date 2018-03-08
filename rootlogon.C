@@ -5,7 +5,7 @@
   TStyle *myStyle  = new TStyle("MyStyle","My Root Styles");
 
   // no stats or title
-  myStyle->SetOptStat(00000000);
+  //myStyle->SetOptStat(00000000);
   myStyle->SetOptTitle(0);
 
   // from ROOT plain style                                                      

@@ -20,7 +20,7 @@ echo $MyProcess
 
 MyEnv=$WM_GLUEX/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
-MyRunningDir=/sciclone/scr01/$USER/TMPDIR/$MyProcess/
+MyRunningDir=/sciclone/scr10/$USER/TMPDIR/$MyProcess/
 MyDataInDir=/sciclone/data10/jrstevens01/RunPeriod-2016-02/analysis/ver06/tree_2pi0pimpip/ #replace with your channels directory
 MyDataOutDir=/sciclone/data10/$USER/$MyProcess/
 MyLogDir=$MyDataOutDir/log/

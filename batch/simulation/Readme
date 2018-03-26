@@ -1,6 +1,6 @@
 Initiate batch job simulation with the following command
 
-./gluex_MC.py ConfigFile RunNumber NEvents per_file=NEventsPerFile batch=1
+gluex_MC.py ConfigFile RunNumber NEvents per_file=NEventsPerFile batch=1
 
 where each of the following  
 

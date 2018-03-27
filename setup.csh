@@ -1,5 +1,21 @@
 #!/bin/tcsh
 
+# set non-default compiler
+setenv HOSTNAME `hostname`
+set VORTEX_WORKER=`echo $HOSTNAME | grep -c "vx"`
+set HURRICANE_WORKER=`echo $HOSTNAME | grep -c "hu"`
+set WHIRLWIND_WORKER=`echo $HOSTNAME | grep -c "wh"`
+if ($HOSTNAME == "hurricane.sciclone.wm.edu" || $HURRICANE_WORKER == 1 || $HOSTNAME == "whirlwind.sciclone.wm.edu" || $WHIRLWIND_WORKER == 1) then
+     module unload pgi/11.10
+     module load python/2.7.2
+     module load cmake/2.8.8
+else if ($HOSTNAME == "vortex.sciclone.wm.edu" || $VORTEX_WORKER == 1) then 
+     module unload pgi/14.3
+     module load python/2.7.8
+     module load cmake/3.5.2
+endif
+module load gcc/4.8.4
+
 setenv WM_GLUEX $HOME/wm_gluex
 source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version.xml
 

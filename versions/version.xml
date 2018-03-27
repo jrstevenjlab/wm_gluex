@@ -7,10 +7,12 @@
 <package name="root" version="6.08.06"/>
 <package name="ccdb" version="1.06.05"/>
 <package name="evio" version="4.4.6"/>
-<package name="rcdb" version="0.02"/>
+<package name="rcdb" version="0.03"/>
 <package name="geant4" version="10.02.p02"/>
-<package name="hdgeant4" version="1.2.0"/>
+<package name="hdgeant4" version="1.6.0"/>
 <package name="hd_utilities" version="1.11"/>
 <package name="gluex_root_analysis" home="/sciclone/home10/jrstevens01/builds/gluex_root_analysis/gluex_root_analysis/"/>
 <package name="amptools" version="0.9.3"/>
+<package name="sqlite" version="3.13.0"/>
+<package name="sqlitecpp" version="2.2.0"/>
 </gversions>

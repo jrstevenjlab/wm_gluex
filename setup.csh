@@ -10,7 +10,7 @@ if ($HOSTNAME == "hurricane.sciclone.wm.edu" || $HURRICANE_WORKER == 1 || $HOSTN
      module load python/2.7.2
      module load cmake/2.8.8
 else if ($HOSTNAME == "vortex.sciclone.wm.edu" || $VORTEX_WORKER == 1) then 
-     module unload pgi/14.3
+     module unload pgi/17.7
      module load python/2.7.8
      module load cmake/3.5.2
 endif

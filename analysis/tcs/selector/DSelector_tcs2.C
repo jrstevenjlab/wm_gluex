@@ -125,7 +125,7 @@ void DSelector_tcs2::Init(TTree *locTree)
 	dHist_Mee = new TH1I("Mee", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
 	dHist_Mee_CDCdEdx = new TH1I("Mee_CDCdEdx", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
 	dHist_Mee_ShowerCut = new TH1I("Mee_ShowerCut", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
-	dHist_Mee_ACcuts1 = new TH1I("Mee_ACcut1", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
+	dHist_Mee_ACcuts1 = new TH1I("Mee_ACcuts1", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
 	
 	dHist_Mee_ACcuts2 = new TH1I("Mee_ACcuts2", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
 	dHist_Mee_ACcuts3 = new TH1I("Mee_ACcuts3", ";Mass e^{+}e^{-} (GeV/c^{2})", 400, locMinMee, locMaxMee);
@@ -143,7 +143,8 @@ void DSelector_tcs2::Init(TTree *locTree)
 	dHist_cosThetavsPhi = new TH2F("cosThetavsPhi", ";Cos(theta) vs Phi", 600, -1.0, 1.0, 20, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	dHist_cosThetavsPhiLIM = new TH2F("cosThetavsPhiLIM", ";Cos(theta) vs Phi", 600, -1.0, 1.0, 20, -1.0*TMath::Pi(), 1.0*TMath::Pi());
        	dHist_phi = new TH1F("phi", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_phiLIM = new TH1F("phiLIM", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi()); //same as dHist_phi except fill after setting cos(theta) range
+	dHist_phiLIM = new TH1F("phiLIM", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+ //identical to dHist_phi except fill after setting cos(theta) range
 
 
 	// Separate histograms for e+ and e-
@@ -320,49 +321,39 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		
 
 		//Boost 1:  (to gamma-p rest frame)
-		TLorentzVector loc_gpP4 = locBeamP4_Measured + dTargetP4;  // total 4-mom reactants
-		TVector3 locGammap_boostvec = loc_gpP4.BoostVector();      // 4-mom --> GP velocities
+		TLorentzVector loc_gpP4 = locBeamP4_Measured + dTargetP4; // 4-momentum of photon & proton
+		TVector3 locGammap_boostvec = loc_gpP4.BoostVector();     // divide xyz momenta by time
 
-		TLorentzVector locBeamP4_gpRest = locBeamP4_Measured;      //copy&rename beam
-		locBeamP4_gpRest.Boost(-1.0*locGammap_boostvec);               //boost beam to gamma-p rest frame
+		TLorentzVector locBeamP4_gpRest = locBeamP4_Measured;     //copies/renames beam, to retain old axes
+		locBeamP4_gpRest.Boost(-1.0*locGammap_boostvec);               //boosts beam to gamma-p rest frame
 
-	       	TLorentzVector locElectronPositronP4_Measured = locElectronP4_Measured + locPositronP4_Measured;  //get sum of e+e- 4-mom
-		TLorentzVector locElectronPositronP4_gpRest = locElectronPositronP4_Measured;                     //  copy&rename lab e+e-
-		locElectronPositronP4_gpRest.Boost(-1.0*locGammap_boostvec);                                      //Lorentz boost e+e- into gp frame
+	       	TLorentzVector locElectronPositronP4_Measured = locElectronP4_Measured + locPositronP4_Measured;  //get sum of e+e- 4-momenta
+
+		TLorentzVector locElectronPositronP4_gpRest = locElectronPositronP4_Measured;  // copy/rename lab e+e-
+		locElectronPositronP4_gpRest.Boost(-1.0*locGammap_boostvec);    //Lorentz boost e+e- into gp frame
 
 
 		//Boost 2:  (to e+e- rest frame, only concerned ~ e+e- now)
-		TVector3 locElectronPositron_boostvec = locElectronPositronP4_gpRest.BoostVector();               // make e+e- gp frame 4-mom into a velocity vector to use to make transformation 
-		TLorentzVector locElectronPositronP4_eeRest = locElectronPositronP4_gpRest;                       // copy & rename e+e- rest 4mom
-		locElectronPositronP4_eeRest.Boost(-1.0* locElectronPositron_boostvec);                           //apply velocity/boost vec to e+e- gp 4-mom,  Lorentz boosting e+e- into e+e- rest frame
+		TVector3 locElectronPositron_boostvec = locElectronPositronP4_gpRest.BoostVector();              
+ // dividing through by time for 3-vector 
+		TLorentzVector locElectronPositronP4_eeRest = locElectronPositronP4_gpRest;                       // copy & rename e+e- rest 4-momentum
+		locElectronPositronP4_eeRest.Boost(-1.0* locElectronPositron_boostvec);                           //apply boost vec to e+e- gp 4-mom,  Lorentz boosting e+e- into e+e- rest frame
 
-		TVector3 loc_eevec = locElectronPositronP4_eeRest.Vect();                                    //coordinates vector needed to create locphi; x,y,z of e+e- plane vector?
-
-		//direction coordinates for phi calculation:
-		//TVector3 locBeamP3_gpRest = locBeamP4_gpRest.Vect();
-		//TVector3 locElectronPositronP3_gpRest = locElectronPositronP4_gpRest.Vect();
-		//TVector3 lock = locBeamP3_gpRest.Unit();
-		//TVector3 locz = locElectronPositronP3_gpRest.Unit();
-		//TVector3 lockcrossz = lock.Cross(locz);
-		//	TVector3 locy = lockcrossz.Unit();
-		//TVector3 locx = locy.Cross(locz);
-		//double locx = loc_eeplanevec.Px();
-		//double locy = loc_eeplanevec.Py();
-		//double locz = loc_eeplanevec.Pz();
-		//double lock = pow((pow(locx,2) + pow(locy,2)), 0.5);
+		TVector3 loc_eevec = locElectronPositronP4_eeRest.Vect();                       //coordinates vector needed to create locphi; x,y,z of e+e- plane vector?
 
 
-		//need proton momentum in e+e- rest frame
+		//transform proton momentum in e+e- rest frame in steps of the 2 boosts
 		TLorentzVector locProtonP4_ElectronPositronCM = locProtonP4_Measured;
 		locProtonP4_ElectronPositronCM.Boost(-1.0* locGammap_boostvec);
 		locProtonP4_ElectronPositronCM.Boost(-1.0* locElectronPositron_boostvec);
 		TVector3 locProtonP3_ElectronPositronCM = locProtonP4_ElectronPositronCM.Vect();
 
-		//Boost helicity unit vectors to e+e- rf
+		//Boost helicity (angular momentum projection) unit vectors to e+e- rest frame
 		TVector3 locHelicityZAxis_eeCM = -1.0*locProtonP3_ElectronPositronCM.Unit();
 		TVector3 locHelicityYAxis_eeCM = -1.0*locBeamP4_gpRest.Vect().Cross(locProtonP3_ElectronPositronCM).Unit();
 		TVector3 locHelicityXAxis_eeCM = locHelicityYAxis_eeCM.Cross(locHelicityZAxis_eeCM).Unit();
-		//Project the e+e- momentum onto these axes and read off the angles
+
+		//Project the e+e- momentum onto these axes; allows theta & phi calculations
 		TVector3 loc_eeP3_Angles(loc_eevec.Dot(locHelicityXAxis_eeCM),loc_eevec.Dot(locHelicityYAxis_eeCM),loc_eevec.Dot(locHelicityZAxis_eeCM));
 
 
@@ -623,7 +614,7 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		//else continue;
 
 
-		 //1)
+		 //Cut 1)
 	       	if ((locElectronSigThetaBCALShower > locElectronSigThetaCut) || (locPositronSigThetaBCALShower > locPositronSigThetaCut)) continue;
 		dHist_Mee_ACcuts1->Fill(locMee);
 		if(locMee > locMinJpsiMee && locMee < locMaxJpsiMee) {
@@ -635,7 +626,7 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		  dHist_SigTheta_Preshower_BkgdACcuts1[1]->Fill(locPositronBCALPreshowerE, locPositronSigThetaBCALShower);
 	      	};
 
-		//2)
+		//Cut 2)
 	       	if ((locElectronBCALPreshowerE < 0.015) || (locPositronBCALPreshowerE < 0.015))  continue;
 		dHist_Mee_ACcuts2->Fill(locMee);
 		if(locMee > locMinJpsiMee && locMee < locMaxJpsiMee) {
@@ -647,7 +638,7 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		  dHist_SigTheta_Preshower_BkgdACcuts2[1]->Fill(locPositronBCALPreshowerE, locPositronSigThetaBCALShower);
 		};
 
-		//3)
+		//Cut 3)
 		if ((locElectronSigThetaBCALShower > 0.025) || (locPositronSigThetaBCALShower > 0.025)) continue;
 		dHist_Mee_ACcuts3->Fill(locMee);
 		if(locMee > locMinJpsiMee && locMee < locMaxJpsiMee) {
@@ -659,7 +650,7 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		  dHist_SigTrans_SigTheta_BkgdACcuts3[1]->Fill(locPositronSigThetaBCALShower, locPositronSigTransBCALShower);
 		};
 
-		//4)	
+		//Cut 4)	
 		if ((locElectronEOverP < 0.75)|| (locPositronEOverP < 0.75)) continue;
 		dHist_Mee_ACcuts4->Fill(locMee);
 		if(locMee > locMinJpsiMee && locMee < locMaxJpsiMee) {
@@ -671,7 +662,7 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		  dHistEOverP_Theta_BCAL_BkgdACcuts4[1]->Fill(locPositronTheta, locPositronEOverP);
 	       	};
 
-		//5)
+		//Cut 5)
 	       	if ((locElectronSigTransBCALShower > 0.013) || (locPositronSigTransBCALShower > 0.013)) continue;
 		dHist_Mee_ACcuts5->Fill(locMee);
 		if(locMee > locMinJpsiMee && locMee < locMaxJpsiMee) {
@@ -684,11 +675,11 @@ Bool_t DSelector_tcs2::Process(Long64_t locEntry)
 		};
 
 
-		if (locMee > 2 && locMee < 3){
+		if (locMee > 2 && locMee < 3){     // set mass range restriction
 		    dHist_cosThetavsPhi ->Fill(loccostheta,locphi);
 		    if (locphi != 0){ 
 		       dHist_phi ->Fill(locphi);
-		       if ((loctheta > 0.25*TMath::Pi()) && (loctheta < 0.75*TMath::Pi())) {
+		       if ((loctheta > 0.25*TMath::Pi()) && (loctheta < 0.75*TMath::Pi())) {   // apply theta range
 			 dHist_cosThetavsPhiLIM ->Fill(loccostheta,locphi);
 			 dHist_phiLIM->Fill(locphi);
 		       };

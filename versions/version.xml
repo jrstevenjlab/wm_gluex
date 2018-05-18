@@ -13,6 +13,6 @@
 <package name="hd_utilities" version="1.11"/>
 <package name="gluex_root_analysis" home="/sciclone/home10/jrstevens01/builds/gluex_root_analysis/gluex_root_analysis/"/>
 <package name="amptools" version="0.9.3"/>
-<package name="sqlite" version="3.13.0"/>
-<package name="sqlitecpp" version="2.2.0"/>
+<package name="sqlite" version="3.13.0" year="2016" dirtag="bs130"/>
+<package name="sqlitecpp" version="2.2.0" dirtag="bs130"/>
 </gversions>

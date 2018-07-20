@@ -10,7 +10,7 @@
 
 PPN=8
 MyProcess=pomegapi
-MyCluster=hurricane
+MyCluster=x5672
 echo $MyProcess
 
 MyEnv=$WM_GLUEX/

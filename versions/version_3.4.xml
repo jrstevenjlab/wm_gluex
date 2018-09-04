@@ -18,6 +18,6 @@
 <package name="gluex_MCwrapper" version="v2.0"/>
 <package name="gluex_root_analysis" version="0.4"/>
 <package name="amptools" version="0.9.3"/>
-<package name="sqlitecpp" version="2.2.0" dirtag="bs130"/>
-<package name="sqlite" version="3.13.0" year="2016" dirtag="bs130"/>
+<package name="sqlitecpp" version="2.2.0"/>
+<package name="sqlite" version="3.13.0" year="2016"/>
 </gversions>

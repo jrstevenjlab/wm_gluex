@@ -19,7 +19,7 @@ endif
 module load gcc/4.8.4
 
 setenv WM_GLUEX $HOME/wm_gluex
-source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version.xml
+source /sciclone/home10/jrstevens01/build_scripts/gluex_env_version.csh $WM_GLUEX/versions/version_custom.xml
 
 setenv HALLD_MY /sciclone/home10/jrstevens01/builds/plugins/
 setenv JANA_PLUGIN_PATH /sciclone/home10/jrstevens01/builds/plugins/

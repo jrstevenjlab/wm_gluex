@@ -22,7 +22,12 @@ cp $MyCodeDir/selector/runSelector.C ./
 
 ls -al
 
-root.exe -l -b -q runSelector.C\(\"$MyRun\",\"$MyDataInDir\"\)
+#echo $MyDataInDir/tree_*_0$MyRun.root
+cp $MyDataInDir/tree_*_0$MyRun.root ./
+
+ls -al
+
+root.exe -l -b -q runSelector.C\(\"$MyRun\",\"./\"\)
 mv hist*.acc.root $MyDataOutDir
 mv tree*.acc.root $MyDataOutDir
 

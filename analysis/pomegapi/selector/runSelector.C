@@ -7,7 +7,7 @@
 #include "TSystem.h"
    
 
-void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0pi0pimpip__B3/merged/") 
+void runSelector(TString runNumber = "30276", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pi0pippim__B4_M7/merged/") 
 
 {
   // Load DSelector library
@@ -19,7 +19,7 @@ void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/data10
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("pi0pi0pimpip__B3_Tree");
+  TChain *chain = new TChain("pi0pi0pippim__B4_M7_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;
@@ -52,7 +52,7 @@ void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/data10
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_pomegapi.C+", Proof_Nthreads, Form("hist_pomegapi_%s.acc.root", runNumber.Data()));
+	  DPROOFLiteManager::Process_Chain(chain, "DSelector_pomegapi.C+", Proof_Nthreads, Form("hist_pomegapi_%s_ver23.acc.root", runNumber.Data()));
   }
 
   return;

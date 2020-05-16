@@ -43,13 +43,13 @@ class DSelector_pomegapi : public DSelector
 
 		//Step 1
 		DParticleComboStep* dStep1Wrapper;
-		DKinematicData* dDecayingPi01Wrapper;
+		//DKinematicData* dDecayingPi01Wrapper;
 		DNeutralParticleHypothesis* dPhoton1Wrapper;
 		DNeutralParticleHypothesis* dPhoton2Wrapper;
 
 		//Step 2
 		DParticleComboStep* dStep2Wrapper;
-		DKinematicData* dDecayingPi02Wrapper;
+		//DKinematicData* dDecayingPi02Wrapper;
 		DNeutralParticleHypothesis* dPhoton3Wrapper;
 		DNeutralParticleHypothesis* dPhoton4Wrapper;
 
@@ -57,7 +57,10 @@ class DSelector_pomegapi : public DSelector
 		// EXAMPLES:
 		TH1F* dHist_MissingMassSquared;
 		TH1F* dHist_BeamEnergy;
+		TH1F* dHist_BeamDeltaT;
+		TH1F* dHist_3PiMass;
 		TH1F* dHist_3PiMass_Measured;
+		TH2F* dHist_3vs3;
 		TH1F* dHist_MM2_Weighted;
 		TH1F* dHist_lambda_peak;
 		TH1F* dHist_lambda_wings;
@@ -129,19 +132,19 @@ void DSelector_pomegapi::Get_ComboWrappers(void)
 	//Step 0
 	dStep0Wrapper = dComboWrapper->Get_ParticleComboStep(0);
 	dComboBeamWrapper = static_cast<DBeamParticle*>(dStep0Wrapper->Get_InitialParticle());
-	dPiMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(2));
-	dPiPlusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(3));
+	dPiPlusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(2));
+	dPiMinusWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(3));
 	dProtonWrapper = static_cast<DChargedTrackHypothesis*>(dStep0Wrapper->Get_FinalParticle(4));
 
 	//Step 1
 	dStep1Wrapper = dComboWrapper->Get_ParticleComboStep(1);
-	dDecayingPi01Wrapper = dStep1Wrapper->Get_InitialParticle();
+	//dDecayingPi01Wrapper = dStep1Wrapper->Get_InitialParticle();
 	dPhoton1Wrapper = static_cast<DNeutralParticleHypothesis*>(dStep1Wrapper->Get_FinalParticle(0));
 	dPhoton2Wrapper = static_cast<DNeutralParticleHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
 
 	//Step 2
 	dStep2Wrapper = dComboWrapper->Get_ParticleComboStep(2);
-	dDecayingPi02Wrapper = dStep2Wrapper->Get_InitialParticle();
+	//dDecayingPi02Wrapper = dStep2Wrapper->Get_InitialParticle();
 	dPhoton3Wrapper = static_cast<DNeutralParticleHypothesis*>(dStep2Wrapper->Get_FinalParticle(0));
 	dPhoton4Wrapper = static_cast<DNeutralParticleHypothesis*>(dStep2Wrapper->Get_FinalParticle(1));
 }

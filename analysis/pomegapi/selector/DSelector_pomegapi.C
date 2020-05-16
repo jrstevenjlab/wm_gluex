@@ -75,7 +75,7 @@ void DSelector_pomegapi::Init(TTree *locTree)
         //dAnalysisActions.push_back(new DHistogramAction_2DInvariantMass(dComboWrapper, true, 0, locOmegaPIDs, 0, locb1PIDs, 100, minOmega, maxOmega, 150, minb1, maxb1, "Omega_b1_Pi0Cut"));
 
 	//CUT OMEGA MASS
-        dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, true, 0, locOmegaPIDs, 0.76, 0.81));
+        //dAnalysisActions.push_back(new DCutAction_InvariantMass(dComboWrapper, true, 0, locOmegaPIDs, 0.76, 0.81)); //turned this off on 06.29.18
         dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, true, 0, locb1PIDs, 150, minb1, maxb1, "b1_OmegaCut"));
 
         //CUT BEAM ENERGY
@@ -97,30 +97,33 @@ void DSelector_pomegapi::Init(TTree *locTree)
 	dHist_BeamEnergy = new TH1F("BeamEnergy", ";Beam Energy (GeV)", 600, 0.0, 12.0);
 
 	//MY HISTOGRAMS:
-	dHist_3PiMass_Measured = new TH1F("3PiMass_Measured", ";3 Pion Mass (GeV/c^{2})", 600, 0.6, 1.1);
+	dHist_BeamDeltaT = new TH1F("BeamDeltaT", "; t_{Tagger} - t_{RF} (ns)", 200, -20., 20.);
+	dHist_3PiMass = new TH1F("3PiMass", ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV)", 600, 0.6, 1.1);
+	dHist_3vs3 = new TH2F("3vs3", ";M_{#pi^{+}#pi^{-}#pi^{0}_{1}} (GeV);M_{#pi^{+}#pi^{-}#pi^{0}_{2}} (GeV)", 600, 0.6, 1.1, 600, 0.6, 1.1);
+	dHist_3PiMass_Measured = new TH1F("3PiMass_Measured", ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV)", 600, 0.6, 1.1);
 	dHist_MM2_Weighted = new TH1F("MM2_Weighted", ";Weighted Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
-	dHist_lambda_peak = new TH1F("lambda_peak", ";{lambda} (peak)", 600, 0, 1);
-       	dHist_lambda_wings = new TH1F("lambda_wings", ";{lambda} (wings)", 600, 0, 1);
-       	dHist_lambda_uncut = new TH1F("lambda_uncut", ";{lambda} (uncut)", 600, 0, 1);
-	dHist_4PiMass = new TH1F("4PiMass", ";Pi+Pi-Pi0Pi0 Mass (GeV/c^{2})", 600, 0, 3);
-	dHist_OmegaPiMass = new TH1F("OmegaPiMass", ";Omega Pi0 Mass (GeV)", 600, 0, 3);
-	dHist_3vs4 = new TH2F("3vs4", ";3 Pion Mass vs 4 Pion Mass", 600, 0, 3, 600, 0, 3);
+	dHist_lambda_peak = new TH1F("lambda_peak", ";#lambda_{peak}", 600, 0, 1);
+       	dHist_lambda_wings = new TH1F("lambda_wings", ";#lambda_{wings}", 600, 0, 1);
+       	dHist_lambda_uncut = new TH1F("lambda_uncut", ";#lambda_{uncut}", 600, 0, 1);
+	dHist_4PiMass = new TH1F("4PiMass", ";M_{#pi^{+}#pi^{-}#pi^{0}#pi^{0}} (GeV)", 600, 0, 3);
+	dHist_OmegaPiMass = new TH1F("OmegaPiMass", ";M_{#omega#pi^{0}} (GeV)", 600, 0, 3);
+	dHist_3vs4 = new TH2F("3vs4", ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);M_{#pi^{+}#pi^{-}#pi^{0}#pi^{0}} (GeV)", 600, 0, 3, 600, 0, 3);
 	dHist_Man_t = new TH1F("Man_t", ";Four-Momentum Transfer Squared (GeV)^{2}", 600, 0.0, 1.0);
 	//Decay Angles
-	dHist_costheta = new TH1F("costheta", ";Cos(theta)", 600, -1.0, 1.0);
-	dHist_phi = new TH1F("phi", ";phi (radians)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_costhetaH = new TH1F("costhetaH", ";Cos(theta_H)", 600, -1.0, 1.0);
-	dHist_phiH = new TH1F("phiH", ";phi_H (rad)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_costheta = new TH1F("costheta", ";cos(#theta)", 600, -1.0, 1.0);
+	dHist_phi = new TH1F("phi", ";#phi (rad)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_costhetaH = new TH1F("costhetaH", ";cos(#theta_{H})", 600, -1.0, 1.0);
+	dHist_phiH = new TH1F("phiH", ";#phi_{H} (rad)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	//Angles vs mass
-	dHist_CosThetaVsMass = new TH2F("CosThetaVsMass", ";Cos(theta) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiVsMass = new TH2F("PhiVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
-	dHist_CosThetaHVsMass = new TH2F("CosThetaHVsMass", ";Cos(theta_H) vs Omega Pi Mass", 600, -1.0, 1.0, 20, 1.0, 3.0);
-	dHist_PhiHVsMass = new TH2F("PhiHVsMass", ";Phi vs Omega Pi Mass", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaVsMass = new TH2F("CosThetaVsMass", ";cos(#theta);M_{#omega#pi^{0}} (GeV)", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiVsMass = new TH2F("PhiVsMass", ";#phi (rad);M_{#omega#pi^{0}} (GeV)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
+	dHist_CosThetaHVsMass = new TH2F("CosThetaHVsMass", ";cos(#theta_{H});M_{#omega#pi^{0}} (GeV)", 600, -1.0, 1.0, 20, 1.0, 3.0);
+	dHist_PhiHVsMass = new TH2F("PhiHVsMass", ";#phi_{H} (rad);M_{#omega#pi^{0}} (GeV)", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi(), 20, 1.0, 3.0);
 	//Angles in t range [0.1, 0.3]
-	dHist_CosTheta_t1 = new TH1F("CosTheta_t1", ";Cos(theta) with t[0.1, 0.3]", 600, -1.0, 1.0);
-	dHist_Phi_t1 = new TH1F("Phi_t1", ";Phi with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
-	dHist_CosThetaH_t1 = new TH1F("CosThetaH_t1", ";Cos(theta_H) with t[0.1, 0.3]", 600, -1.0, 1.0);
-	dHist_PhiH_t1 = new TH1F("PhiH_t1", ";Phi_H with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosTheta_t1 = new TH1F("CosTheta_t1", ";cos(#theta) with t[0.1, 0.3]", 600, -1.0, 1.0);
+	dHist_Phi_t1 = new TH1F("Phi_t1", ";#phi with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
+	dHist_CosThetaH_t1 = new TH1F("CosThetaH_t1", ";cos(#theta_{H}) with t[0.1, 0.3]", 600, -1.0, 1.0);
+	dHist_PhiH_t1 = new TH1F("PhiH_t1", ";#phi_{H} with t[0.1, 0.3]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
 	//Angles in t range [0.3, 1.0]
 	dHist_CosTheta_t2 = new TH1F("CosTheta_t2", ";Cos(theta) with t[0.3, 1.0]", 600, -1.0, 1.0);
 	dHist_Phi_t2 = new TH1F("Phi_t2", ";Phi with t[0.3, 1.0]", 600, -1.0*TMath::Pi(), 1.0*TMath::Pi());
@@ -344,18 +347,18 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		// Get P4's: //is kinfit if kinfit performed, else is measured
 		//dTargetP4 is target p4
 		//Step 0
-		TLorentzVector locBeamP4 = dComboBeamWrapper->Get_P4();
-		TLorentzVector locPiPlusP4 = dPiPlusWrapper->Get_P4();
-		TLorentzVector locPiMinusP4 = dPiMinusWrapper->Get_P4();
-		TLorentzVector locProtonP4 = dProtonWrapper->Get_P4();
+		TLorentzVector locBeamP4_Kinfit = dComboBeamWrapper->Get_P4();
+		TLorentzVector locPiPlusP4_Kinfit = dPiPlusWrapper->Get_P4();
+		TLorentzVector locPiMinusP4_Kinfit = dPiMinusWrapper->Get_P4();
+		TLorentzVector locProtonP4_Kinfit = dProtonWrapper->Get_P4();
 		//Step 1
-		TLorentzVector locDecayingPi01P4 = dDecayingPi01Wrapper->Get_P4();
-		TLorentzVector locPhoton1P4 = dPhoton1Wrapper->Get_P4();
-		TLorentzVector locPhoton2P4 = dPhoton2Wrapper->Get_P4();
+		//TLorentzVector locDecayingPi01P4 = dDecayingPi01Wrapper->Get_P4();
+		TLorentzVector locPhoton1P4_Kinfit = dPhoton1Wrapper->Get_P4();
+		TLorentzVector locPhoton2P4_Kinfit = dPhoton2Wrapper->Get_P4();
 		//Step 2
-		TLorentzVector locDecayingPi02P4 = dDecayingPi02Wrapper->Get_P4();
-		TLorentzVector locPhoton3P4 = dPhoton3Wrapper->Get_P4();
-		TLorentzVector locPhoton4P4 = dPhoton4Wrapper->Get_P4();
+		//TLorentzVector locDecayingPi02P4 = dDecayingPi02Wrapper->Get_P4();
+		TLorentzVector locPhoton3P4_Kinfit = dPhoton3Wrapper->Get_P4();
+		TLorentzVector locPhoton4P4_Kinfit = dPhoton4Wrapper->Get_P4();
 
 		// Get Measured P4's:
 		//Step 0
@@ -370,27 +373,75 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		TLorentzVector locPhoton3P4_Measured = dPhoton3Wrapper->Get_P4_Measured();
 		TLorentzVector locPhoton4P4_Measured = dPhoton4Wrapper->Get_P4_Measured();
 
-		/********************************************* COMBINE FOUR-MOMENTUM ********************************************/
+		/******************************************* TOGGLE KINFIT VS MEASURED QUANTITIES *******************************/
+
+		bool kinfit_performed = true;
+
+		TLorentzVector locBeamP4;
+		TLorentzVector locPiPlusP4;
+		TLorentzVector locPiMinusP4;
+		TLorentzVector locProtonP4;
+
+		TLorentzVector locPhoton1P4;
+		TLorentzVector locPhoton2P4;
+		
+		TLorentzVector locPhoton3P4;
+		TLorentzVector locPhoton4P4;
+
+		if(kinfit_performed == true){
+		  locBeamP4 = locBeamP4_Kinfit;
+		  locPiPlusP4 = locPiPlusP4_Kinfit;
+		  locPiMinusP4 = locPiMinusP4_Kinfit;
+		  locProtonP4 = locProtonP4_Kinfit;
+
+		  locPhoton1P4 = locPhoton1P4_Kinfit;
+		  locPhoton2P4 = locPhoton2P4_Kinfit;
+		
+		  locPhoton3P4 = locPhoton3P4_Kinfit;
+		  locPhoton4P4 = locPhoton4P4_Kinfit;
+		}
+
+		else{
+		  locBeamP4 = locBeamP4_Measured;
+		  locPiPlusP4 = locPiPlusP4_Measured;
+		  locPiMinusP4 = locPiMinusP4_Measured;
+		  locProtonP4 = locProtonP4_Measured;
+
+		  locPhoton1P4 = locPhoton1P4_Measured;
+		  locPhoton2P4 = locPhoton2P4_Measured;
+		
+		  locPhoton3P4 = locPhoton3P4_Measured;
+		  locPhoton4P4 = locPhoton4P4_Measured;
+		}
+
+
+		/******************************************** COMBINE FOUR-MOMENTUM ********************************************/
 
 		// DO YOUR STUFF HERE
+		TLorentzVector locPi01P4 = locPhoton1P4 + locPhoton2P4;
+		TLorentzVector loc3Pi1P4 = locPiPlusP4 + locPiMinusP4 + locPi01P4;
+		TLorentzVector locPi02P4 = locPhoton3P4 + locPhoton4P4;
+		TLorentzVector loc3Pi2P4 = locPiPlusP4 + locPiMinusP4 + locPi02P4;
+		TLorentzVector loc4PiP4 = locPiPlusP4 + locPiMinusP4 + locPi01P4 + locPi02P4;
+		TLorentzVector locSqrt_t = loc4PiP4 - locBeamP4;
+
+		//Measured pion 4-momenta:
 		TLorentzVector locPi01P4_Measured = locPhoton1P4_Measured + locPhoton2P4_Measured;
 		TLorentzVector loc3Pi1P4_Measured = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi01P4_Measured;
 		TLorentzVector locPi02P4_Measured = locPhoton3P4_Measured + locPhoton4P4_Measured;
 		TLorentzVector loc3Pi2P4_Measured = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi02P4_Measured;
-		TLorentzVector loc4PiP4_Measured = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi01P4_Measured + locPi02P4_Measured;
-		TLorentzVector locSqrt_t = loc4PiP4_Measured - locBeamP4_Measured;
 
 		//Define omega-pi0 decay angles
 		//Boost to gamma-p rest frame
-		TLorentzVector locGammapP4 = locBeamP4_Measured + dTargetP4; 
+		TLorentzVector locGammapP4 = locBeamP4 + dTargetP4; 
 		TVector3 locGammapBoost = locGammapP4.BoostVector();     //create boost vector from gamma-p rest frame to lab frame - use negative of this to boost to gamma-p rest frame
-		TLorentzVector locBeamP4_gpRest = locBeamP4_Measured;     //boost the beam to the gamma-p rest frame
+		TLorentzVector locBeamP4_gpRest = locBeamP4;     //boost the beam to the gamma-p rest frame
 		locBeamP4_gpRest.Boost(-1.0*locGammapBoost);
-		TLorentzVector locOmegaPi0P4_gpRest = loc4PiP4_Measured;    //boost omega-pi0 to the gamma-p rest frame
+		TLorentzVector locOmegaPi0P4_gpRest = loc4PiP4;    //boost omega-pi0 to the gamma-p rest frame
 		locOmegaPi0P4_gpRest.Boost(-1.0*locGammapBoost);
-		TLorentzVector locOmega1P4_gpRest = loc3Pi1P4_Measured;   //boost omega to gamma-p rest frame - first omega
+		TLorentzVector locOmega1P4_gpRest = loc3Pi1P4;   //boost omega to gamma-p rest frame - first omega
 		locOmega1P4_gpRest.Boost(-1.0*locGammapBoost);
-		TLorentzVector locOmega2P4_gpRest = loc3Pi2P4_Measured;   //boost omega to gamma-p rest frame -second omega
+		TLorentzVector locOmega2P4_gpRest = loc3Pi2P4;   //boost omega to gamma-p rest frame - second omega
 		locOmega2P4_gpRest.Boost(-1.0*locGammapBoost);
 	
 		//Define unit 3-vectors - turns out we could have combined a lot of these steps
@@ -421,28 +472,28 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		TVector3 locyH2 = locz.Cross(loczH2).Unit();
 		TVector3 locxH2 = locyH2.Cross(loczH2).Unit();
 
-		//Boost charged pions from lab to Omega rest frame
+		//Boost charged pions from lab to omega rest frame
 		//First Omega combo
 		TVector3 locOmega1Boost = locOmega1P4_opiRest.BoostVector();   //create boost vector from omega rest frame to omega-pi rest frame
-		TLorentzVector locPiPlusP4_o1Rest = locPiPlusP4_Measured;
+		TLorentzVector locPiPlusP4_o1Rest = locPiPlusP4;
 		locPiPlusP4_o1Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf		
 		locPiPlusP4_o1Rest.Boost(-1.0*locOmegapiBoost);   //Boost to Omega-pi rf
 		locPiPlusP4_o1Rest.Boost(-1.0*locOmega1Boost);     //Boost to omega rf
 		TVector3 locPiPlusP3_o1Rest = locPiPlusP4_o1Rest.Vect();
-		TLorentzVector locPiMinusP4_o1Rest = locPiMinusP4_Measured;
-		locPiMinusP4_o1Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf		
+		TLorentzVector locPiMinusP4_o1Rest = locPiMinusP4;
+		locPiMinusP4_o1Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf       	
 		locPiMinusP4_o1Rest.Boost(-1.0*locOmegapiBoost);   //Boost to Omega-pi rf
 		locPiMinusP4_o1Rest.Boost(-1.0*locOmega1Boost);     //Boost to omega rf
 		TVector3 locPiMinusP3_o1Rest = locPiMinusP4_o1Rest.Vect();
 		//Second Omega combo
 		TVector3 locOmega2Boost = locOmega2P4_opiRest.BoostVector();   //create boost vector from omega rest frame to omega-pi rest frame
-		TLorentzVector locPiPlusP4_o2Rest = locPiPlusP4_Measured;
+		TLorentzVector locPiPlusP4_o2Rest = locPiPlusP4;
 		locPiPlusP4_o2Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf		
 		locPiPlusP4_o2Rest.Boost(-1.0*locOmegapiBoost);   //Boost to Omega-pi rf
 		locPiPlusP4_o2Rest.Boost(-1.0*locOmega2Boost);     //Boost to omega rf
 		TVector3 locPiPlusP3_o2Rest = locPiPlusP4_o2Rest.Vect();
-		TLorentzVector locPiMinusP4_o2Rest = locPiMinusP4_Measured;
-		locPiMinusP4_o2Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf		
+		TLorentzVector locPiMinusP4_o2Rest = locPiMinusP4;
+		locPiMinusP4_o2Rest.Boost(-1.0*locGammapBoost);    //Boost to gamma-p rf
 		locPiMinusP4_o2Rest.Boost(-1.0*locOmegapiBoost);   //Boost to Omega-pi rf
 		locPiMinusP4_o2Rest.Boost(-1.0*locOmega2Boost);     //Boost to omega rf
 		TVector3 locPiMinusP3_o2Rest = locPiMinusP4_o2Rest.Vect();
@@ -465,6 +516,31 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		//if you manually execute any actions, and it fails a cut, be sure to call:
 			//dComboWrapper->Set_IsComboCut(true);
 
+		/******************************************** ACCIDENTAL SUBTRACTION INFO *******************************************/
+		
+		// measured tagger time for combo
+		TLorentzVector locBeam_X4_Measured = dComboBeamWrapper->Get_X4_Measured(); 
+
+		// measured RF time for combo
+		double locRFTime = dComboWrapper->Get_RFTime_Measured(); 
+
+		// time difference between tagger and RF (corrected for production vertex position relative to target center)
+		double locBeamDeltaT = locBeam_X4_Measured.T() - (locRFTime + (locBeam_X4_Measured.Z() - dTargetCenter.Z())/29.9792458); 
+		dHist_BeamDeltaT->Fill(locBeamDeltaT);
+
+		// calculate accidental subtraction weight based on time difference 
+		double locAccWeight = 0.; // weight to accidentally subtracted histgorams
+		bool locAccid = false; // flag to fill separate prompt and accidental histograms for later subtraction
+
+		if(fabs(locBeamDeltaT) < 0.5*4.008) { // prompt signal recieves a weight of 1
+			locAccWeight = 1.;
+			locAccid = false;
+		}
+                else { // accidentals recieve a weight of 1/# RF bunches included in TTree (8 in this case)
+			locAccWeight = -1./8.;
+			locAccid = true;
+		}
+		
 		/**************************************** EXAMPLE: HISTOGRAM BEAM ENERGY *****************************************/
 
 		//Histogram beam energy (if haven't already)
@@ -473,7 +549,9 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 			dHist_BeamEnergy->Fill(locBeamP4.E());
 			locUsedSoFar_BeamEnergy.insert(locBeamID);
 		}
-		/******************************************* HISTOGRAM 3PI MASS *****************************************************/
+		/******************************************* HISTOGRAM 3PI MASS (KINFIT AND MEASURED) ************************************************/
+		double loc3PiMass1 = loc3Pi1P4.M();
+		double loc3PiMass2 = loc3Pi2P4.M();
 		double loc3PiMass1_Measured = loc3Pi1P4_Measured.M();
 		double loc3PiMass2_Measured = loc3Pi2P4_Measured.M();
 	
@@ -490,10 +568,15 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_3PiMass.find(locUsedThisCombo_3PiMass) == locUsedSoFar_3PiMass.end())
 		  {
 		    //unique missing mass combo: histogram it, and register this combo of particles
-		    dHist_3PiMass_Measured->Fill(loc3PiMass1_Measured);
-		    dHist_3PiMass_Measured->Fill(loc3PiMass2_Measured);
+		    dHist_3PiMass->Fill(loc3PiMass1, locAccWeight);
+		    dHist_3PiMass->Fill(loc3PiMass2, locAccWeight);
+		    dHist_3PiMass_Measured->Fill(loc3PiMass1_Measured, locAccWeight);
+		    dHist_3PiMass_Measured->Fill(loc3PiMass2_Measured, locAccWeight);
+		    dHist_3vs3->Fill(loc3PiMass1, loc3PiMass2, locAccWeight);
 		    locUsedSoFar_3PiMass.insert(locUsedThisCombo_3PiMass);
 		  }
+
+
 
 		/************************************ EXAMPLE: HISTOGRAM MISSING MASS SQUARED ************************************/
 
@@ -516,7 +599,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_MissingMass.find(locUsedThisCombo_MissingMass) == locUsedSoFar_MissingMass.end())
 		{
 			//unique missing mass combo: histogram it, and register this combo of particles
-			dHist_MissingMassSquared->Fill(locMissingMassSquared);
+			dHist_MissingMassSquared->Fill(locMissingMassSquared, locAccWeight);
 			locUsedSoFar_MissingMass.insert(locUsedThisCombo_MissingMass);
 		}
 
@@ -531,14 +614,56 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 	       	//Missing Mass Squared is defined above, here we'll define weights for the 3Pi mass, that we'll use over and over
 		//Assign weight for first 3Pi combo
 		double weight1;
-		if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weight1 = +1;
-		else if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weight1 = -1;
+		double weight2;
+		if(loc3PiMass1 > 0.7479 && loc3PiMass1 < 0.8169) weight1 = +1. * locAccWeight;
+		else if((loc3PiMass1 > 0.7364 && loc3PiMass1 < 0.7479) || (loc3PiMass1 > 0.8169 && loc3PiMass1 < 0.8284)) weight1 = -1./3. * locAccWeight;
 		else weight1 = 0;
 		//Assign weight for second 3Pi combo
-		double weight2;
-		if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weight2 = +1;
-		else if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weight2 = -1;
+		if(loc3PiMass2 > 0.7479 && loc3PiMass2 < 0.8169) weight2 = +1. * locAccWeight;
+		else if((loc3PiMass2 > 0.7364 && loc3PiMass2 < 0.7479) || (loc3PiMass2 > 0.8169 && loc3PiMass2 < 0.8284)) weight2 = -1./3. * locAccWeight;
 		else weight2 = 0;
+
+		//Create 2D weighting process like in Chung and Protopopescu PRD 1975
+		// if((loc3PiMass1 > 0.760 && loc3PiMass1 < 0.805) && (loc3PiMass2 > 0.760 && loc3PiMass2 < 0.805)){
+		//   weight1 = 1. * locAccWeight;
+		//   weight2 = 1. * locAccWeight;
+		// }
+		// else if(loc3PiMass1 > 0.760 && loc3PiMass1 < 0.805){
+		//   weight1 = 1. * locAccWeight;
+		//   weight2 = 0;
+		// }
+		// else if(loc3PiMass2 > 0.760 && loc3PiMass2 < 0.805){
+		//   weight1 = 0;
+		//   weight2 = 1. * locAccWeight;
+		// }
+		// else if((loc3PiMass1 > 0.690 && loc3PiMass1 < 0.735) && (loc3PiMass2 > 0.690 && loc3PiMass2 < 0.735)){
+		//   weight1 = -5./8. * locAccWeight;
+		//   weight2 = -5./8. * locAccWeight;
+		// }
+		// else if((loc3PiMass1 > 0.690 && loc3PiMass1 < 0.735) && (loc3PiMass2 > 0.830 && loc3PiMass2 < 0.875)){
+		//   weight1 = -5./8. * locAccWeight;
+		//   weight2 = -5./8. * locAccWeight;
+		// }
+		// else if((loc3PiMass1 > 0.830 && loc3PiMass1 < 0.875) && (loc3PiMass2 > 0.830 && loc3PiMass2 < 0.875)){
+		//   weight1 = -5./8. * locAccWeight;
+		//   weight2 = -5./8. * locAccWeight;
+		// }
+		// else if((loc3PiMass1 > 0.830 && loc3PiMass1 < 0.875) && (loc3PiMass2 > 0.690 && loc3PiMass2 < 0.735)){
+		//   weight1 = -5./8. * locAccWeight;
+		//   weight2 = -5./8. * locAccWeight;
+		// }
+		// else if((loc3PiMass1 > 0.690 && loc3PiMass1 < 0.735) || (loc3PiMass1 > 0.830 && loc3PiMass1 < 0.875)){
+		//   weight1 = -1./2. * locAccWeight;
+		//   weight2 = 0;
+		// }
+		// else if((loc3PiMass2 > 0.690 && loc3PiMass2 < 0.735) || (loc3PiMass2 > 0.830 && loc3PiMass2 < 0.875)){
+		//   weight1 = 0;
+		//   weight2 = -1./2. * locAccWeight;
+		// }
+		// else{
+		//   weight1 = 0;
+		//   weight2 = 0;
+		// }
 		
 
 		//Uniqueness tracking: Build the map of particles used for the missing mass
@@ -565,11 +690,11 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		/**************************************** HISTOGRAM DECAY MATRIX ELEMENT SQUARED (LAMBDA)(PEAK) ************************/
 		//Boost Pi+ and Pi- to the 3Pi rest frame
 		//Sum the 3Pi 4-Momenta
-		TLorentzVector loc3PiP4_1 = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi01P4_Measured;
+		TLorentzVector loc3PiP4_1 = locPiPlusP4 + locPiMinusP4 + locPi01P4;
 		TVector3 b1 = loc3PiP4_1.BoostVector();
-		TLorentzVector locPiPlusP4_Boosted1 = locPiPlusP4_Measured;
+		TLorentzVector locPiPlusP4_Boosted1 = locPiPlusP4;
 		locPiPlusP4_Boosted1.Boost(-1*b1);
-		TLorentzVector locPiMinusP4_Boosted1 = locPiMinusP4_Measured;
+		TLorentzVector locPiMinusP4_Boosted1 = locPiMinusP4;
 		locPiMinusP4_Boosted1.Boost(-1*b1);
 
 		//Extract 3-Momenta from 4-Momenta
@@ -579,11 +704,11 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 
 		//Boost Pi+ and Pi- to the 3Pi rest frame
 		//Sum the 3Pi 4-Momenta
-		TLorentzVector loc3PiP4_2 = locPiPlusP4_Measured + locPiMinusP4_Measured + locPi02P4_Measured;
+		TLorentzVector loc3PiP4_2 = locPiPlusP4 + locPiMinusP4 + locPi02P4;
 		TVector3 b2 = loc3PiP4_2.BoostVector();
-		TLorentzVector locPiPlusP4_Boosted2 = locPiPlusP4_Measured;
+		TLorentzVector locPiPlusP4_Boosted2 = locPiPlusP4;
 		locPiPlusP4_Boosted2.Boost(-1*b2);
-		TLorentzVector locPiMinusP4_Boosted2 = locPiMinusP4_Measured;
+		TLorentzVector locPiMinusP4_Boosted2 = locPiMinusP4;
 		locPiMinusP4_Boosted2.Boost(-1*b2);
 
 		//Extract 3-Momenta from 4-Momenta
@@ -592,9 +717,9 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		TVector3 locPlusCrossMinus2 = locPiPlusP3_2.Cross(locPiMinusP3_2);		
 
 		//Decay matrix element squared (for first photon pair)
-	       	double loclambda1 = 4/3. * fabs(locPlusCrossMinus1.Dot(locPlusCrossMinus1))/TMath::Power((1/9. * loc3Pi1P4_Measured.M2() - locPi01P4_Measured.M2()), 2.);
+	       	double loclambda1 = 4/3. * fabs(locPlusCrossMinus1.Dot(locPlusCrossMinus1))/TMath::Power((1/9. * loc3Pi1P4.M2() - locPi01P4.M2()), 2.);
 		//Decay matrix element squared (for second photon pair)
-	       	double loclambda2 = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/TMath::Power((1/9. * loc3Pi2P4_Measured.M2() - locPi02P4_Measured.M2()), 2.);
+	       	double loclambda2 = 4/3. * fabs(locPlusCrossMinus2.Dot(locPlusCrossMinus2))/TMath::Power((1/9. * loc3Pi2P4.M2() - locPi02P4.M2()), 2.);
 		
 		//Uniqueness Tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_lambda_peak;
@@ -610,11 +735,11 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  {
 		    //unique lambda combo: histogram it, and register this combo of particles
 		    double weightpeak1;
-		    if(loc3PiMass1_Measured > 0.733 && loc3PiMass1_Measured < 0.833) weightpeak1 = +1;
+		    if(loc3PiMass1 > 0.7479 && loc3PiMass1 < 0.8169) weightpeak1 = +1;
 		    else weightpeak1 = 0;
 		    dHist_lambda_peak->Fill(loclambda1, weightpeak1);
 		    double weightpeak2;
-		    if(loc3PiMass2_Measured > 0.733 && loc3PiMass2_Measured < 0.833) weightpeak2 = +1;
+		    if(loc3PiMass2 > 0.7479 && loc3PiMass2 < 0.8169) weightpeak2 = +1;
 		    else weightpeak2 = 0;
 		    dHist_lambda_peak->Fill(loclambda2, weightpeak2);
 
@@ -640,11 +765,11 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  {
 		    //unique lambda combo: histogram it, and register this combo of particles
 		    double weightwings1;
-		    if((loc3PiMass1_Measured > 0.683 && loc3PiMass1_Measured < 0.733) || (loc3PiMass1_Measured > 0.833 && loc3PiMass1_Measured < 0.883)) weightwings1 = +1;
+		    if((loc3PiMass1 > 0.7364 && loc3PiMass1 < 0.7479) || (loc3PiMass1 > 0.8169 && loc3PiMass1 < 0.8284)) weightwings1 = +1;
 		    else weightwings1 = 0;
 		    dHist_lambda_wings->Fill(loclambda1, weightwings1);
 		    double weightwings2;
-		    if((loc3PiMass2_Measured > 0.683 && loc3PiMass2_Measured < 0.733) || (loc3PiMass2_Measured > 0.833 && loc3PiMass2_Measured < 0.883)) weightwings2 = +1;
+		    if((loc3PiMass2 > 0.7364 && loc3PiMass2 < 0.7479) || (loc3PiMass2 > 0.8169 && loc3PiMass2 < 0.8284)) weightwings2 = +1;
 		    else weightwings2 = 0;
 		    dHist_lambda_wings->Fill(loclambda2, weightwings2);
 
@@ -671,7 +796,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		  }
 
 		/*********************************** HISTOGRAM 4PI MASS SPECTRUM **************************************************/
-		double loc4PiMass = loc4PiP4_Measured.M();
+		double loc4PiMass = loc4PiP4.M();
 		
 		//Uniqueness tracking:
 		map<Particle_t, set<Int_t> > locUsedThisCombo_4PiMass;
@@ -686,7 +811,7 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_4PiMass.find(locUsedThisCombo_4PiMass) == locUsedSoFar_4PiMass.end())
 		  {
 		    //unique missing mass combo: histogram it, and register this combo of particles
-		    dHist_4PiMass->Fill(loc4PiMass);
+		    dHist_4PiMass->Fill(loc4PiMass, locAccWeight);
 		    locUsedSoFar_4PiMass.insert(locUsedThisCombo_4PiMass);
 		  }
 
@@ -726,8 +851,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 		if(locUsedSoFar_3vs4.find(locUsedThisCombo_3vs4) == locUsedSoFar_3vs4.end())
 		  {
 		    //unique combo: histogram it, and register this combo of particles
-		    dHist_3vs4->Fill(loc3PiMass1_Measured, loc4PiMass);
-		    dHist_3vs4->Fill(loc3PiMass2_Measured, loc4PiMass);
+		    dHist_3vs4->Fill(loc3PiMass1, loc4PiMass, locAccWeight);
+		    dHist_3vs4->Fill(loc3PiMass2, loc4PiMass, locAccWeight);
 		    locUsedSoFar_3vs4.insert(locUsedThisCombo_3vs4);
 		  }
 		
@@ -1497,8 +1622,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 
 		/*********************************************** HISTOGRAM H+(0022) *****************************************************/
 		//Define weights
-		double locH0022_1 = TMath::Sqrt(3.0/2.0)*TMath::Power(locsintheta1, 2.0)*TMath::Cos(2.0*locphi1);
-		double locH0022_2 = TMath::Sqrt(3.0/2.0)*TMath::Power(locsintheta2, 2.0)*TMath::Cos(2.0*locphi2);
+		double locH0022_1 = TMath::Sqrt(6.)/4.0*TMath::Power(locsintheta1, 2.0)*TMath::Cos(2.0*locphi1);
+		double locH0022_2 = TMath::Sqrt(6.)/4.0*TMath::Power(locsintheta2, 2.0)*TMath::Cos(2.0*locphi2);
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_H0022;
@@ -1596,8 +1721,8 @@ Bool_t DSelector_pomegapi::Process(Long64_t locEntry)
 
 		/*********************************************** HISTOGRAM H+(2022) *****************************************************/
 		//Define weights
-		double locH2022_1 = TMath::Sqrt(0.75) * TMath::Power(locsintheta1, 2.0) * TMath::Cos(2.0 * locphi1) * (3.0 * TMath::Power(loccosthetaH1, 2.0) - 1.0); 
-		double locH2022_2 = TMath::Sqrt(0.75) * TMath::Power(locsintheta2, 2.0) * TMath::Cos(2.0 * locphi2) * (3.0 * TMath::Power(loccosthetaH2, 2.0) - 1.0);
+		double locH2022_1 = TMath::Sqrt(6.)/8.0 * TMath::Power(locsintheta1, 2.0) * TMath::Cos(2.0 * locphi1) * (3.0 * TMath::Power(loccosthetaH1, 2.0) - 1.0); 
+		double locH2022_2 = TMath::Sqrt(6.)/8.0 * TMath::Power(locsintheta2, 2.0) * TMath::Cos(2.0 * locphi2) * (3.0 * TMath::Power(loccosthetaH2, 2.0) - 1.0);
 
 		//Uniqueness tracking
 		map<Particle_t, set<Int_t> > locUsedThisCombo_H2022;

@@ -105,6 +105,58 @@ class DSelector_omega_misspim : public DSelector
 		TH2F* dHist_ThetaVsP_reco;
 		TH2F* dHist_ThetaVsP_missing;
 
+		TH1F* dHist_PValue;
+		TH2F* dHist_PValueVsTheta;
+
+		TH1F* dHist_3PiMass_pvcut[7];
+		TH1F* dHist_OmegaMass_1track_pvcut[7];
+		TH2F* dHist_MassCorr_pvcut[7];
+
+		TH2F* dHist_OmegaMassVsPhi_1track_pvcut[7];
+		TH2F* dHist_OmegaMassVsTheta_1track_pvcut[7];
+		TH2F* dHist_OmegaMassVsP_1track_pvcut[7];
+		TH2F* dHist_3PiMassVsPhi_pvcut[7];
+		TH2F* dHist_3PiMassVsTheta_pvcut[7];
+		TH2F* dHist_3PiMassVsP_pvcut[7];
+
+		TH2F* dHist_Theta_recoVstruth_pvcut[7];
+
+		TH2F* dHist_OmegaMassVsTheta_1track_pvcut_p[9][7];
+		TH2F* dHist_3PiMassVsTheta_pvcut_p[9][7];
+
+		TH1F* dHist_3PiMass_thetacut[7];
+		TH1F* dHist_OmegaMass_1track_thetacut[7];
+		TH2F* dHist_MassCorr_thetacut[7];
+
+		TH2F* dHist_OmegaMassVsPhi_1track_thetacut[7];
+		TH2F* dHist_OmegaMassVsTheta_1track_thetacut[7];
+		TH2F* dHist_OmegaMassVsP_1track_thetacut[7];
+		TH2F* dHist_3PiMassVsPhi_thetacut[7];
+		TH2F* dHist_3PiMassVsTheta_thetacut[7];
+		TH2F* dHist_3PiMassVsP_thetacut[7];
+
+		TH2F* dHist_Theta_recoVstruth_thetacut[7];
+
+		TH2F* dHist_OmegaMassVsTheta_1track_thetacut_p[9][7];
+		TH2F* dHist_3PiMassVsTheta_thetacut_p[9][7];
+
+		TH1F* dHist_3PiMass_pcut[7];
+		TH1F* dHist_OmegaMass_1track_pcut[7];
+		TH2F* dHist_MassCorr_pcut[7];
+
+		TH2F* dHist_OmegaMassVsPhi_1track_pcut[7];
+		TH2F* dHist_OmegaMassVsTheta_1track_pcut[7];
+		TH2F* dHist_OmegaMassVsP_1track_pcut[7];
+		TH2F* dHist_3PiMassVsPhi_pcut[7];
+		TH2F* dHist_3PiMassVsTheta_pcut[7];
+		TH2F* dHist_3PiMassVsP_pcut[7];
+
+		TH2F* dHist_Theta_recoVstruth_pcut[7];
+
+		TH2F* dHist_OmegaMassVsTheta_1track_pcut_p[9][7];
+		TH2F* dHist_3PiMassVsTheta_pcut_p[9][7];
+
+
 	ClassDef(DSelector_omega_misspim, 0);
 };
 

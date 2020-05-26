@@ -6,7 +6,7 @@
 #include "TString.h"
 #include "TSystem.h"
   
-void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_g__F0_B3/merged/") 
+void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver20/tree_g__B4_F0/merged/") 
 {
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
@@ -18,7 +18,7 @@ void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("g__F0_B3_Tree");
+  TChain *chain = new TChain("g__B4_F0_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   if(files) {

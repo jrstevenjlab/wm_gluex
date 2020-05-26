@@ -29,7 +29,7 @@ void DSelector_compton::Init(TTree *locTree)
 	//false/true below: use measured/kinfit data
 
 	//PID
-	//dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false));
+	dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false));
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.4, Proton, SYS_TOF));
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 1.0, Proton, SYS_BCAL));
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 2.0, Gamma, SYS_FCAL));
@@ -41,7 +41,7 @@ void DSelector_compton::Init(TTree *locTree)
 
 	//KINFIT RESULTS
 	dAnalysisActions.push_back(new DHistogramAction_KinFitResults(dComboWrapper));
-	dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 1.0e-10));
+	//dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 1.0e-10));
 
 	//CUT MISSING MASS
 	//dAnalysisActions.push_back(new DCutAction_MissingMassSquared(dComboWrapper, false, -0.1, 0.1));
@@ -103,8 +103,8 @@ void DSelector_compton::Init(TTree *locTree)
 			dHist_ThetaCM_t[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"ThetaCM_t_"+locBeamEBinLabel[locBeamEBin], "; -t (GeV^{2}); #theta_{CM} (degrees)", 250, 0., 5.0, 360, 0., 180.);
 			dHist_u_t[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"u_t_"+locBeamEBinLabel[locBeamEBin], "; -t (GeV^{2}); -u (GeV^{2})", 250, 0., 5.0, 250, 0., 25.0);
 
-			dHist_BCALSigTrans_SigLong[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"SigTrans_SigLong_"+locBeamEBinLabel[locBeamEBin], "; BCAL Shower #sigma_{#rho}; BCAL Shower #sigma_{#phi}", 300, 0, 30, 200, 0., 0.02);
-			dHist_BCALSigTrans_SigTheta[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"SigTrans_SigTheta_"+locBeamEBinLabel[locBeamEBin], "; BCAL Shower #sigma_{#theta}; BCAL Shower #sigma_{#phi}", 200, 0., 0.02, 200, 0., 0.02);
+			dHist_BCALSigTrans_SigLong[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"SigTrans_SigLong_"+locBeamEBinLabel[locBeamEBin], "; BCAL Shower #sigma_{#rho}; BCAL Shower #sigma_{#phi}", 300, 0, 10, 200, 0., 0.02);
+			dHist_BCALSigTrans_SigTheta[locRFBin][locBeamEBin] = new TH2I(locRFBinLabel[locRFBin]+"SigTrans_SigTheta_"+locBeamEBinLabel[locBeamEBin], "; BCAL Shower #sigma_{#theta}; BCAL Shower #sigma_{#phi}", 200, 0., 0.05, 200, 0., 0.02);
 		}			
 
 		for(int locCutCounter=0; locCutCounter<5; locCutCounter++) {

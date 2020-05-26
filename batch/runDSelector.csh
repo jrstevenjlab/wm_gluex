@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/csh
 
 echo $HOSTNAME
 echo $MyRun
@@ -6,6 +6,10 @@ echo $MyCodeDir
 echo $MyDataInDir
 echo $MyDataOutDir
 
+cat ~/.login
+cat ~/.cshrc
+
+source ~/.cshrc 
 source $MyEnv/setup.csh
 env
 

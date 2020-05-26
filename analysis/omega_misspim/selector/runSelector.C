@@ -7,13 +7,10 @@
 #include "TSystem.h"
    
 
-void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex10/gluex_simulations/recon-2017_01-ver03/gen_omega_3pi/jz_omega_3pi/ver23/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") //use for mc
-
-//void runSelector(TString runNumber = "30788", TString myPath = "REPLACE THIS") //use for data
-
+void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") //use for mc
 {
   bool mc;
-  if(myPath == "/sciclone/gluex10/gluex_simulations/recon-2017_01-ver03/gen_omega_3pi/jz_omega_3pi/ver23/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") {
+  if(myPath == "/sciclone/gluex10/gluex_simulations/REQUESTED_MC/gen_omega_3pi_efficiency_20190422103832am/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") {
     mc = true;
   }
   else {

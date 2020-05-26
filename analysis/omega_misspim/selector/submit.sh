@@ -14,7 +14,7 @@ MyCluster=x5672
 echo $MyProcess
 
 MyEnv=$WM_GLUEX/
-MyCodeDir=/sciclone/home20/amschertz/wm_gluex/analysis/omega_misspim/selector
+MyCodeDir=/sciclone/home20/$USER/wm_gluex/analysis/omega_misspim/selector
 MyRunningDir=/sciclone/scr10/$USER/TMPDIR/$MyProcess/
 
 data=false

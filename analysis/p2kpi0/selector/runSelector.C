@@ -10,7 +10,7 @@ void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/data10
 {
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
-  int Proof_Nthreads = 8;
+  int Proof_Nthreads = 1;
 
   // process signal 
   TString sampleDir = myPath;

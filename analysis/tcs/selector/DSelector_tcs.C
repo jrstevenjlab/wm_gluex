@@ -34,6 +34,19 @@ void DSelector_tcs::Init(TTree *locTree)
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 2.0, Proton, SYS_BCAL));
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 1.0, Proton, SYS_TOF));
 
+	// apply default cuts for old versions
+	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 1.0, Proton, SYS_BCAL));
+        dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 0.6, Proton, SYS_TOF));
+	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 2.0, Proton, SYS_FCAL));
+
+	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 1.0, Positron, SYS_BCAL));
+        dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 0.5, Positron, SYS_TOF));
+        dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 2.0, Positron, SYS_FCAL));
+
+	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 1.0, Electron, SYS_BCAL));
+        dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 0.5, Electron, SYS_TOF));
+        dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, true, 2.0, Electron, SYS_FCAL));
+
 	//MASSES and KINEMATICS HISTOGRAMS
 	dAnalysisActions.push_back(new DHistogramAction_InvariantMass(dComboWrapper, true, Jpsi, 400, 0.0, 4.0, "JpsiNoCut"));
 	dAnalysisActions.push_back(new DHistogramAction_MissingMassSquared(dComboWrapper, false, 1000, -0.25, 0.25, "NoCut"));
@@ -344,10 +357,17 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
                 double locPropagatedRFTime = locRFTime + (locVertex.Z() - locTargetCenterZ)/29.9792458;
 		double locElectronDeltaT = dElectronWrapper->Get_X4().T() - locPropagatedRFTime;
                 double locPositronDeltaT = dPositronWrapper->Get_X4().T() - locPropagatedRFTime;
-		
+		double locBeamDeltaT = dComboBeamWrapper->Get_X4().T() - locPropagatedRFTime;	
+		if(fabs(locBeamDeltaT) > 2.004) continue;	
+
 		// require both tracks have showers in calorimeter
 		if(!(locElectronBCALE>0. || locElectronFCALE>0.) || !(locPositronBCALE>0. || locPositronFCALE>0.))
 			continue;
+
+		// apply fiducial cuts to compare with ver11
+		if(locProtonP4.Theta()*180./TMath::Pi() < 11. && locProtonP4.Vect().Mag() < 1.0) continue;
+		if(locElectronCDCdEdx > 5.5 || locPositronCDCdEdx > 5.5) continue;
+		if(locElectronFDCdEdx > 3.5 || locPositronFDCdEdx > 3.5) continue;
 
 		// CDC dE/dx cut (temporary)
 		double locElectrondEdxCut = 2.2 - 0.00015*locElectronTheta*locElectronTheta;
@@ -520,7 +540,7 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
 		// CDC dE/dx cut
 		//double locElectrondEdxCut = 2.2 - 0.00015*locElectronTheta*locElectronTheta;
 		//double locPositrondEdxCut = 2.2 - 0.00015*locPositronTheta*locPositronTheta;
-		if((locElectronCDCdEdx > locElectrondEdxCut && locElectronTheta < 90.) || (locPositronCDCdEdx > locPositrondEdxCut && locPositronTheta < 90.) || (locElectronCDCdEdx < 0.001 && locPositronCDCdEdx < 0.001)) {
+		if(1) { //(locElectronCDCdEdx > locElectrondEdxCut && locElectronTheta < 90.) || (locPositronCDCdEdx > locPositrondEdxCut && locPositronTheta < 90.) || (locElectronCDCdEdx < 0.001 && locPositronCDCdEdx < 0.001)) {
 			dHist_Mee_CDCdEdx->Fill(locMee);
 			dHist_P_Mee_CDCdEdx[0]->Fill(locMee, locElectronP);
 	                dHist_P_Mee_CDCdEdx[1]->Fill(locMee, locPositronP);
@@ -529,9 +549,13 @@ Bool_t DSelector_tcs::Process(Long64_t locEntry)
 		}
 		else continue;
 
-		if(((locElectronSigTransBCALShower < locElectronShowerShapeCut) ||  (locPositronSigTransBCALShower < locPositronShowerShapeCut) || (locElectronBCALE < 0.001 && locPositronBCALE < 0.001)))
+		//if(((locElectronSigTransBCALShower < locElectronShowerShapeCut) ||  (locPositronSigTransBCALShower < locPositronShowerShapeCut) || (locElectronBCALE < 0.001 && locPositronBCALE < 0.001)))
+		if((locPositronBCALPreshowerE*locPositronBCALE > 0.03 || locElectronBCALPreshowerE*locElectronBCALE > 0.03) || (locElectronBCALE < 0.001 && locPositronBCALE < 0.001))
 			dHist_Mee_ShowerCut->Fill(locMee);
 		else continue;
+
+		if(locMee > 3.07 && locMee < 3.12)
+			cout<<"*     "<<locRunNumber<<" *  "<<Get_EventNumber()<<endl;
 
 		double locKinFitCL = dComboWrapper->Get_ConfidenceLevel_KinFit();
 		if(locKinFitCL > 1e-4) dHist_Mee_KinFit4->Fill(locMee);

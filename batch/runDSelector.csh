@@ -1,4 +1,4 @@
-#!/bin/tcsh
+#!/bin/csh
 
 echo $HOSTNAME
 echo $MyRun
@@ -6,6 +6,10 @@ echo $MyCodeDir
 echo $MyDataInDir
 echo $MyDataOutDir
 
+cat ~/.login
+cat ~/.cshrc
+
+source ~/.cshrc 
 source $MyEnv/setup.csh
 env
 
@@ -22,7 +26,12 @@ cp $MyCodeDir/selector/runSelector.C ./
 
 ls -al
 
-root.exe -l -b -q runSelector.C\(\"$MyRun\",\"$MyDataInDir\"\)
+#echo $MyDataInDir/tree_*_0$MyRun.root
+cp $MyDataInDir/tree_*_0$MyRun.root ./
+
+ls -al
+
+root.exe -l -b -q runSelector.C\(\"$MyRun\",\"./\"\)
 mv hist*.acc.root $MyDataOutDir
 mv tree*.acc.root $MyDataOutDir
 

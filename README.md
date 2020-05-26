@@ -10,7 +10,7 @@ Then source the setup.csh script to set your environment variables:
 
 `cd wm_gluex`
 
-`source setup.csh`
+`source setup_custom.csh`
 
 Now you should have access to root, python, etc. for running some basic analysis tutorials.
 

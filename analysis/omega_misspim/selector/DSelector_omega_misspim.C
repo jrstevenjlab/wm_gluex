@@ -107,6 +107,63 @@ void DSelector_omega_misspim::Init(TTree *locTree)
 	  dHist_3PiMassVsTheta_p[i] = new TH2F(Form("3PiMassVsTheta_p%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
 	}
 
+	dHist_PValue = new TH1F("PValue", ";P(#chi^{2}) of Charged Track", 600, 0, 1);
+	dHist_PValueVsTheta = new TH2F("PValueVsTheta", ";P(#chi^{2}) of Charged Track;#theta_{mmop} (deg)", 600, 0., 1., 600, 0., 30.);
+
+
+
+	for(int i = 0; i < 7; i++){
+	  dHist_3PiMass_pvcut[i] = new TH1F(Form("3PiMass_pvcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV)", 600, 0.3, 1.3);
+	  dHist_OmegaMass_1track_pvcut[i] = new TH1F(Form("OmegaMass_1track_pvcut%d", i+1), ";Missing Mass off the Proton (GeV)", 600, 0.3, 1.3);
+	  dHist_MassCorr_pvcut[i] = new TH2F(Form("MassCorr_pvcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);Missing Mass off the Proton (GeV)", 600, 0.3, 1.3, 600, 0.3, 1.3);
+	  dHist_OmegaMassVsPhi_1track_pvcut[i] = new TH2F(Form("OmegaMassVsPhi_1track_pvcut%d", i+1), ";Missing Mass off the Proton (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_OmegaMassVsTheta_1track_pvcut[i] = new TH2F(Form("OmegaMassVsTheta_1track_pvcut%d", i+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_OmegaMassVsP_1track_pvcut[i] = new TH2F(Form("OmegaMassVsP_1track_pvcut%d", i+1), ";Missing Mass off the Proton (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);;
+	  dHist_3PiMassVsPhi_pvcut[i] = new TH2F(Form("3PiMassVsPhi_pvcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_3PiMassVsTheta_pvcut[i] = new TH2F(Form("3PiMassVsTheta_pvcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_3PiMassVsP_pvcut[i] = new TH2F(Form("3PiMassVsP_pvcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);
+	  dHist_Theta_recoVstruth_pvcut[i] = new TH2F(Form("Theta_recoVstruth_pvcut%d", i+1), ";#theta_{reco} (deg);#theta_{truth} (deg)", 600, 0., 30., 600, 0., 30.);
+	  for(int ip = 0; ip < 9; ip++){
+	    dHist_OmegaMassVsTheta_1track_pvcut_p[ip][i] = new TH2F(Form("OmegaMassVsTheta_pvcut%d_p%d", i+1, ip+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	    dHist_3PiMassVsTheta_pvcut_p[ip][i] = new TH2F(Form("3PiMassVsTheta_pvcut%d_p%d", i+1, ip+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  }
+	}
+
+	for(int i = 0; i < 7; i++){
+	  dHist_3PiMass_thetacut[i] = new TH1F(Form("3PiMass_thetacut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV)", 600, 0.3, 1.3);
+	  dHist_OmegaMass_1track_thetacut[i] = new TH1F(Form("OmegaMass_1track_thetacut%d", i+1), ";Missing Mass off the Proton (GeV)", 600, 0.3, 1.3);
+	  dHist_MassCorr_thetacut[i] = new TH2F(Form("MassCorr_thetacut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);Missing Mass off the Proton (GeV)", 600, 0.3, 1.3, 600, 0.3, 1.3);
+	  dHist_OmegaMassVsPhi_1track_thetacut[i] = new TH2F(Form("OmegaMassVsPhi_1track_thetacut%d", i+1), ";Missing Mass off the Proton (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_OmegaMassVsTheta_1track_thetacut[i] = new TH2F(Form("OmegaMassVsTheta_1track_thetacut%d", i+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_OmegaMassVsP_1track_thetacut[i] = new TH2F(Form("OmegaMassVsP_1track_thetacut%d", i+1), ";Missing Mass off the Proton (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);;
+	  dHist_3PiMassVsPhi_thetacut[i] = new TH2F(Form("3PiMassVsPhi_thetacut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_3PiMassVsTheta_thetacut[i] = new TH2F(Form("3PiMassVsTheta_thetacut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_3PiMassVsP_thetacut[i] = new TH2F(Form("3PiMassVsP_thetacut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);
+	  dHist_Theta_recoVstruth_thetacut[i] = new TH2F(Form("Theta_recoVstruth_thetacut%d", i+1), ";#theta_{reco} (deg);#theta_{truth} (deg)", 600, 0., 30., 600, 0., 30.);
+	  for(int ip = 0; ip < 9; ip++){
+	    dHist_OmegaMassVsTheta_1track_thetacut_p[ip][i] = new TH2F(Form("OmegaMassVsTheta_thetacut%d_p%d", i+1, ip+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	    dHist_3PiMassVsTheta_thetacut_p[ip][i] = new TH2F(Form("3PiMassVsTheta_thetacut%d_p%d", i+1, ip+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  }
+	}
+
+	for(int i = 0; i < 7; i++){
+	  dHist_3PiMass_pcut[i] = new TH1F(Form("3PiMass_pcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV)", 600, 0.3, 1.3);
+	  dHist_OmegaMass_1track_pcut[i] = new TH1F(Form("OmegaMass_1track_pcut%d", i+1), ";Missing Mass off the Proton (GeV)", 600, 0.3, 1.3);
+	  dHist_MassCorr_pcut[i] = new TH2F(Form("MassCorr_pcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);Missing Mass off the Proton (GeV)", 600, 0.3, 1.3, 600, 0.3, 1.3);
+	  dHist_OmegaMassVsPhi_1track_pcut[i] = new TH2F(Form("OmegaMassVsPhi_1track_pcut%d", i+1), ";Missing Mass off the Proton (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_OmegaMassVsTheta_1track_pcut[i] = new TH2F(Form("OmegaMassVsTheta_1track_pcut%d", i+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_OmegaMassVsP_1track_pcut[i] = new TH2F(Form("OmegaMassVsP_1track_pcut%d", i+1), ";Missing Mass off the Proton (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);;
+	  dHist_3PiMassVsPhi_pcut[i] = new TH2F(Form("3PiMassVsPhi_pcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#phi_{mmop} (deg)", 600, 0.3, 1.3, 600, -180., 180.);
+	  dHist_3PiMassVsTheta_pcut[i] = new TH2F(Form("3PiMassVsTheta_pcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  dHist_3PiMassVsP_pcut[i] = new TH2F(Form("3PiMassVsP_pcut%d", i+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);p_{mmop} (GeV)", 600, 0.3, 1.3, 600, 0., 10.);
+	  dHist_Theta_recoVstruth_pcut[i] = new TH2F(Form("Theta_recoVstruth_pcut%d", i+1), ";#theta_{reco} (deg);#theta_{truth} (deg)", 600, 0., 30., 600, 0., 30.);
+	  for(int ip = 0; ip < 9; ip++){
+	    dHist_OmegaMassVsTheta_1track_pcut_p[ip][i] = new TH2F(Form("OmegaMassVsTheta_pcut%d_p%d", i+1, ip+1), ";Missing Mass off the Proton (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	    dHist_3PiMassVsTheta_pcut_p[ip][i] = new TH2F(Form("3PiMassVsTheta_pcut%d_p%d", i+1, ip+1), ";M_{#pi^{+}#pi^{-}#pi^{0}} (GeV);#theta_{mmop} (deg)", 600, 0.3, 1.3, 600, 0., 30.);
+	  }
+	}
+
+
 	dHist_ThetaVsP_reco = new TH2F("ThetaVsP_reco", ";#theta_{reco} (deg);p_{reco} (GeV)", 600, 0., 30., 600, 0., 10.);
 	dHist_ThetaVsP_missing = new TH2F("ThetaVsP_missing", ";#theta_{missing} (deg);p_{missing} (GeV)", 600, 0., 30., 600, 0., 10.);
 
@@ -242,6 +299,13 @@ Bool_t DSelector_omega_misspim::Process(Long64_t locEntry)
   set<map<Particle_t, set<Int_t> > > locUsedSoFar_MissingMassSquared;
 
   set<map<Particle_t, set<Int_t> > > locUsedSoFar_MissingEnergy;
+
+  set<map<Particle_t, set<Int_t> > > locUsedSoFar_PValueCuts[7];
+
+  set<map<Particle_t, set<Int_t> > > locUsedSoFar_thetaCuts[7];
+
+  set<map<Particle_t, set<Int_t> > > locUsedSoFar_pCuts[7];
+
 
   
   //INSERT USER ANALYSIS UNIQUENESS TRACKING HERE
@@ -909,6 +973,135 @@ Bool_t DSelector_omega_misspim::Process(Long64_t locEntry)
 	      }
 	      locUsedSoFar_OmegaMassVsPhi_1track.insert(locUsedThisCombo_OmegaMassVsPhi_1track);
 	    }
+
+	  //Histogram P-Value of Charged Track
+	  UInt_t locNDF = dChargedHypoWrapper->Get_NDF_Tracking();
+	  Double_t locChiSq = dChargedHypoWrapper->Get_ChiSq_Tracking();
+	  
+	  Double_t locPVal = TMath::Prob(locChiSq, locNDF);
+	  dHist_PValue->Fill(locPVal);
+	  dHist_PValueVsTheta->Fill(locPVal, locPiMinusTheta_mmop);
+
+	  double locPValCut[7] = {0., 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1};
+
+	  //Uniqueness Tracking
+	  map<Particle_t, set<Int_t> > locUsedThisCombo_PValueCuts[7];
+	  for(int i = 0; i < 7; i++){
+	    if(locPVal < locPValCut[i])
+	      continue;
+	    locUsedThisCombo_PValueCuts[i][PiMinus].insert(dChargedHypoWrapper->Get_TrackID());
+	    locUsedThisCombo_PValueCuts[i][Unknown].insert(locBeamID);
+	    locUsedThisCombo_PValueCuts[i][Proton].insert(locProtonTrackID);
+	    locUsedThisCombo_PValueCuts[i][PiPlus].insert(locPiPlusTrackID);
+	    locUsedThisCombo_PValueCuts[i][Gamma].insert(locPhoton1NeutralID);
+	    locUsedThisCombo_PValueCuts[i][Gamma].insert(locPhoton2NeutralID);
+
+	    if(locUsedSoFar_PValueCuts[i].find(locUsedThisCombo_PValueCuts[i]) == locUsedSoFar_PValueCuts[i].end()){
+	      dHist_3PiMass_pvcut[i]->Fill(loc3PiMass_reco, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMass_1track_pvcut[i]->Fill(locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_MassCorr_pvcut[i]->Fill(loc3PiMass_reco, locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMassVsPhi_1track_pvcut[i]->Fill(locOmegaMass_mmop, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_3PiMassVsPhi_pvcut[i]->Fill(loc3PiMass_reco, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_Theta_recoVstruth_pvcut[i]->Fill(locPiMinusTheta_reco, locTruthTheta, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      if(locPiMinusP_mmop > 0.5){
+		dHist_OmegaMassVsTheta_1track_pvcut[i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsTheta_pvcut[i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      if(locPiMinusTheta_mmop > 1.15){
+		dHist_OmegaMassVsP_1track_pvcut[i]->Fill(locOmegaMass_mmop, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsP_pvcut[i]->Fill(loc3PiMass_reco, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      for(int ip = 0; ip < 9; ip++){
+		if(locPiMinusP_mmop > pmin[ip] && locPiMinusP_mmop < pmax[ip]){
+		  dHist_OmegaMassVsTheta_1track_pvcut_p[ip][i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		  dHist_3PiMassVsTheta_pvcut_p[ip][i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		}
+	      }
+	      locUsedSoFar_PValueCuts[i].insert(locUsedThisCombo_PValueCuts[i]);
+	    }
+	  }
+
+	  //Perform cuts on theta_reco
+	  double locthetaCut[7] = {0., 0.5, 1., 1.5, 2., 3., 4.};
+
+	  //Uniqueness Tracking
+	  map<Particle_t, set<Int_t> > locUsedThisCombo_thetaCuts[7];
+	  for(int i = 0; i < 7; i++){
+	    if(locPiMinusTheta_reco < locthetaCut[i])
+	      continue;
+	    locUsedThisCombo_thetaCuts[i][PiMinus].insert(dChargedHypoWrapper->Get_TrackID());
+	    locUsedThisCombo_thetaCuts[i][Unknown].insert(locBeamID);
+	    locUsedThisCombo_thetaCuts[i][Proton].insert(locProtonTrackID);
+	    locUsedThisCombo_thetaCuts[i][PiPlus].insert(locPiPlusTrackID);
+	    locUsedThisCombo_thetaCuts[i][Gamma].insert(locPhoton1NeutralID);
+	    locUsedThisCombo_thetaCuts[i][Gamma].insert(locPhoton2NeutralID);
+
+	    if(locUsedSoFar_thetaCuts[i].find(locUsedThisCombo_thetaCuts[i]) == locUsedSoFar_thetaCuts[i].end()){
+	      dHist_3PiMass_thetacut[i]->Fill(loc3PiMass_reco, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMass_1track_thetacut[i]->Fill(locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_MassCorr_thetacut[i]->Fill(loc3PiMass_reco, locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMassVsPhi_1track_thetacut[i]->Fill(locOmegaMass_mmop, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_3PiMassVsPhi_thetacut[i]->Fill(loc3PiMass_reco, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_Theta_recoVstruth_thetacut[i]->Fill(locPiMinusTheta_reco, locTruthTheta, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      if(locPiMinusP_mmop > 0.5){
+		dHist_OmegaMassVsTheta_1track_thetacut[i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsTheta_thetacut[i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      if(locPiMinusTheta_mmop > 1.15){
+		dHist_OmegaMassVsP_1track_thetacut[i]->Fill(locOmegaMass_mmop, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsP_thetacut[i]->Fill(loc3PiMass_reco, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      for(int ip = 0; ip < 9; ip++){
+		if(locPiMinusP_mmop > pmin[ip] && locPiMinusP_mmop < pmax[ip]){
+		  dHist_OmegaMassVsTheta_1track_thetacut_p[ip][i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		  dHist_3PiMassVsTheta_thetacut_p[ip][i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		}
+	      }
+	      locUsedSoFar_thetaCuts[i].insert(locUsedThisCombo_thetaCuts[i]);
+	    }
+	  }
+
+	  //Perform cuts on p_reco
+	  double locpCut[7] = {0., 0.25, 0.5, 0.75, 1., 1.5, 2.};
+
+	  //Uniqueness Tracking
+	  map<Particle_t, set<Int_t> > locUsedThisCombo_pCuts[7];
+	  for(int i = 0; i < 7; i++){
+	    if(locPiMinusP_reco < locpCut[i])
+	      continue;
+	    locUsedThisCombo_pCuts[i][PiMinus].insert(dChargedHypoWrapper->Get_TrackID());
+	    locUsedThisCombo_pCuts[i][Unknown].insert(locBeamID);
+	    locUsedThisCombo_pCuts[i][Proton].insert(locProtonTrackID);
+	    locUsedThisCombo_pCuts[i][PiPlus].insert(locPiPlusTrackID);
+	    locUsedThisCombo_pCuts[i][Gamma].insert(locPhoton1NeutralID);
+	    locUsedThisCombo_pCuts[i][Gamma].insert(locPhoton2NeutralID);
+
+	    if(locUsedSoFar_pCuts[i].find(locUsedThisCombo_pCuts[i]) == locUsedSoFar_pCuts[i].end()){
+	      dHist_3PiMass_pcut[i]->Fill(loc3PiMass_reco, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMass_1track_pcut[i]->Fill(locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_MassCorr_pcut[i]->Fill(loc3PiMass_reco, locOmegaMass_mmop, locAccWeight * locPi0Weight * locTruthWeight * locCutWeight);
+	      dHist_OmegaMassVsPhi_1track_pcut[i]->Fill(locOmegaMass_mmop, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_3PiMassVsPhi_pcut[i]->Fill(loc3PiMass_reco, locPiMinusPhi_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      dHist_Theta_recoVstruth_pcut[i]->Fill(locPiMinusTheta_reco, locTruthTheta, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      if(locPiMinusP_mmop > 0.5){
+		dHist_OmegaMassVsTheta_1track_pcut[i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsTheta_pcut[i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      if(locPiMinusTheta_mmop > 1.15){
+		dHist_OmegaMassVsP_1track_pcut[i]->Fill(locOmegaMass_mmop, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		dHist_3PiMassVsP_pcut[i]->Fill(loc3PiMass_reco, locPiMinusP_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+	      }
+	      for(int ip = 0; ip < 9; ip++){
+		if(locPiMinusP_mmop > pmin[ip] && locPiMinusP_mmop < pmax[ip]){
+		  dHist_OmegaMassVsTheta_1track_pcut_p[ip][i]->Fill(locOmegaMass_mmop, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		  dHist_3PiMassVsTheta_pcut_p[ip][i]->Fill(loc3PiMass_reco, locPiMinusTheta_mmop, locAccWeight * locPi0Weight * locCutWeight * locTruthWeight);
+		}
+	      }
+	      locUsedSoFar_pCuts[i].insert(locUsedThisCombo_pCuts[i]);
+	    }
+	  }
+
+
       
 	  /*********************************** PLOT DELTAPHI, THETA, P VS THETA VS P -TRUTH **************************************************/
       

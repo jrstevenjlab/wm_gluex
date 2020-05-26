@@ -5,9 +5,14 @@
 #include "TTree.h"
 #include "TString.h"
 #include "TSystem.h"
+//GlueX 2017 data located at: /sciclone/gluex10/RunPeriod-2017-01/analysis/ver36/tree_pi0pippippimpim__B4_M7/merged/
+//GlueX 2018-01 data located at: /sciclone/gluex10/RunPeriod-2018-01/analysis/ver08/tree_pi0pippippimpim__B4_M7/merged/
+//GlueX 2018-08 data located at: /sciclone/gluex10/RunPeriod-2018-08/analysis/ver06/tree_pi0pippippimpim__B4_M7/merged/
+//Simulations located at: /sciclone/gluex10/amschertz/pomega2pi_omega3pi/simulations/test##/root/trees/
+//bggen located at /sciclone/gluex10/gluex_simulations/REQUESTED_MC/2017_bggen_p1/tree_pi0pippippimpim__B4_M7/
    
 
-void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver01/tree_pi02pim2pip/merged/") 
+void runSelector(TString runNumber = "41127", TString myPath = "/sciclone/gluex10/RunPeriod-2018-01/analysis/ver08/tree_pi0pippippimpim__B4_M7/merged/") 
 
 {
   // Load DSelector library
@@ -19,7 +24,7 @@ void runSelector(TString runNumber = "30274", TString myPath = "/sciclone/data10
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("pi02pim2pip_Tree");
+  TChain *chain = new TChain("pi0pippippimpim__B4_M7_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;

@@ -10,19 +10,16 @@
 
 PPN=8
 MyProcess=pomegapi
-MyCluster=hurricane
-
-# data run numbers
-#for MyRun in 11366; do
-for MyRun in 11366 11367 11368 11384 11404 11405 11406 11407 11410 11411 11429 11430 11431 11432 11433 11434 11435 11436 11437 11445 11446 11447 11448 11449 11450 11452 11453 11454 11455 11457 11458 11472 11473 11474 11475 11476 11477 11481 11482 11483 11484 11497 11508 11510 11511 11512 11513 11514 11519 11520 11521 11529 11532 11552 11553 11554 11555; do 
-
+MyCluster=x5672
 echo $MyProcess
 
 MyEnv=$WM_GLUEX/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
 MyRunningDir=/sciclone/scr10/$USER/TMPDIR/$MyProcess/
-MyDataInDir=/sciclone/data10/jrstevens01/RunPeriod-2016-02/analysis/ver06/tree_2pi0pimpip/ #replace with your channels directory
-MyDataOutDir=/sciclone/data10/$USER/$MyProcess/
+
+MyDataInDir=/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pi0pippim__B4_M7/merged/ #replace with your channels directory
+MyDataOutDir=/sciclone/gluex10/$USER/$MyProcess/test02/
+
 MyLogDir=$MyDataOutDir/log/
 
 mkdir -p $MyRunningDir
@@ -32,6 +29,30 @@ mkdir -p $MyLogDir
 echo $MyProcessDir
 echo $MyLogDir
 
-qsub -l nodes=1:$MyCluster:ppn=$PPN -l walltime=00:60:00 -d $MyRunningDir -o $MyLogDir/$MyRun.out -e $MyLogDir/$MyRun.err `pwd`/runDSelector.csh -v MyRun=$MyRun,MyDataInDir=$MyDataInDir,MyDataOutDir=$MyDataOutDir,MyCodeDir=$MyCodeDir,MyEnv=$MyEnv -N ${MyProcess}_${MyRun}
+# data run numbers
+# for MyRun in 030410 030421; do
+for MyRun in ${MyDataInDir}/*; do # all run numbers in input directory
 
+    MyRun=`basename ${MyRun}`
+
+    MyRun=${MyRun:26:5} # get run number from filename (in this case 18 characters from the beginning of the filename: tree_pi0kpkm__B3_030496.root) #comment out when specifying run numbers
+    
+    flag=0
+    
+    for MyRunCompleted in ${MyDataOutDir}/*; do
+	MyRunCompleted=`basename ${MyRunCompleted}`
+	MyRunCompleted=${MyRunCompleted:14:5}
+	if [ "$MyRunCompleted" == "$MyRun" ];
+	then
+            flag=1
+            break
+	fi
+    done
+    
+    if [ $flag -eq 0 ];
+    then
+	echo $MyRun
+
+	qsub -l nodes=1:$MyCluster:ppn=$PPN -l walltime=00:59:00 -d $MyRunningDir -o $MyLogDir/$MyRun.out -e $MyLogDir/$MyRun.err `pwd`/runDSelector.csh -v MyRun=$MyRun,MyDataInDir=$MyDataInDir,MyDataOutDir=$MyDataOutDir,MyCodeDir=$MyCodeDir,MyEnv=$MyEnv -N ${MyProcess}_${MyRun}
+    fi
 done

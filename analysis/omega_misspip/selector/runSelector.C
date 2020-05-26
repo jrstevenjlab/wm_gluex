@@ -7,9 +7,18 @@
 #include "TSystem.h"
    
 
-void runSelector(TString runNumber = "30276", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pi0pippim__B4_M7/merged/") 
+void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex10/gluex_simulations/recon-2017_01-ver03/gen_omega_3pi/jz_omega_3pi/ver23/tree_pi0pimmisspip__B1_T1_U1_M7/merged/") //use for mc
+
+//void runSelector(TString runNumber = "30276", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pimmisspip__B1_T1_U1_M7/merged/") //use for data
 
 {
+  bool mc;
+  if(myPath == "/sciclone/gluex10/gluex_simulations/recon-2017_01-ver03/gen_omega_3pi/jz_omega_3pi/ver23/tree_pi0pimmisspip__B1_T1_U1_M7/merged/") {
+    mc = true;
+  }
+  else {
+    mc = false;  
+  }
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
   int Proof_Nthreads = 8;
@@ -19,7 +28,7 @@ void runSelector(TString runNumber = "30276", TString myPath = "/sciclone/gluex1
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("pi0pi0pippim__B4_M7_Tree");
+  TChain *chain = new TChain("pi0pimmisspip__B1_T1_U1_M7_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;
@@ -52,7 +61,12 @@ void runSelector(TString runNumber = "30276", TString myPath = "/sciclone/gluex1
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_pomegapi.C+", Proof_Nthreads, Form("hist_pomegapi_%s_ver23.acc.root", runNumber.Data()));
+	  if(mc == true){
+	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspip.C+", Proof_Nthreads, Form("hist_omega_misspip_gen_%s.acc.root", runNumber.Data()));
+	  }
+	  else {
+	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspip.C+", Proof_Nthreads, Form("hist_omega_misspip_data_%s.acc.root", runNumber.Data()));
+	  }
   }
 
   return;

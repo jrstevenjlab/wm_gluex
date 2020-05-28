@@ -26,8 +26,9 @@ which will load a custom ROOT environment everytime you open a session.  This is
 
 You should start by studying the ROOT tutorial, which you can find linked in this GitHub repository under: tutorials/root/ROOTClassManual2015.pdf  This provides instructions for excercises using the ROOT software framework and specifically uses some source code located in this repository.  You can access the source code needed for these excercise with the following command
 
-`cd $WM_GLUEX/tutorials/root`  
-`source setup.csh`
+`qlogin -t 720 1:vortex:ppn=1`  
+`cd ~/wm_gluex/tutorials/root`  
+`source ~/wm_gluex/setup_custom.csh`
 
 -----------------------------------
 ----- GlueX Analysis Tutorial -----

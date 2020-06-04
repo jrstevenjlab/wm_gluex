@@ -38,13 +38,15 @@ void AnalyzeExercise5::SlaveBegin(TTree* tree) {}
 
 Bool_t AnalyzeExercise5::Process(Long64_t entry)
 {
+  fReader.SetEntry(entry);
+
   //******** Loop section *********
   //* You will probably want to put a GetEntry here. 
-  tree1->GetEntry(entry);
+  GetEntry(entry);
 
-  ebeamHist->Fill(ebeam);        // Exercise 3
-  chi2Hist->Fill(chi2);
-  scatterHist->Fill(chi2,ebeam); // Exercise 5
+  ebeamHist->Fill(*ebeam);         // Exercise 3
+  chi2Hist->Fill(*chi2);
+  scatterHist->Fill(*chi2,*ebeam); // Exercise 5
 
   return kTRUE;
 }

@@ -10,15 +10,18 @@ void Analyze::Begin(TTree * /*tree*/)
 {
   TString option = GetOption();
 
-  //******** Set-up section *********
+  //******** Initialization section *********
 }
 
-void Analyze::SlaveBegin(TTree* tree) {}
+void Analyze::SlaveBegin(TTree *) {}
 
 Bool_t Analyze::Process(Long64_t entry)
 {
+  // Don’t delete this line! Without it the program will crash. 
+  fReader.SetEntry(entry);
+
   //******** Loop section *********
-  //* You will probably want to put a GetEntry here. 
+  // You probably want GetEntry(entry) here.
 
   return kTRUE;
 }

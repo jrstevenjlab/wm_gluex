@@ -9,10 +9,12 @@ set HURRICANE_WORKER=`echo $HOSTNAME | grep -c "hu"`
 set WHIRLWIND_WORKER=`echo $HOSTNAME | grep -c "wh"`
 if ($HOSTNAME == "hurricane.sciclone.wm.edu" || $HURRICANE_WORKER == 1 || $HOSTNAME == "whirlwind.sciclone.wm.edu" || $WHIRLWIND_WORKER == 1) then
      module unload pgi/11.10
+     module unload intel/2017
      module load python/2.7.2
      module load cmake/2.8.8
 else if ($HOSTNAME == "vortex.sciclone.wm.edu" || $VORTEX_WORKER == 1) then 
      module unload pgi/17.7
+     module unload intel/2017
      module load python/2.7.8
      module load cmake/3.5.2
 endif

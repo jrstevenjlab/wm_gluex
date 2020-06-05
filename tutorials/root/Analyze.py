@@ -1,7 +1,7 @@
 from ROOT import TFile, gDirectory
-# You probably also want to import TH1D,
+# You probably also want to import TH1D and TCanvas,
 # unless you're not making any histograms.
-from ROOT import TH1D
+from ROOT import TH1D, TCanvas
 
 # Open the file. Note that the name of your file outside this class
 # will probably NOT be experiment.root.

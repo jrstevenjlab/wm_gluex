@@ -1,4 +1,4 @@
-from ROOT import TFile, gDirectory, TH2D
+from ROOT import TFile, gDirectory, TH2D, TCanvas
 
 # Open the file. Note that the name of your file outside this class
 # will probably NOT be experiment.root.
@@ -43,5 +43,7 @@ for jentry in xrange( entries ):
    ###
    
 ### The Wrap-up code goes here
+myCanvas = TCanvas()
 myHist.Draw()
+myCanvas.Draw()
 ###

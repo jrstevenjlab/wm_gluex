@@ -6,7 +6,7 @@ echo $MyCodeDir
 echo $MyDataInDir
 echo $MyDataOutDir
 
-source $MyEnv/setup.csh
+source $MyEnv/setup_custom.csh
 env
 
 pwd

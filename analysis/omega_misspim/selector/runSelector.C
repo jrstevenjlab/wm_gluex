@@ -10,7 +10,7 @@
 void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver23/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") //use for mc
 {
   bool mc;
-  if(myPath == "/sciclone/gluex10/gluex_simulations/REQUESTED_MC/gen_omega_3pi_efficiency_20190422103832am/tree_pi0pipmisspim__B1_T1_U1_M7/merged/") {
+  if(myPath.Contains("REQUESTED_MC")) {
     mc = true;
   }
   else {
@@ -25,7 +25,7 @@ void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex1
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain("pi0pipmisspim__B1_T1_U1_M7_Tree");
+  TChain *chain = new TChain("pi0pipmisspim__B1_T1_U1_M7_Effic_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;

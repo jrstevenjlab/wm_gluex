@@ -6,11 +6,11 @@ To get started clone this repository in your home directory on one of the HPC ma
 
 `git clone https://github.com/jrstevenjlab/wm_gluex.git`
 
-Then source the setup.csh script to set your environment variables:
+Then source the setup_root.csh script to set your environment variables:
 
 `cd wm_gluex`
 
-`source setup_custom.csh`
+`source setup_root.csh`
 
 Now you should have access to root, python, etc. for running some basic analysis tutorials.
 
@@ -26,9 +26,9 @@ which will load a custom ROOT environment everytime you open a session.  This is
 
 You should start by studying the ROOT tutorial, which you can find linked in this GitHub repository under: tutorials/root/ROOTClassManual2015.pdf  This provides instructions for excercises using the ROOT software framework and specifically uses some source code located in this repository.  You can access the source code needed for these excercise with the following command
 
-`qlogin -t 720 1:vortex:ppn=1`  
+`qlogin -t 720 1:hurricane:ppn=1`  
 `cd ~/wm_gluex/tutorials/root`  
-`source ~/wm_gluex/setup_custom.csh`
+`source ~/wm_gluex/setup_root.csh`
 
 -----------------------------------
 ----- GlueX Analysis Tutorial -----

@@ -18,7 +18,7 @@ it will loop over the run numbers provided submit a 'job' to a batch node to exe
 
 Now that you have a histogram file for each run you can combine them using the hadd command in root by executing:
 
-`hadd hist_total.root ./hist_p2kpi0_*.root`
+`hadd hist_total.root ./hist_*.root`
 
 which will sum all the histogram files so you can make plots using the full dataset.  
 

@@ -2,7 +2,7 @@ Documentation for submitting batch jobs on the W&M HPC cluster:
 
 First, setup your environment by sourcing the setup script
 
-`source $WM_GLUEX/setup.csh`
+`source $WM_GLUEX/setup_custom.csh`
 
 Next modify the submit.sh script as needed for your specific analysis.  At a minimum you need to specify the 'MyProcess' variable for your reaction, but there may be other variables like the input data directory 'MyDataInDir' or the output data directory 'MyDataOutDir' which need to be changed as well.
 

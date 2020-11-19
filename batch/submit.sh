@@ -9,16 +9,16 @@
 #   vortex-α  (c18c)      
 
 PPN=8
-MyProcess=pomegapi
+MyProcess=p2ketapr
 MyCluster=x5672
 echo $MyProcess
 
 MyEnv=$WM_GLUEX/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
-MyRunningDir=/sciclone/scr10/$USER/TMPDIR/$MyProcess/
+MyRunningDir=/sciclone/scr20/$USER/TMPDIR/$MyProcess/
 
-MyDataInDir=/sciclone/data10/jrstevens01/RunPeriod-2017-01/analysis/ver08/tree_pi0kpkm__B3/merged/ #replace with your channels directory
-MyDataOutDir=/sciclone/data10/$USER/$MyProcess/test1/
+MyDataInDir=/sciclone/gluex10/RunPeriod-2018-08/analysis/ver11/tree_kpkmetapr__B4_M35_M17/merged/ #replace with your channels directory
+MyDataOutDir=/sciclone/gluex10/$USER/$MyProcess/
 
 MyLogDir=$MyDataOutDir/log/
 
@@ -35,7 +35,7 @@ for MyRun in ${MyDataInDir}/*; do # all run numbers in input directory
 
 MyRun=`basename ${MyRun}`
 
-MyRun=${MyRun:18:5} # get run number from filename (in this case 18 characters from the beginning of the filename: tree_pi0kpkm__B3_030496.root)
+MyRun=${MyRun: -10:5} # get run number from filename (in this case 18 characters from the beginning of the filename: tree_pi0kpkm__B3_030496.root)
 
 echo $MyRun
 

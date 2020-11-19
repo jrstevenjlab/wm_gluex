@@ -10,7 +10,7 @@ cat ~/.login
 cat ~/.cshrc
 
 source ~/.cshrc 
-source $MyEnv/setup.csh
+source $MyEnv/setup_custom.csh
 env
 
 pwd

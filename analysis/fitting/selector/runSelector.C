@@ -6,7 +6,7 @@
 #include "TString.h"
 #include "TSystem.h"
 
-void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/gluex10/amschertz/deltaPlusPlus_b1Minus/test01/natural_exchange/root/trees/") 
+void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/gluex10/amschertz/deltaPlusPlus_b1Minus/test01/natural_exchange/root/trees/", TString myOption = "signal") 
 
 {
   // Load DSelector library
@@ -51,7 +51,7 @@ void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/gluex1
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_omegapi.C+", Proof_Nthreads, Form("hist_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()), Form("tree_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()));
+	  DPROOFLiteManager::Process_Chain(chain, "DSelector_omegapi.C+", Proof_Nthreads, Form("hist_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()), Form("tree_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()), Form("%s DEFAULTFLATOFF",myOption.Data()));
   }
 
   return;

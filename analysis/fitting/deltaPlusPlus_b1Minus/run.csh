@@ -20,3 +20,15 @@ cp anglesOmegaPiAmplitude_unnatural.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_unnatural_DeltaLowerVertex_b1.cfg
 omegapi_plotter omegapi.fit -g
 mv omegapi_plot.root omegapi_plot_unnatural.root
+
+# fit natural signal with unconstrained naturality
+cp anglesOmegaPiAmplitude_natural.root anglesOmegaPiAmplitude.root
+fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1.cfg
+omegapi_plotter omegapi.fit -g
+mv omegapi_plot.root omegapi_plot_natural_unconstrained.root
+
+# fit unnatural signal with unconstrained naturality
+cp anglesOmegaPiAmplitude_unnatural.root anglesOmegaPiAmplitude.root
+fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1.cfg
+omegapi_plotter omegapi.fit -g
+mv omegapi_plot.root omegapi_plot_unnatural_unconstrained.root

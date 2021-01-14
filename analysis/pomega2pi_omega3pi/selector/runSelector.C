@@ -12,7 +12,7 @@
 //bggen located at /sciclone/gluex10/gluex_simulations/REQUESTED_MC/2017_bggen_p1/tree_pi0pippippimpim__B4_M7/
    
 
-void runSelector(TString runNumber = "41127", TString myPath = "/sciclone/gluex10/RunPeriod-2018-01/analysis/ver08/tree_pi0pippippimpim__B4_M7/merged/") 
+void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/gluex10/amschertz/deltaPlusPlus_b1Minus/test02/phasespace/root/trees/") 
 
 {
   // Load DSelector library
@@ -57,7 +57,7 @@ void runSelector(TString runNumber = "41127", TString myPath = "/sciclone/gluex1
 	  }
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
-	  DPROOFLiteManager::Process_Chain(chain, "DSelector_pomega2pi_omega3pi.C+", Proof_Nthreads, Form("hist_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()));
+	  DPROOFLiteManager::Process_Chain(chain, "DSelector_pomega2pi_omega3pi.C+", Proof_Nthreads, Form("hist_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()), Form("tree_pomega2pi_omega3pi_%s.acc.root", runNumber.Data()), "DEFAULTFLATOFF");
   }
 
   return;

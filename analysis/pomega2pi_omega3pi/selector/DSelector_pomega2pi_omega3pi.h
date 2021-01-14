@@ -30,6 +30,8 @@ class DSelector_pomega2pi_omega3pi : public DSelector
 		bool dIsPolarizedFlag; //else is AMO
 		bool dIsPARAFlag; //else is PERP or AMO
 
+		bool dIsMC;
+
 		// ANALYZE CUT ACTIONS
 		// // Automatically makes mass histograms where one cut is missing
 		DHistogramAction_AnalyzeCutActions* dAnalyzeCutActions;
@@ -228,10 +230,23 @@ class DSelector_pomega2pi_omega3pi : public DSelector
 		TH2F* dHist_CosThetaVsPhi_DeltaPlusPlusPeak;
 		TH2F* dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak;
 
+		TH2F* dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_omega_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak;
+		TH2F* dHist_CosTheta_M_2pi_DeltaPlusPlusPeak;
+
+		TH2F* dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak;
+		TH2F* dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak;
+		TH2F* dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak;
+
 		TH2F* dHist_Phi_lab_ProtonPiPlus_vs_Ebeam;
 		TH2F* dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak;
 		TH2F* dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak_high_t;
-
+		TH2F* dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak;
 
 	ClassDef(DSelector_pomega2pi_omega3pi, 0);
 };

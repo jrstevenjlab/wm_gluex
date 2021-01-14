@@ -9,6 +9,9 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 	//SET OUTPUT FILE NAME //can be overriden by user in PROOF
 	dOutputFileName = "pomega2pi_omega3pi.root"; //"" for none
 	dOutputTreeFileName = ""; //"" for none
+	dFlatTreeFileName = "AmpToolsInputTree.root"; //output flat tree (one combo per tree entry), "" for none
+	dFlatTreeName = "kin"; //if blank, default name will be chosen
+	//dSaveDefaultFlatBranches = true; // False: don't save default branches, reduce disk footprint.
 
 	//DO THIS NEXT
 	//Because this function gets called for each TTree in the TChain, we must be careful:
@@ -22,6 +25,18 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 	//THEN THIS
 	Get_ComboWrappers();
 	dPreviousRunNumber = 0;
+
+	dIsMC = (dTreeInterface->Get_Branch("MCWeight") != NULL);
+
+	SetupAmpTools_FlatTree();
+
+  	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("t");
+ 	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("M3Pi");
+ 	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("M4Pi");
+ 	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("MRecoil");
+ 	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("Phi_Prod");
+
+
 
 	/*********************************** EXAMPLE USER INITIALIZATION: ANALYSIS ACTIONS **********************************/
 
@@ -380,8 +395,25 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 	dHist_PhiH_DeltaPlusPlusPeak = new TH1F("hPhiH_DeltaPlusPlusPeak", ";#phi_{H} (deg)", 600, -180., 180.);
 	dHist_CosThetaVsPhi_DeltaPlusPlusPeak = new TH2F("hCosThetaVsPhi_DeltaPlusPlusPeak", ";#phi (deg);cos(#theta)", 600, -180., 180., 600, -1., 1.);
 	dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak = new TH2F("hCosThetaVsPhiH_DeltaPlusPlusPeak", ";#phi_{H} (deg);cos(#theta)", 600, -180., 180., 600, -1., 1.);
+
 	dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak = new TH2F("hPhi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak", ";E_{#gamma} (GeV);#Phi_{lab,p#pi^{+}} (deg)", 600, 0., 12., 600, -180., 180.);
 	dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak_high_t = new TH2F("hPhi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak_high_t", ";E_{#gamma} (GeV);#Phi_{lab,p#pi^{+}} (deg)", 600, 0., 12., 600, -180., 180.);
+
+	dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_omega2pi_DeltaPlusPlusPeak", ";M_{#omega#pi#pi} (GeV);cos(#theta)", 600, 1., 3., 600, -1., 1.);
+	dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_omegapiminus_DeltaPlusPlusPeak", ";M_{#omega#pi^{-}} (GeV);cos(#theta)", 600, .3, 2.3, 600, -1., 1.);
+	dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_omegapiplus_DeltaPlusPlusPeak", ";M_{#omega#pi^{+}} (GeV);cos(#theta)", 600, .3, 2.3, 600, -1., 1.);
+	dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_protonpiminus_DeltaPlusPlusPeak", ";M_{p#pi^{-}} (GeV);cos(#theta)", 600, .3, 3., 600, -1., 1.);
+	dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_protonpiplus_DeltaPlusPlusPeak", ";M_{p#pi^{+}} (GeV);cos(#theta)", 600, .3, 3., 600, -1., 1.);
+	dHist_CosTheta_M_omega_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_omega_DeltaPlusPlusPeak", ";M_{#omega} (GeV);cos(#theta)", 600, .3, 2.3, 600, -1., 1.);
+	dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_proton2pi_DeltaPlusPlusPeak", ";M_{p#pi^{+}#pi^{-}} (GeV);cos(#theta)", 600, 1., 4., 600, -1., 1.);
+	dHist_CosTheta_M_2pi_DeltaPlusPlusPeak = new TH2F("hCosTheta_M_2pi_DeltaPlusPlusPeak", ";M_{#pi^{+}#pi^{-}} (GeV);cos(#theta)", 600, 0., 1.5, 600, -1., 1.);
+
+	dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak = new TH2F("hM_proton2pi_protonpiplus_DeltaPlusPlusPeak", ";M_{p#pi^{+}} (GeV);M_{p#pi^{+}#pi^{-}} (GeV)", 600, .3, 2.3, 600, 1., 4.);
+	dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak = new TH2F("hM_proton2pi_protonpiminus_DeltaPlusPlusPeak", ";M_{p#pi^{-}} (GeV);M_{p#pi^{+}#pi^{-}} (GeV)", 600, .3, 2.3, 600, 1., 4.);
+	dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak = new TH2F("hM_proton2pi_pipluspiminus_DeltaPlusPlusPeak", ";M_{#pi^{+}#pi^{-}} (GeV);M_{p#pi^{+}#pi^{-}} (GeV)", 600, 0., 1.5, 600, 1., 4.);
+
+	dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak = new TH2F("hOmega_Dalitz_xy_DeltaPlusPlusPeak", ";x_{Dalitz};y_{Dalitz}", 600, -2., 2., 600, -2., 2.);
+
 
 
 	/***************************************** ADVANCED: CHOOSE BRANCHES TO READ ****************************************/
@@ -423,6 +455,27 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		dIsPolarizedFlag = dAnalysisUtilities.Get_IsPolarizedBeam(locRunNumber, dIsPARAFlag);
 		dPreviousRunNumber = locRunNumber;
 	}
+
+	// get thrown particles in case we want to test fit with truth information
+ 	vector<TLorentzVector> locFinalStateThrownP4;
+ 	TLorentzVector locPi0ThrownP4;
+ 	if(Get_NumThrown()>0) {
+ 		for (UInt_t i=0;i<Get_NumThrown();i++){
+ 			dThrownWrapper->Set_ArrayIndex(i);
+                         Int_t locThrownPID = dThrownWrapper->Get_PID();
+                         if(locThrownPID==7) locPi0ThrownP4 = dThrownWrapper->Get_P4(); // get Pi0 first to set proper order for AmpTools
+ 		}
+          	for (UInt_t i=0;i<Get_NumThrown();i++){
+                 	//Set branch array indices corresponding to this particle
+                 	dThrownWrapper->Set_ArrayIndex(i);
+ 			Int_t locThrownPID = dThrownWrapper->Get_PID();
+ 			if(locThrownPID==14 || locThrownPID==8 || locThrownPID==9) {
+ 				locFinalStateThrownP4.push_back(dThrownWrapper->Get_P4());
+ 			}
+ 			if(locFinalStateThrownP4.size() == 2) locFinalStateThrownP4.push_back(locPi0ThrownP4);
+ 			if(locFinalStateThrownP4.size() == 6) break;
+ 	    	}
+ 	}
 
 	/********************************************* SETUP UNIQUENESS TRACKING ********************************************/
 
@@ -487,6 +540,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		dComboWrapper->Set_ComboIndex(loc_i);
 
 		// Is used to indicate when combos have been cut
+		dComboWrapper->Set_IsComboCut(false);
 		if(dComboWrapper->Get_IsComboCut()) // Is false when tree originally created
 			continue; // Combo has been cut previously
 
@@ -557,6 +611,16 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		TLorentzVector loc2PiP4_12 = locPiPlus2P4 + locPiMinus1P4;
 		TLorentzVector loc2PiP4_21 = locPiPlus1P4 + locPiMinus2P4;
 		TLorentzVector loc2PiP4_22 = locPiPlus1P4 + locPiMinus1P4;
+		//Proton + "bachelor" 2pi momenta:
+		TLorentzVector locProton2PiP4_11 = locProtonP4 + loc2PiP4_11;
+		TLorentzVector locProton2PiP4_12 = locProtonP4 + loc2PiP4_12;
+		TLorentzVector locProton2PiP4_21 = locProtonP4 + loc2PiP4_21;
+		TLorentzVector locProton2PiP4_22 = locProtonP4 + loc2PiP4_22;
+
+		double locProton2PiMass11 = locProton2PiP4_11.M();
+		double locProton2PiMass12 = locProton2PiP4_12.M();
+		double locProton2PiMass21 = locProton2PiP4_21.M();
+		double locProton2PiMass22 = locProton2PiP4_22.M();
 
 		//"Charged" 2pi Momenta (using these to look for charged rhos)
 		TLorentzVector loc2PiP4_p01 = locPiPlus1P4 + locPhoton1P4 + locPhoton2P4;
@@ -587,6 +651,45 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 
 		double locProtonPiMinusMass1 = locProtonPiMinusP4_1.M();
 		double locProtonPiMinusMass2 = locProtonPiMinusP4_2.M();
+
+		//Dalitz parameters for the omega
+		double locDalitz_s_11 = (loc3PiP4_11 - locPi0P4).M2();
+		double locDalitz_t_11 = (loc3PiP4_11 - locPiMinus1P4).M2();
+		double locDalitz_u_11 = (loc3PiP4_11 - locPiPlus1P4).M2();
+		double locDalitz_sc_11 = (1/3.0) * (loc3PiP4_11.M2() + locPiPlus1P4.M2() + locPiMinus1P4.M2() + locPi0P4.M2());
+		double locDalitz_d_11 = 2.0 * loc3PiP4_11.M() * (loc3PiP4_11.M() - locPiPlus1P4.M() - locPiMinus1P4.M() - locPi0P4.M());
+
+		double locDalitz_x_11 = TMath::Sqrt(3.0) * (locDalitz_t_11 - locDalitz_u_11) / locDalitz_d_11;
+		double locDalitz_y_11 = 3.0 * (locDalitz_sc_11 - locDalitz_s_11) / locDalitz_d_11;
+
+		double locDalitz_s_12 = (loc3PiP4_12 - locPi0P4).M2();
+		double locDalitz_t_12 = (loc3PiP4_12 - locPiMinus2P4).M2();
+		double locDalitz_u_12 = (loc3PiP4_12 - locPiPlus1P4).M2();
+		double locDalitz_sc_12 = (1/3.0) * (loc3PiP4_12.M2() + locPiPlus1P4.M2() + locPiMinus2P4.M2() + locPi0P4.M2());
+		double locDalitz_d_12 = 2.0 * loc3PiP4_12.M() * (loc3PiP4_12.M() - locPiPlus1P4.M() - locPiMinus2P4.M() - locPi0P4.M());
+
+		double locDalitz_x_12 = TMath::Sqrt(3.0) * (locDalitz_t_12 - locDalitz_u_12) / locDalitz_d_12;
+		double locDalitz_y_12 = 3.0 * (locDalitz_sc_12 - locDalitz_s_12) / locDalitz_d_12;
+
+		double locDalitz_s_21 = (loc3PiP4_21 - locPi0P4).M2();
+		double locDalitz_t_21 = (loc3PiP4_21 - locPiMinus1P4).M2();
+		double locDalitz_u_21 = (loc3PiP4_21 - locPiPlus2P4).M2();
+		double locDalitz_sc_21 = (1/3.0) * (loc3PiP4_21.M2() + locPiPlus2P4.M2() + locPiMinus1P4.M2() + locPi0P4.M2());
+		double locDalitz_d_21 = 2.0 * loc3PiP4_21.M() * (loc3PiP4_21.M() - locPiPlus2P4.M() - locPiMinus1P4.M() - locPi0P4.M());
+
+		double locDalitz_x_21 = TMath::Sqrt(3.0) * (locDalitz_t_21 - locDalitz_u_21) / locDalitz_d_21;
+		double locDalitz_y_21 = 3.0 * (locDalitz_sc_21 - locDalitz_s_21) / locDalitz_d_21;
+
+		double locDalitz_s_22 = (loc3PiP4_22 - locPi0P4).M2();
+		double locDalitz_t_22 = (loc3PiP4_22 - locPiMinus2P4).M2();
+		double locDalitz_u_22 = (loc3PiP4_22 - locPiPlus2P4).M2();
+		double locDalitz_sc_22 = (1/3.0) * (loc3PiP4_22.M2() + locPiPlus2P4.M2() + locPiMinus2P4.M2() + locPi0P4.M2());
+		double locDalitz_d_22 = 2.0 * loc3PiP4_22.M() * (loc3PiP4_22.M() - locPiPlus2P4.M() - locPiMinus2P4.M() - locPi0P4.M());
+
+		double locDalitz_x_22 = TMath::Sqrt(3.0) * (locDalitz_t_22 - locDalitz_u_22) / locDalitz_d_22;
+		double locDalitz_y_22 = 3.0 * (locDalitz_sc_22 - locDalitz_s_22) / locDalitz_d_22;
+
+
 
 
 
@@ -1165,18 +1268,26 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 
 		/***************************** DELTA++ VETO ***************************/
 		if(veto_Deltaplusplus == true) {
-		  if(locProtonPiPlusMass1 < 1.4)
+		  if(locProtonPiPlusMass1 < 1.4){
+		    dComboWrapper->Set_IsComboCut(true);
 		    continue;
-		  if(locProtonPiPlusMass2 < 1.4)
+		  }
+		  if(locProtonPiPlusMass2 < 1.4){
+		    dComboWrapper->Set_IsComboCut(true);
 		    continue;
+		  }
 		}
 
 		/***************************** DELTA0 VETO ***************************/
 		if(veto_Delta0 == true) {
-		  if(locProtonPiMinusMass1 < 1.8)
+		  if(locProtonPiMinusMass1 < 1.8){
+		    dComboWrapper->Set_IsComboCut(true);
 		    continue;
-		  if(locProtonPiMinusMass2 < 1.8)
-		    continue;
+		  }
+		  if(locProtonPiMinusMass2 < 1.8){
+		   dComboWrapper->Set_IsComboCut(true);
+		   continue;
+		  }
 		}
 
 
@@ -1287,6 +1398,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		else weight22 = 0;
 
 
+
 		/****************************************** HISTOGRAM 4-MOMENTUM TRANSFER SQUARED (-t) ************************************************/
 		TLorentzVector locSqrt_t_proton = loc5PiP4 - locBeamP4;
 		TLorentzVector locSqrt_s = locBeamP4 + dTargetP4;
@@ -1376,8 +1488,10 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		  }
 
 		/************************************ CUT ON -t' *****************************************************/
-		if(loct_proton_prime > 0.5 && cut_t_prime == true)
+		if(loct_proton_prime > 0.5 && cut_t_prime == true){
+		  dComboWrapper->Set_IsComboCut(true);
 		  continue;
+		}
 
 
 		//Uniqueness Tracking
@@ -1928,6 +2042,18 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 			  dHist_CosThetaVsPhi_DeltaPlusPlusPeak->Fill(locPhi21, locCosTheta21, weight21 * locAccWeight);
 			  dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak->Fill(locPhiH_21, locCosThetaH_21, weight21 * locAccWeight);
 			  dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak->Fill(locBeamP4.E(), locProtonPiPlus1_Phi_lab, weight21 * locAccWeight);
+			  dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak->Fill(loc5PiMass, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak->Fill(locOmegaPiMinusMass21, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak->Fill(locOmegaPiPlusMass21, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass2, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass1, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_omega_DeltaPlusPlusPeak->Fill(loc3PiMass21, locCosTheta21, locAccWeight);
+			  dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak->Fill(locProton2PiMass21, locCosTheta21, weight21 * locAccWeight);
+			  dHist_CosTheta_M_2pi_DeltaPlusPlusPeak->Fill(loc2PiMass21, locCosTheta21, weight21 * locAccWeight);
+			  dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass1, locProton2PiMass21, weight21 * locAccWeight);
+			  dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass2, locProton2PiMass21, weight21 * locAccWeight);
+			  dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak->Fill(loc2PiMass21, locProton2PiMass21, weight21 * locAccWeight);
+			  dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak->Fill(locDalitz_x_21, locDalitz_y_21, weight21 * locAccWeight);
 			}
 			if(locOmegaPiMinusMass22 > 1.1 && locOmegaPiMinusMass22 < 1.35){
 			  dHist_Omega2PiMass_DeltaPlusPlusPeak->Fill(loc5PiMass, weight22 * locAccWeight);
@@ -1942,6 +2068,18 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 			  dHist_CosThetaVsPhi_DeltaPlusPlusPeak->Fill(locPhi22, locCosTheta22, weight22 * locAccWeight);
 			  dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak->Fill(locPhiH_22, locCosThetaH_22, weight22 * locAccWeight);
 			  dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak->Fill(locBeamP4.E(), locProtonPiPlus1_Phi_lab, weight21 * locAccWeight);
+			  dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak->Fill(loc5PiMass, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak->Fill(locOmegaPiMinusMass22, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak->Fill(locOmegaPiPlusMass22, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass1, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass1, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_omega_DeltaPlusPlusPeak->Fill(loc3PiMass22, locCosTheta22, locAccWeight);
+			  dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak->Fill(locProton2PiMass22, locCosTheta22, weight22 * locAccWeight);
+			  dHist_CosTheta_M_2pi_DeltaPlusPlusPeak->Fill(loc2PiMass22, locCosTheta22, weight22 * locAccWeight);
+			  dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass1, locProton2PiMass22, weight22 * locAccWeight);
+			  dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass1, locProton2PiMass22, weight22 * locAccWeight);
+			  dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak->Fill(loc2PiMass22, locProton2PiMass22, weight22 * locAccWeight);
+			  dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak->Fill(locDalitz_x_22, locDalitz_y_22, weight22 * locAccWeight);
 			}
 
 		      }
@@ -1964,6 +2102,18 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 			  dHist_CosThetaVsPhi_DeltaPlusPlusPeak->Fill(locPhi11, locCosTheta11, weight11 * locAccWeight);
 			  dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak->Fill(locPhiH_11, locCosThetaH_11, weight11 * locAccWeight);
 			  dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak->Fill(locBeamP4.E(), locProtonPiPlus2_Phi_lab, weight11 * locAccWeight);
+			  dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak->Fill(loc5PiMass, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak->Fill(locOmegaPiMinusMass11, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak->Fill(locOmegaPiPlusMass11, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass2, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass2, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_omega_DeltaPlusPlusPeak->Fill(loc3PiMass11, locCosTheta11, locAccWeight);
+			  dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak->Fill(locProton2PiMass11, locCosTheta11, weight11 * locAccWeight);
+			  dHist_CosTheta_M_2pi_DeltaPlusPlusPeak->Fill(loc2PiMass11, locCosTheta11, weight11 * locAccWeight);
+			  dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass2, locProton2PiMass11, weight11 * locAccWeight);
+			  dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass2, locProton2PiMass11, weight11 * locAccWeight);
+			  dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak->Fill(loc2PiMass11, locProton2PiMass11, weight11 * locAccWeight);
+			  dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak->Fill(locDalitz_x_11, locDalitz_y_11, weight11 * locAccWeight);
 			}
 			if(locOmegaPiMinusMass12 > 1.1 && locOmegaPiMinusMass12 < 1.35){
 			  dHist_Omega2PiMass_DeltaPlusPlusPeak->Fill(loc5PiMass, weight12 * locAccWeight);
@@ -1978,6 +2128,18 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 			  dHist_CosThetaVsPhi_DeltaPlusPlusPeak->Fill(locPhi12, locCosTheta12, weight12 * locAccWeight);
 			  dHist_CosThetaHVsPhiH_DeltaPlusPlusPeak->Fill(locPhiH_12, locCosThetaH_12, weight12 * locAccWeight);
 			  dHist_Phi_lab_ProtonPiPlus_vs_Ebeam_DeltaPlusPlusPeak->Fill(locBeamP4.E(), locProtonPiPlus2_Phi_lab, weight12 * locAccWeight);
+			  dHist_CosTheta_M_omega2pi_DeltaPlusPlusPeak->Fill(loc5PiMass, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_omegapiminus_DeltaPlusPlusPeak->Fill(locOmegaPiMinusMass12, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_omegapiplus_DeltaPlusPlusPeak->Fill(locOmegaPiPlusMass12, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass1, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass2, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_omega_DeltaPlusPlusPeak->Fill(loc3PiMass12, locCosTheta12, locAccWeight);
+			  dHist_CosTheta_M_proton2pi_DeltaPlusPlusPeak->Fill(locProton2PiMass12, locCosTheta12, weight12 * locAccWeight);
+			  dHist_CosTheta_M_2pi_DeltaPlusPlusPeak->Fill(loc2PiMass12, locCosTheta12, weight12 * locAccWeight);
+			  dHist_M_proton2pi_protonpiplus_DeltaPlusPlusPeak->Fill(locProtonPiPlusMass2, locProton2PiMass12, weight12 * locAccWeight);
+			  dHist_M_proton2pi_protonpiminus_DeltaPlusPlusPeak->Fill(locProtonPiMinusMass1, locProton2PiMass12, weight12 * locAccWeight);
+			  dHist_M_proton2pi_pipluspiminus_DeltaPlusPlusPeak->Fill(loc2PiMass12, locProton2PiMass12, weight12 * locAccWeight);
+			  dHist_Omega_Dalitz_xy_DeltaPlusPlusPeak->Fill(locDalitz_x_12, locDalitz_y_12, weight12 * locAccWeight);
 			}
 		      }
 		    else if(locProtonPiPlusMass1 < 1.4 && loct_Deltaplusplus1 > 0.5 && loct_Deltaplusplus1 < 1.5)
@@ -2460,6 +2622,105 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		  }
 
 
+		/***************************** SET UP ISCOMBOCUT FLAG *************************************/
+		/*
+		if(locProtonPiPlusMass1 < 1.4 && loct_Deltaplusplus1 < 0.5){
+		  if(locOmegaPiMinusMass21 > 1.1 && locOmegaPiMinusMass21 < 1.35){
+		    dComboWrapper->Set_IsComboCut(false);
+		  }
+		  if(locOmegaPiMinusMass22 > 1.1 && locOmegaPiMinusMass22 < 1.35){
+		    dComboWrapper->Set_IsComboCut(false);
+		  }
+		}
+		else if(locProtonPiPlusMass2 < 1.4 && loct_Deltaplusplus2 < 0.5){
+		  if(locOmegaPiMinusMass11 > 1.1 && locOmegaPiMinusMass11 < 1.35){
+		    dComboWrapper->Set_IsComboCut(false);
+		  }
+		  if(locOmegaPiMinusMass12 > 1.1 && locOmegaPiMinusMass12 < 1.35){
+		    dComboWrapper->Set_IsComboCut(false);
+		  }
+		}
+		else{
+		  dComboWrapper->Set_IsComboCut(true);
+		}
+		*/
+
+
+		//FILL FLAT TREE
+ 		vector<Int_t> locFinalStatePID {2212, -211, 111, 211, -211, 211};
+ 		vector<TLorentzVector> locPiMinusP4; 
+ 		locPiMinusP4.push_back(locPiMinus1P4); locPiMinusP4.push_back(locPiMinus2P4);
+ 		vector<TLorentzVector> locPiPlusP4; 
+ 		locPiPlusP4.push_back(locPiPlus1P4); locPiPlusP4.push_back(locPiPlus2P4);
+ 		for(int iminus=0; iminus<(int)locPiMinusP4.size(); iminus++) {
+ 			for(int iplus=0; iplus<(int)locPiPlusP4.size(); iplus++) {
+
+  				// omega mass cut and sideband weight
+ 				TLorentzVector loc3PiP4 = locPi0P4 + locPiPlusP4[iplus] + locPiMinusP4[iminus];
+ 				double loc3PiMass = loc3PiP4.M();
+ 				TLorentzVector loc3PiP4_alt = locPi0P4 + locPiPlusP4[iplus] + locPiMinusP4[abs(iminus-1)];
+ 				double loc3PiMass_alt = loc3PiP4_alt.M();
+
+
+  				// Delta++ cut
+ 				TLorentzVector locRecoilP4 = locProtonP4+locPiPlusP4[abs(iplus-1)];
+ 				if(locRecoilP4.M() > 1.6) 
+ 					continue; 
+
+  				// loose pi0 mass
+ 				if(fabs(locPi0P4.M() - 0.135) > 0.015) continue; 
+
+  				// loose -t cut for now
+ 				double loct = -1. * (locRecoilP4 - dTargetP4).M2();
+ 				if(loct > 1.0) continue;
+
+  				// set weight from 2D 3pi mass correlation (see Chung et. al. 1975)...
+				double loc2Dweight;
+				double locLmin = 0.690;
+				double locLmax = 0.735;
+				double locomegamin = 0.760;
+				double locomegamax = 0.805;
+				double locHmin = 0.830;
+				double locHmax = 0.875;
+
+				if((loc3PiMass > locomegamin && loc3PiMass < locomegamax) || (loc3PiMass_alt > locomegamin && loc3PiMass_alt < locomegamax)) loc2Dweight = 1.0;
+				else if((loc3PiMass > locLmin && loc3PiMass < locLmax) && (loc3PiMass_alt > locLmin && loc3PiMass_alt < locLmax)) loc2Dweight = -0.625;
+				else if((loc3PiMass > locLmin && loc3PiMass < locLmax) && (loc3PiMass_alt > locHmin && loc3PiMass_alt < locHmax)) loc2Dweight = -0.625;
+				else if((loc3PiMass > locHmin && loc3PiMass < locHmax) && (loc3PiMass_alt > locLmin && loc3PiMass_alt < locLmax)) loc2Dweight = -0.625;
+				else if((loc3PiMass > locHmin && loc3PiMass < locHmax) && (loc3PiMass_alt > locHmin && loc3PiMass_alt < locHmax)) loc2Dweight = -0.625;
+				else if((loc3PiMass > locLmin && loc3PiMass < locLmax) || (loc3PiMass > locHmin && loc3PiMass < locHmax)) loc2Dweight = -0.5;
+				else if((loc3PiMass_alt > locLmin && loc3PiMass_alt < locLmax) || (loc3PiMass_alt > locHmin && loc3PiMass_alt < locHmax)) loc2Dweight = -0.5;
+				else continue;
+
+  				double loc4PiMass = (loc3PiP4 + locPiMinusP4[abs(iminus-1)]).M();
+
+  				// set ordering of pions for amplitude analysis
+ 				vector<TLorentzVector> locFinalStateP4;
+ 				locFinalStateP4.push_back(locProtonP4);
+ 				locFinalStateP4.push_back(locPiMinusP4[abs(iminus-1)]); // Bachelor Pi-
+ 				locFinalStateP4.push_back(locPi0P4); 
+ 				locFinalStateP4.push_back(locPiPlusP4[iplus]); 
+ 				locFinalStateP4.push_back(locPiMinusP4[iminus]);
+ 				locFinalStateP4.push_back(locPiPlusP4[abs(iplus-1)]); // Delta++ recoil Pi+
+
+  				dFlatTreeInterface->Fill_Fundamental<Float_t>("M3Pi", loc3PiMass);
+ 				dFlatTreeInterface->Fill_Fundamental<Float_t>("M4Pi", loc4PiMass);
+ 				dFlatTreeInterface->Fill_Fundamental<Float_t>("MRecoil", locRecoilP4.M());
+ 				dFlatTreeInterface->Fill_Fundamental<Float_t>("Phi_Prod", locRecoilP4.Phi());
+ 				dFlatTreeInterface->Fill_Fundamental<Float_t>("t", loct);
+
+  				// set weight according to omega mass
+ 				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
+
+  				// set ordered final state P4 for filling flat tree
+ 				//FillAmpTools_FlatTree(locBeamP4, locFinalStateP4); 
+ 				FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);
+
+  				Fill_FlatTree(); //for the active combo
+ 			}
+ 		}
+
+
 	} // end of combo loop
 
 	//FILL HISTOGRAMS: Num combos / events surviving actions
@@ -2511,7 +2772,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 */
 
 	/************************************ EXAMPLE: FILL CLONE OF TTREE HERE WITH CUTS APPLIED ************************************/
-/*
+
 	Bool_t locIsEventCut = true;
 	for(UInt_t loc_i = 0; loc_i < Get_NumCombos(); ++loc_i) {
 		//Set branch array indices for combo and all combo particles
@@ -2522,10 +2783,12 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		locIsEventCut = false; // At least one combo succeeded
 		break;
 	}
-	if(!locIsEventCut && dOutputTreeFileName != "")
-		FillOutputTree();
-*/
-
+	if(!locIsEventCut){ // && dOutputTreeFileName != "") {
+ 		cout<<"filled tree good entry "<<locEntry<<endl;
+ 		cout<<dOutputTreeFileName<<endl;
+ 		//eventCounter++;
+ 		Fill_OutputTree();
+ 	}
  	return kTRUE;
 }
 

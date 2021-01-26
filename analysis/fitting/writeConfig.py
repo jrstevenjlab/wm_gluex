@@ -48,7 +48,7 @@ def main(argv):
 def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initReMag, initImMag, constrainDSamps):
 
     # dictionaries to write consistent names
-    char = {-1:"m", 0:"0", +1:"p"}
+    char = {-2:"m2", -1:"m", 0:"0", +1:"p", +2:"p2"}
     word = {-1:"Neg", +1:"Pos"}
     L = {0:"s", 1:"p", 2:"d", 3:"f", 4:"g"}
     common = "angle fraction dalitz"

@@ -55,19 +55,22 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
 
     # list of amplitudes for later constraints and scale factors
     amplitudes = []
-
+    amplitudes_jp = []
+        
     # temporary strings for storing amplitude lines and initialization to be written later
     amplitudeLines = ""
     initializationLines = ""
     Mloop = ""
     Lloop = ""
+    
     comments = ""
     fixedPhase = ""
     fixedPhaseRefl = []
 
     # loop over waves
     jpComment = ""
-    for wave in waves:
+    for iwave in range(len(waves)):
+        wave = waves[iwave]
         j = wave["spin"]
         parity = wave["parity"]
         jp = str(wave["spin"]) + char[wave["parity"]]
@@ -127,6 +130,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                 amp = jp+char[spin_proj]+l
                 if amp not in amplitudes:
                     amplitudes.append(amp)
+                    amplitudes_jp.append(amp)
                     if spin_proj == 0:
                         Mloop += " 0"
                     else:
@@ -138,22 +142,41 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                     fixedPhaseRefl.append(refl)
                     fixedPhase += initializationLine.replace("LOOPAMPNAME",amp)
                     fixedPhase += " real\n"
-            
-    # write loop info to file
-    loopAmpName = "loop LOOPAMPNAME"
-    for amp in amplitudes:
-        loopAmpName += " " + amp
-    fout.write(loopAmpName + "\n")
-    fout.write("loop LOOPM%s\n" % Mloop)
-    fout.write("loop LOOPL%s\n" % Lloop)
         
-    # write all amplitudes and initialization to file
-    fout.write(amplitudeLines)
-    fout.write(initializationLines)
+        # if more waves with the same J^P are in waveset, wait to print loop
+        skipPrinting = False
+        for jwave in range(iwave,len(waves)):
+            if wave == waves[jwave]: continue
+            
+            later_jp = str(waves[jwave]["spin"]) + char[waves[jwave]["parity"]]
+            if later_jp == jp:
+                skipPrinting = True
+                
+        if skipPrinting:
+            continue;
+        
+        # write loop info to file for given wave
+        loopAmpName = "loop LOOPAMPNAME"
+        for amp in amplitudes_jp:
+            loopAmpName += " " + amp
+        fout.write(loopAmpName + "\n")
+        fout.write("loop LOOPM%s\n" % Mloop)
+        fout.write("loop LOOPL%s\n" % Lloop)
+        
+        # write all amplitudes and initialization to file
+        fout.write(amplitudeLines)
+        fout.write(initializationLines)
     
-    # constrain common parameters from different sums
-    fout.write("constrain omegapi PosReflPosSign LOOPAMPNAME omegapi PosReflNegSign LOOPAMPNAME\n")
-    fout.write("constrain omegapi NegReflPosSign LOOPAMPNAME omegapi NegReflNegSign LOOPAMPNAME\n")
+        # constrain common parameters from different sums
+        fout.write("constrain omegapi PosReflPosSign LOOPAMPNAME omegapi PosReflNegSign LOOPAMPNAME\n")
+        fout.write("constrain omegapi NegReflPosSign LOOPAMPNAME omegapi NegReflNegSign LOOPAMPNAME\n")
+        fout.write("\n")
+        
+        amplitudes_jp = []
+        amplitudeLines = ""
+        initializationLines = ""
+        Mloop = ""
+        Lloop = ""
     
     # option to constrain phase between S and D wave amplitudes (use real-valued D/S ratio as scale)
     if not constrainDSamps:

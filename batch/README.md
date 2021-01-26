@@ -25,3 +25,28 @@ which will sum all the histogram files so you can make plots using the full data
 More information on checking the status of batch jobs or canceling jobs can be found at
 https://www.wm.edu/offices/it/services/researchcomputing/using/jobs/supervising/index.php
 
+
+--------------------------------------
+----- General batch job guidence -----
+--------------------------------------
+
+* Job submission is only possible through the qlogin session.
+
+* The HPC recommands each user keep less than 500 jobs in the farm.
+
+* Usage of the debug queue: one submits a job is shorter than 1 hour and less nodes than 2 between 8am to 5pm during the weekdays will be defaulted into a debug queue. 
+
+Example debug queue command: qlogin -t 60 1:vortex:ppn=4 
+
+Special note: the debug queue can be used to a short code test, it disregards the number of submitted jobs in the queue. The debug queue only work Monday-Friday, 8am - 5pm. 
+
+If the user submitted many jobs into the queue, then the qlogin will not initiate outside of the debug queue time zone.
+
+* When submitting jobs into the farm, one must pay attention to change the job running directory set in the MC_XXX.config file. Example: RUNNING_DIRECTORY=/sciclone/home20/wli08/bill_analysis/sims/KKpi/ , changle home20 to scr20. New running directory: RUNNING_DIRECTORY=/sciclone/scr20/wli08/bill_analysis/sims/KKpi/ . Note that I/O load to home20  with many simulation jobs significantly slows down the performace of the HPC.
+
+Job running directory:
+/sciclone/scr20/USER/analysis/sims/REACTION/
+
+USER = username of William Mary
+REACTION = defined reaction by the user
+

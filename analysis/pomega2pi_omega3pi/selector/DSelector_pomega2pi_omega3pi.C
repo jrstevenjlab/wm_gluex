@@ -2712,6 +2712,12 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
   				// set weight according to omega mass
  				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
 
+				//remove random trigger background from phasespace MC
+				if(dOption.Contains("phasespace") && !dComboBeamWrapper->Get_IsGenerator()) {
+				  dComboWrapper->Set_IsComboCut(true);
+				  continue;
+				}
+
   				// set ordered final state P4 for filling flat tree
  				//FillAmpTools_FlatTree(locBeamP4, locFinalStateP4); 
  				FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);

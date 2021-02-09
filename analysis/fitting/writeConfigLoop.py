@@ -27,7 +27,7 @@ def main(argv):
     waves = []
     waves.append( {"spin":1, "parity":+1, "l":0} ) #1+ S-wave
     waves.append( {"spin":1, "parity":+1, "l":2} ) #1+ D-wave
-    # waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave
+    waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave
     
     # read template data for initial portion of config file defining common parameters and input file setup
     cfgTempl = templateName
@@ -69,12 +69,18 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
 
     # loop over waves
     jpComment = ""
+    loopAmpName = ""
+    loopMName = ""
+    loopLName = ""
     for iwave in range(len(waves)):
         wave = waves[iwave]
         j = wave["spin"]
         parity = wave["parity"]
         jp = str(wave["spin"]) + char[wave["parity"]]
         l = L[wave["l"]]
+        loopName = "LOOPAMP" + jp
+        loopMName = "LOOPM" + jp
+        loopLName = "LOOPL" + jp
         
         jpComment = "############################ spin %d parity %+d ##################################\n\n" % (j,parity)
         if jpComment not in comments:
@@ -106,15 +112,15 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
 
             # write individual amplitudes
             sum = word[refl] + "Refl" + word[sign] + "Sign"
-            amplitude = reaction + "::" + sum + "::LOOPAMPNAME"
+            amplitude = reaction + "::" + sum + "::" + loopName
             amplitudeLine = "amplitude " + amplitude + " " + className
-            amplitudeLine += " %d LOOPM LOOPL  %+d  %+d  %s" % (j, real, sign, common)
+            amplitudeLine += " %d %s %s  %+d  %+d  %s" % (j, loopMName, loopLName, real, sign, common)
             if amplitudeLine not in amplitudeLines:
                 amplitudeLines += amplitudeLine
                 amplitudeLines += "\n"
             
             # write amplitude initialization
-            initializationLine = "initialize " + reaction + "::" + sum + "::LOOPAMPNAME"
+            initializationLine = "initialize " + reaction + "::" + sum + "::" + loopName
             if initRefl and refl != initRefl:
                 initializationLine += " cartesian 0 0 fixed"
             else:
@@ -140,7 +146,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                 # select amplitude for fixed phase
                 if refl not in fixedPhaseRefl and spin_proj == 0: # fix phase for one of the amplitudes in each reflectivity
                     fixedPhaseRefl.append(refl)
-                    fixedPhase += initializationLine.replace("LOOPAMPNAME",amp)
+                    fixedPhase += initializationLine.replace(loopName,amp)
                     fixedPhase += " real\n"
         
         # if more waves with the same J^P are in waveset, wait to print loop
@@ -156,20 +162,20 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
             continue;
         
         # write loop info to file for given wave
-        loopAmpName = "loop LOOPAMPNAME"
+        loopAmpName = "loop " + loopName
         for amp in amplitudes_jp:
             loopAmpName += " " + amp
         fout.write(loopAmpName + "\n")
-        fout.write("loop LOOPM%s\n" % Mloop)
-        fout.write("loop LOOPL%s\n" % Lloop)
+        fout.write("loop %s%s\n" % (loopMName,Mloop))
+        fout.write("loop %s%s\n" % (loopLName,Lloop))
         
         # write all amplitudes and initialization to file
         fout.write(amplitudeLines)
         fout.write(initializationLines)
     
         # constrain common parameters from different sums
-        fout.write("constrain omegapi PosReflPosSign LOOPAMPNAME omegapi PosReflNegSign LOOPAMPNAME\n")
-        fout.write("constrain omegapi NegReflPosSign LOOPAMPNAME omegapi NegReflNegSign LOOPAMPNAME\n")
+        fout.write("constrain omegapi PosReflPosSign %s omegapi PosReflNegSign %s\n" % (loopName,loopName))
+        fout.write("constrain omegapi NegReflPosSign %s omegapi NegReflNegSign %s\n" % (loopName,loopName))
         fout.write("\n")
         
         amplitudes_jp = []

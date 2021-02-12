@@ -2723,10 +2723,12 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
  				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
 
 				//remove random trigger background from phasespace MC
-				Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
-				if(dOption.Contains("phasespace") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator())) {
-				  dComboWrapper->Set_IsComboCut(true);
-				  continue;
+				if(dOption.Contains("phasespace")) {
+				  Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
+				  if( !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator()) ) {
+				    dComboWrapper->Set_IsComboCut(true);
+				    continue;
+				  }
 				}
 
   				// set ordered final state P4 for filling flat tree
@@ -2800,7 +2802,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		locIsEventCut = false; // At least one combo succeeded
 		break;
 	}
-	if(!locIsEventCut){ // && dOutputTreeFileName != "") {
+	if(!locIsEventCut && dOutputTreeFileName != "") {
  		cout<<"filled tree good entry "<<locEntry<<endl;
  		cout<<dOutputTreeFileName<<endl;
  		//eventCounter++;

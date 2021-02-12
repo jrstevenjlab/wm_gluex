@@ -23,9 +23,6 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 		return; //have already created histograms, etc. below: exit
 
 	//THEN THIS
-	if(!(dTreeInterface->Get_Branch("NumCombos") == NULL)) Get_ComboWrappers();
-	dPreviousRunNumber = 0;
-
 	dIsMC = (dTreeInterface->Get_Branch("MCWeight") != NULL);
 
 	SetupAmpTools_FlatTree();
@@ -36,7 +33,10 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
  	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("MRecoil");
  	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("Phi_Prod");
 
+        if((dTreeInterface->Get_Branch("NumCombos") == NULL)) return;
 
+	Get_ComboWrappers();
+        dPreviousRunNumber = 0;
 
 	/*********************************** EXAMPLE USER INITIALIZATION: ANALYSIS ACTIONS **********************************/
 
@@ -204,7 +204,6 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 	for(uint i=0; i<locThrownTopologies_omegacut_nosideband.size(); i++) {
 		dHist_InvariantMass_ThrownTopology_omegacut_nosideband[locThrownTopologies_omegacut_nosideband[i]] = new TH1F(Form("hInvariantMass_ThrownTopology_omegacut_nosideband_%d", i),Form("Invariant Mass Topology: %s", locThrownTopologies_omegacut_nosideband[i].Data()), 1000, 1.0, 3.0);
 	}
-	
 
 	/******************************** EXAMPLE USER INITIALIZATION: STAND-ALONE HISTOGRAMS *******************************/
 
@@ -2725,7 +2724,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 
 				//remove random trigger background from phasespace MC
 				Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
-				if(dOption.Contains("phasespace") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator()) {
+				if(dOption.Contains("phasespace") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator())) {
 				  dComboWrapper->Set_IsComboCut(true);
 				  continue;
 				}

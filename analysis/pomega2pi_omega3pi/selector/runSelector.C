@@ -23,9 +23,10 @@ void runSelector(TString runNumber = "3", TString myPath = "/sciclone/gluex10/am
   TString sampleDir = myPath;
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
-  
-  TChain *chain = new TChain("pi0pippippimpim__B4_M7_Tree");
-  if(myPath.Contains("tree_thrown")) treeName = "Thrown_Tree";
+ 
+  TString treeName = "pi0pippippimpim__B4_M7_Tree";
+  if(myPath.Contains("tree_thrown")) treeName = "Thrown_Tree"; 
+  TChain *chain = new TChain(treeName);
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;

@@ -1,5 +1,5 @@
-#ifndef DSelector_omegapi_h
-#define DSelector_omegapi_h
+#ifndef DSelector_omegapi_all_h
+#define DSelector_omegapi_all_h
 
 #include <iostream>
 
@@ -10,12 +10,12 @@
 #include "TH1I.h"
 #include "TH2I.h"
 
-class DSelector_omegapi : public DSelector
+class DSelector_omegapi_all : public DSelector
 {
 	public:
 
-		DSelector_omegapi(TTree* locTree = NULL) : DSelector(locTree){}
-		virtual ~DSelector_omegapi(){}
+		DSelector_omegapi_all(TTree* locTree = NULL) : DSelector(locTree){}
+		virtual ~DSelector_omegapi_all(){}
 
 		void Init(TTree *tree);
 		Bool_t Process(Long64_t entry);
@@ -31,6 +31,12 @@ class DSelector_omegapi : public DSelector
 		bool dIsPARAFlag; //else is PERP or AMO
 
 		bool dIsMC;
+
+		TH1F *dHist_KinFitChiSq;
+		TH1F *dHist_4piMassSum, *dHist_3piMassSum, *dHist_2gammaMassSum;
+		TH1F *dHist_ProtonPiPlus1Mass, *dHist_ProtonPiPlus2Mass;
+		TH1F *dHist_3piPiPlus1Mass, *dHist_3piPiPlus2Mass;
+		TH2F *dHist_3piPiPlus1MassCorr;
 
 		//CREATE REACTION-SPECIFIC PARTICLE ARRAYS
 
@@ -48,10 +54,10 @@ class DSelector_omegapi : public DSelector
 		DNeutralParticleHypothesis* dPhoton1Wrapper;
 		DNeutralParticleHypothesis* dPhoton2Wrapper;
 
-	ClassDef(DSelector_omegapi, 0);
+	ClassDef(DSelector_omegapi_all, 0);
 };
 
-void DSelector_omegapi::Get_ComboWrappers(void)
+void DSelector_omegapi_all::Get_ComboWrappers(void)
 {
 	//Step 0
 	dStep0Wrapper = dComboWrapper->Get_ParticleComboStep(0);
@@ -68,4 +74,4 @@ void DSelector_omegapi::Get_ComboWrappers(void)
 	dPhoton2Wrapper = static_cast<DNeutralParticleHypothesis*>(dStep1Wrapper->Get_FinalParticle(1));
 }
 
-#endif // DSelector_omegapi_h
+#endif // DSelector_omegapi_all_h

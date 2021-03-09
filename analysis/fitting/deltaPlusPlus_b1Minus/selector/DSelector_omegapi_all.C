@@ -179,7 +179,7 @@ Bool_t DSelector_omegapi_all::Process(Long64_t locEntry)
 		if(dIsMC) {
 			// Keep only generator beam photons for phasespace MC
 			Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
-			if(dOption.Contains("phasespace") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator())) {
+			if(dOption.Contains("noaccidental") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator())) {
 				dComboWrapper->Set_IsComboCut(true);
 				continue;
 			}
@@ -420,7 +420,7 @@ Bool_t DSelector_omegapi_all::Process(Long64_t locEntry)
 				// set weight according to omega mass
 				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
 				// set ordered final state P4 for filling flat tree
-				if(!dOption.Contains("thrown")) 
+				if(!dOption.Contains("accept")) 
 					FillAmpTools_FlatTree(locBeamP4, locFinalStateP4); 
 				else {
 					dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", 1.0);

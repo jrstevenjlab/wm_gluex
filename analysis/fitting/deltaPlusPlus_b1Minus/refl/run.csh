@@ -37,3 +37,6 @@ omegapi_plotter omegapi.fit
 mv omegapi_plot.root omegapi_plot_refl-_unconstrained.root
 mv omegapi.fit omegapi_refl-_unconstrained.fit
 
+# cleanup 
+# rm ./*.root
+# rm ./*.ni

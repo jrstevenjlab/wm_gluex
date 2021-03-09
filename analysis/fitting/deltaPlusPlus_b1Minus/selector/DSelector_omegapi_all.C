@@ -1,6 +1,6 @@
-#include "DSelector_omegapi.h"
+#include "DSelector_omegapi_all.h"
 
-void DSelector_omegapi::Init(TTree *locTree)
+void DSelector_omegapi_all::Init(TTree *locTree)
 {
 	// USERS: IN THIS FUNCTION, ONLY MODIFY SECTIONS WITH A "USER" OR "EXAMPLE" LABEL. LEAVE THE REST ALONE.
 
@@ -23,8 +23,44 @@ void DSelector_omegapi::Init(TTree *locTree)
 	if(locInitializedPriorFlag)
 		return; //have already created histograms, etc. below: exit
 
-	Get_ComboWrappers();
 	dPreviousRunNumber = 0;
+
+	if(!(dTreeInterface->Get_Branch("NumCombos") == NULL)) {
+		Get_ComboWrappers();
+		
+		//PID
+		dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false));
+		//below: value: +/- N ns, Unknown: All PIDs, SYS_NULL: all timing systems
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.5, Proton, SYS_TOF));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 1.0, Proton, SYS_BCAL));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.5, PiPlus, SYS_TOF));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 1.0, PiPlus, SYS_BCAL));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.5, PiMinus, SYS_TOF));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 1.0, PiMinus, SYS_BCAL));
+		dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 1.0, Gamma, SYS_BCAL));
+		
+		//KINFIT RESULTS
+		dAnalysisActions.push_back(new DHistogramAction_KinFitResults(dComboWrapper));
+		
+		//CUT MISSING MASS
+		dAnalysisActions.push_back(new DCutAction_MissingMassSquared(dComboWrapper, false, -0.05, 0.05));
+		dAnalysisActions.push_back(new DCutAction_KinFitFOM(dComboWrapper, 0.01));
+		
+		//INITIALIZE ACTIONS
+		//If you create any actions that you want to run manually (i.e. don't add to dAnalysisActions), be sure to initialize them here as well
+		Initialize_Actions();
+	}
+
+	dHist_3piPiPlus1Mass = new TH1F("3piPiPlus1Mass", ";Invariant Mass (GeV)", 200, 0.5, 1.5);
+	dHist_3piPiPlus2Mass = new TH1F("3piPiPlus2Mass", ";Invariant Mass (GeV)", 200, 0.5, 1.5);
+	dHist_3piPiPlus1MassCorr = new TH2F("3piPiPlus1MassCorr", ";Invariant Mass (GeV); Invariant Mass (GeV)", 100, 0.5, 1.5, 100, 0.5, 1.5);
+	dHist_4piMassSum = new TH1F("4piMassSum", ";Invariant Mass (GeV)", 200, 1.0, 2.0);
+	dHist_3piMassSum = new TH1F("3piMassSum", ";Invariant Mass (GeV)", 200, 0.5, 1.5);
+	dHist_2gammaMassSum = new TH1F("2gammaMassSum", ";Invariant Mass (GeV)", 500, 0.07, 0.20);
+	dHist_KinFitChiSq = new TH1F("KinFitChiSq", ";#chi^{2}/NDF", 100, 0, 25);
+
+	dHist_ProtonPiPlus1Mass = new TH1F("ProtonPiPlus1Mass", ";Invariant Mass (GeV)", 1000, 1.0, 2.5);
+	dHist_ProtonPiPlus2Mass = new TH1F("ProtonPiPlus2Mass", ";Invariant Mass (GeV)", 1000, 1.0, 2.5);
 
 	dIsMC = (dTreeInterface->Get_Branch("MCWeight") != NULL);
 
@@ -37,7 +73,7 @@ void DSelector_omegapi::Init(TTree *locTree)
 	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("Phi_Prod");
 }
 
-Bool_t DSelector_omegapi::Process(Long64_t locEntry)
+Bool_t DSelector_omegapi_all::Process(Long64_t locEntry)
 {
 	// The Process() function is called for each entry in the tree. The entry argument
 	// specifies which entry in the currently loaded tree is to be processed.
@@ -66,14 +102,18 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 		dPreviousRunNumber = locRunNumber;
 	}
 
-	// get thrown particles in case we want to test fit with truth information
 	vector<TLorentzVector> locFinalStateThrownP4;
 	TLorentzVector locPi0ThrownP4;
+	TLorentzVector locOmegaP4;
+	TLorentzVector locRecoilP4;
 	if(Get_NumThrown()>0) {
 		for (UInt_t i=0;i<Get_NumThrown();i++){
 			dThrownWrapper->Set_ArrayIndex(i);
                         Int_t locThrownPID = dThrownWrapper->Get_PID();
-                        if(locThrownPID==7) locPi0ThrownP4 = dThrownWrapper->Get_P4(); // get Pi0 first to set proper order for AmpTools
+                        if(locThrownPID==7) { // get Pi0 for later use
+				locPi0ThrownP4 = dThrownWrapper->Get_P4(); 
+				locOmegaP4 = locPi0ThrownP4; // add omega decay neutral pion
+			}
 		}
          	for (UInt_t i=0;i<Get_NumThrown();i++){
                 	//Set branch array indices corresponding to this particle
@@ -81,13 +121,49 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 			Int_t locThrownPID = dThrownWrapper->Get_PID();
 			if(locThrownPID==14 || locThrownPID==8 || locThrownPID==9) {
 				locFinalStateThrownP4.push_back(dThrownWrapper->Get_P4());
+				if(locThrownPID==14) locRecoilP4 += dThrownWrapper->Get_P4();
+				else {
+					// add omega decay charged pions
+					if(locFinalStateThrownP4.size() == 4) {
+						locOmegaP4 += dThrownWrapper->Get_P4(); // pi+
+					}
+					if(locFinalStateThrownP4.size() == 5) {
+						locOmegaP4 += dThrownWrapper->Get_P4(); // pi-
+					}
+				}
 			}
+
+			// set pi0 in the proper order for AmpTools
 			if(locFinalStateThrownP4.size() == 2) locFinalStateThrownP4.push_back(locPi0ThrownP4);
-			if(locFinalStateThrownP4.size() == 6) break;
+			if(locFinalStateThrownP4.size() == 6) {
+				locRecoilP4 += dThrownWrapper->Get_P4();
+				break;
+			}
 	    	}
 	}
 
+	// fill generated from Thrown_Tree
+	if(dOption.Contains("thrown") && dTreeInterface->Get_Branch("NumCombos") == NULL) {
+		dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", 1.0);
+		dFlatTreeInterface->Fill_Fundamental<Float_t>("MRecoil", locRecoilP4.M());
+		TLorentzVector locBeamP4 = dThrownBeam->Get_P4();	
+		FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);
+		Fill_FlatTree();
+		
+		return kTRUE;
+	}
+
+	//ANALYSIS ACTIONS: Reset uniqueness tracking for each action
+        //For any actions that you are executing manually, be sure to call Reset_NewEvent() on them here
+        Reset_Actions_NewEvent();
+
 	/************************************************* LOOP OVER COMBOS *************************************************/
+
+	// keep track of combo with best ChiSquare
+	double locBestChiSq = 9e9;
+	vector< vector<TLorentzVector> > locFinalStateBestChiSqP4;
+	vector< TLorentzVector > locRecoilBestChiSqP4, locBeamBestChiSqP4;
+	vector< double > locWeightBestChiSq, locM3PiBestChiSq, locM4PiBestChiSq, loctBestChiSq; 
 
 	//Loop over combos
 	for(UInt_t loc_i = 0; loc_i < Get_NumCombos(); ++loc_i)
@@ -99,6 +175,15 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 		dComboWrapper->Set_IsComboCut(false);
 		if(dComboWrapper->Get_IsComboCut()) // Is false when tree originally created
 			continue; // Combo has been cut previously
+
+		if(dIsMC) {
+			// Keep only generator beam photons for phasespace MC
+			Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
+			if(dOption.Contains("noaccidental") && !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator())) {
+				dComboWrapper->Set_IsComboCut(true);
+				continue;
+			}
+		}
 
 		/********************************************** GET PARTICLE INDICES *********************************************/
 
@@ -187,6 +272,10 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
                         locAccid = true;
                 }
 
+		// Loop through the analysis actions, executing them in order for the active particle combo
+                if(!Execute_Actions()) //if the active combo fails a cut, IsComboCutFlag automatically set
+                        continue;
+
 		/****************************************** Set up omega sideband weights ************************************/
 
 		double loc3PiMass11 = loc3PiP4_11.M();
@@ -214,7 +303,8 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 		
 		// Apply cuts and if combo fails cut, then use dComboWrapper->Set_IsComboCut(true)
 		double locKinFit_CL = dComboWrapper->Get_ConfidenceLevel_KinFit("");
-                if(locKinFit_CL < 1e-4) {
+		double locKinFit_RedChiSq = dComboWrapper->Get_ChiSq_KinFit("")/dComboWrapper->Get_NDF_KinFit("");
+                if(locKinFit_CL < 1e-6) {
 			dComboWrapper->Set_IsComboCut(true);
 			continue;
 		}
@@ -223,6 +313,29 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 			dComboWrapper->Set_IsComboCut(true);
 			continue;
 		}
+
+		dHist_KinFitChiSq->Fill(locKinFit_RedChiSq, locAccWeight);
+		if(locKinFit_RedChiSq > 5) continue;
+
+		// reset best ChiSquare vectors 
+		if(dOption.Contains("bestChiSq")) {
+			if(locAccid) continue;
+			if(locKinFit_RedChiSq < locBestChiSq) {
+				locFinalStateBestChiSqP4.clear();
+				locRecoilBestChiSqP4.clear(); locBeamBestChiSqP4.clear();
+				locWeightBestChiSq.clear(); locM3PiBestChiSq.clear();
+				locM4PiBestChiSq.clear(); loctBestChiSq.clear();
+			}
+		}
+
+		dHist_3piPiPlus1Mass->Fill(loc3PiMass11);
+		dHist_3piPiPlus1Mass->Fill(loc3PiMass12);
+		dHist_3piPiPlus1MassCorr->Fill(loc3PiMass12, loc3PiMass11);
+		dHist_3piPiPlus2Mass->Fill(loc3PiMass21);
+		dHist_3piPiPlus2Mass->Fill(loc3PiMass22);
+
+		dHist_ProtonPiPlus2Mass->Fill(locProtonPiPlus2P4.M());
+                dHist_ProtonPiPlus1Mass->Fill(locProtonPiPlus1P4.M());
 
 		//FILL FLAT TREE
 		vector<Int_t> locFinalStatePID {2212, -211, 111, 211, -211, 211};
@@ -236,27 +349,56 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 				// omega mass cut and sideband weight
 				TLorentzVector loc3PiP4 = locPi0P4 + locPiPlusP4[iplus] + locPiMinusP4[iminus];
 				double loc3PiMass = loc3PiP4.M();
-				
+				TLorentzVector loc3PiP4_alt = locPi0P4 + locPiPlusP4[iplus] + locPiMinusP4[abs(iminus-1)];
+                                double loc3PiMass_alt = loc3PiP4_alt.M();	
+	
 				// Delta++ cut
 				TLorentzVector locRecoilP4 = locProtonP4+locPiPlusP4[abs(iplus-1)];
 				if(locRecoilP4.M() > 1.6) 
 					continue; 
 
-				// loose pi0 mass
-				if(fabs(locPi0P4.M() - 0.135) > 0.015) continue; 
+				double weight = 0;
+				dHist_2gammaMassSum->Fill(locPi0P4.M());
+				if(fabs(locPi0P4.M() - 0.135) < 0.015) 
+					weight = 1.0;								
+				else if((locPi0P4.M() > 0.09 && locPi0P4.M() < 0.105) || (locPi0P4.M() > 0.15 && locPi0P4.M() < 0.165))
+					weight = -1.0;
 
-				// loose -t cut for now
+				dHist_3piMassSum->Fill(loc3PiMass, weight);
+
+				// t cut
 				double loct = -1. * (locRecoilP4 - dTargetP4).M2();
-				if(loct > 1.0) continue;
+				if(loct > 1.0)
+					continue;
 
-				// set weight from 2D 3pi mass correlation (see Chung et. al. 1975)...
-				double weight = 1.0;
-				// PLACEHOLDER NEEDS TO BE FIXED!
-                                if (loc3PiMass > 0.7479 && loc3PiMass < 0.8169) weight *= 1.0;
-                                else if ((loc3PiMass > 0.7134 && loc3PiMass < 0.7249) || (loc3PiMass > 0.8399 && loc3PiMass < 0.8514)) weight = -3.;
-                                else continue;
+				double loc2Dweight;
+                                double locLmin = 0.690;
+                                double locLmax = 0.735;
+                                double locomegamin = 0.760;
+                                double locomegamax = 0.805;
+                                double locHmin = 0.830;
+                                double locHmax = 0.875;
+
+                                if((loc3PiMass > locomegamin && loc3PiMass < locomegamax) && (loc3PiMass_alt > locomegamin && loc3PiMass_alt < locomegamax)) {
+					// "double-omega" events only used once, closest to true omega mass
+					if(fabs(loc3PiMass-0.783) < fabs(loc3PiMass_alt-0.783)) loc2Dweight = 1.0;
+					else continue;
+				}
+				else if((loc3PiMass > locomegamin && loc3PiMass < locomegamax)) loc2Dweight = 1.0;
+				else if((loc3PiMass_alt > locomegamin && loc3PiMass_alt < locomegamax)) continue;
+				// contol region overlap (cross hatched) are counted twice with a weight of -5/8
+                                else if((loc3PiMass > locLmin && loc3PiMass < locLmax) && (loc3PiMass_alt > locLmin && loc3PiMass_alt < locLmax)) loc2Dweight = -0.625;
+                                else if((loc3PiMass > locLmin && loc3PiMass < locLmax) && (loc3PiMass_alt > locHmin && loc3PiMass_alt < locHmax)) loc2Dweight = -0.625;
+                                else if((loc3PiMass > locHmin && loc3PiMass < locHmax) && (loc3PiMass_alt > locLmin && loc3PiMass_alt < locLmax)) loc2Dweight = -0.625;
+                                else if((loc3PiMass > locHmin && loc3PiMass < locHmax) && (loc3PiMass_alt > locHmin && loc3PiMass_alt < locHmax)) loc2Dweight = -0.625;
+				// control regions included once with weight of -0.5
+                                else if((loc3PiMass > locLmin && loc3PiMass < locLmax) || (loc3PiMass > locHmin && loc3PiMass < locHmax)) loc2Dweight = -0.5;
+				else continue;
+	
+				if(weight < 1.0) continue;
 
 				double loc4PiMass = (loc3PiP4 + locPiMinusP4[abs(iminus-1)]).M();
+				dHist_4piMassSum->Fill(loc4PiMass, loc2Dweight);
 
 				// set ordering of pions for amplitude analysis
 				vector<TLorentzVector> locFinalStateP4;
@@ -273,27 +415,53 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 				dFlatTreeInterface->Fill_Fundamental<Float_t>("Phi_Prod", locRecoilP4.Phi());
 				dFlatTreeInterface->Fill_Fundamental<Float_t>("t", loct);
 
-				// set weight according to omega mass
-				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", weight*locAccWeight);
-		
-				// set ordered final state P4 for filling flat tree
-				FillAmpTools_FlatTree(locBeamP4, locFinalStateP4); 
-				//FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);
+				cout<<locOmegaP4.M()<<" "<<loc3PiMass<<" "<<loc3PiMass_alt<<" "<<loc2Dweight<<endl;
 
-				Fill_FlatTree(); //for the active combo
+				// set weight according to omega mass
+				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
+				// set ordered final state P4 for filling flat tree
+				if(!dOption.Contains("accept")) 
+					FillAmpTools_FlatTree(locBeamP4, locFinalStateP4); 
+				else {
+					dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", 1.0);
+					FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);
+				}
+					
+
+				if(!dOption.Contains("bestChiSq"))
+					Fill_FlatTree(); //for the active combo
+				else {
+					locFinalStateBestChiSqP4.push_back(locFinalStateP4);
+					locRecoilBestChiSqP4.push_back(locRecoilP4);
+					locBeamBestChiSqP4.push_back(locBeamP4);
+					locWeightBestChiSq.push_back(loc2Dweight);
+					loctBestChiSq.push_back(loct);
+					locM3PiBestChiSq.push_back(loc3PiMass);
+					locM4PiBestChiSq.push_back(loc4PiMass);
+				}
 			}
 		}
 
-		if(dOption.Contains("signal") && weight11 <= 0. && weight12 <= 0.) {
-			dComboWrapper->Set_IsComboCut(true);
-			continue;
-		}
-		if(dOption.Contains("bkgnd") && weight11 >= 0. && weight12 >= 0.) {
-			dComboWrapper->Set_IsComboCut(true);
-			continue;
-		}
-
 	} // end of combo loop
+
+	// fill with a single combo per event with the best ChiSquare (reduce accidentals)
+	if(dOption.Contains("bestChiSq")) {
+		
+		// loop over omega candidates within combo
+		for(uint i=0; i<locFinalStateBestChiSqP4.size(); i++) {
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", locWeightBestChiSq[i]);
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("MRecoil", locRecoilBestChiSqP4[i].M());
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("M3Pi", locM3PiBestChiSq[i]);
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("M4Pi", locM4PiBestChiSq[i]);
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("Phi_Prod", locRecoilBestChiSqP4[i].Phi());
+			dFlatTreeInterface->Fill_Fundamental<Float_t>("t", loctBestChiSq[i]);
+		
+			FillAmpTools_FlatTree(locBeamBestChiSqP4[i], locFinalStateBestChiSqP4[i]);
+			Fill_FlatTree();
+		}
+		
+		return kTRUE;
+	}
 
 	/************************************ EXAMPLE: FILL CLONE OF TTREE HERE WITH CUTS APPLIED ************************************/
 	Bool_t locIsEventCut = true;
@@ -306,7 +474,7 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 		locIsEventCut = false; // At least one combo succeeded
 		break;
 	}
-	if(!locIsEventCut){ // && dOutputTreeFileName != "") {
+	if(!locIsEventCut && dOutputTreeFileName != "") {
 		cout<<"filled tree good entry "<<locEntry<<endl;
 		cout<<dOutputTreeFileName<<endl;
 		//eventCounter++;
@@ -316,7 +484,7 @@ Bool_t DSelector_omegapi::Process(Long64_t locEntry)
 	return kTRUE;
 }
 
-void DSelector_omegapi::Finalize(void)
+void DSelector_omegapi_all::Finalize(void)
 {
 	//cout<<"Total events written = "<<eventCounter<<endl;
 

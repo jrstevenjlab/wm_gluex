@@ -23,9 +23,6 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 		return; //have already created histograms, etc. below: exit
 
 	//THEN THIS
-	Get_ComboWrappers();
-	dPreviousRunNumber = 0;
-
 	dIsMC = (dTreeInterface->Get_Branch("MCWeight") != NULL);
 
 	SetupAmpTools_FlatTree();
@@ -36,7 +33,10 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
  	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("MRecoil");
  	dFlatTreeInterface->Create_Branch_Fundamental<Float_t>("Phi_Prod");
 
+        if((dTreeInterface->Get_Branch("NumCombos") == NULL)) return;
 
+	Get_ComboWrappers();
+        dPreviousRunNumber = 0;
 
 	/*********************************** EXAMPLE USER INITIALIZATION: ANALYSIS ACTIONS **********************************/
 
@@ -204,7 +204,6 @@ void DSelector_pomega2pi_omega3pi::Init(TTree *locTree)
 	for(uint i=0; i<locThrownTopologies_omegacut_nosideband.size(); i++) {
 		dHist_InvariantMass_ThrownTopology_omegacut_nosideband[locThrownTopologies_omegacut_nosideband[i]] = new TH1F(Form("hInvariantMass_ThrownTopology_omegacut_nosideband_%d", i),Form("Invariant Mass Topology: %s", locThrownTopologies_omegacut_nosideband[i].Data()), 1000, 1.0, 3.0);
 	}
-	
 
 	/******************************** EXAMPLE USER INITIALIZATION: STAND-ALONE HISTOGRAMS *******************************/
 
@@ -476,6 +475,17 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
  			if(locFinalStateThrownP4.size() == 6) break;
  	    	}
  	}
+
+	// fill generated from Thrown_Tree
+	if(dOption.Contains("thrown") && dTreeInterface->Get_Branch("NumCombos") == NULL) {
+                dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", 1.0);
+                TLorentzVector locBeamP4 = dThrownBeam->Get_P4();
+                FillAmpTools_FlatTree(locBeamP4, locFinalStateThrownP4);
+                Fill_FlatTree();
+
+                return kTRUE;
+        }
+
 
 	/********************************************* SETUP UNIQUENESS TRACKING ********************************************/
 
@@ -2713,9 +2723,12 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
  				dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", loc2Dweight*locAccWeight);
 
 				//remove random trigger background from phasespace MC
-				if(dOption.Contains("phasespace") && !dComboBeamWrapper->Get_IsGenerator()) {
-				  dComboWrapper->Set_IsComboCut(true);
-				  continue;
+				if(dOption.Contains("phasespace")) {
+				  Bool_t locIsGeneratorFlag = (dThrownBeam->Get_P4().E() == dComboBeamWrapper->Get_P4().E() && fabs(dThrownBeam->Get_X4().T() - dComboBeamWrapper->Get_X4().T()) < 2.004) ? kTRUE : kFALSE;
+				  if( !(locIsGeneratorFlag || dComboBeamWrapper->Get_IsGenerator()) ) {
+				    dComboWrapper->Set_IsComboCut(true);
+				    continue;
+				  }
 				}
 
   				// set ordered final state P4 for filling flat tree
@@ -2789,7 +2802,7 @@ Bool_t DSelector_pomega2pi_omega3pi::Process(Long64_t locEntry)
 		locIsEventCut = false; // At least one combo succeeded
 		break;
 	}
-	if(!locIsEventCut){ // && dOutputTreeFileName != "") {
+	if(!locIsEventCut && dOutputTreeFileName != "") {
  		cout<<"filled tree good entry "<<locEntry<<endl;
  		cout<<dOutputTreeFileName<<endl;
  		//eventCounter++;

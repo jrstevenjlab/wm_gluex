@@ -12,7 +12,7 @@ def main(argv):
     configName = "DeltaLowerVertex_b1"  # file label for output configuration
     templateName = "template_deltaPlusPlus_b1Minus.cfg"  # name of template config file defining common parameters
     
-    className = "vec_ps_refl" # AMPTOOLS_AMPS class definition
+    className = "Vec_ps_refl" # AMPTOOLS_AMPS class definition
     constrainDSamps = True    # option to fix phase between S and D waves
     forceRefl = 0             # consider only one reflectivity by setting to +1 or -1 (default 0 includes both)
     initRefl = 0              # initialize only one reflectivity by setting to +1 or -1 (default 0 includes both)

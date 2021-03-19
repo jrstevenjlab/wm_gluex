@@ -8,16 +8,23 @@ from optparse import OptionParser
 ####################### MAIN #######################
 def main(argv):
     
+    name = "neutralb1"
+    parser_usage = "runOrientation.py [orientation_name angle]"
+    parser = OptionParser(usage = parser_usage)
+    (options, args) = parser.parse_args(argv)
+    if len(args) == 1:
+	name = args[0]
+
     reaction = "omegapi"
-    configName = "DeltaLowerVertex_b1"  # file label for output configuration
-    templateName = "template_deltaPlusPlus_b1Minus.cfg"  # name of template config file defining common parameters
-    
+    configName = "template"  # file label for output configuration
+    templateName = "template_%s.cfg" % name  # name of template config file defining common parameters
+
     className = "Vec_ps_refl" # AMPTOOLS_AMPS class definition
     constrainDSamps = True    # option to fix phase between S and D waves
     forceRefl = 0             # consider only one reflectivity by setting to +1 or -1 (default 0 includes both)
     initRefl = 0              # initialize only one reflectivity by setting to +1 or -1 (default 0 includes both)
     initReMag = 100
-    initImMag = 0
+    initImMag = 100
     
     outFileName = "fit_" + reaction + "_amplitude_"
     if initRefl: outFileName += "refl%s_" % ("%+d" % initRefl)[0]
@@ -50,6 +57,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
     # dictionaries to write consistent names
     char = {-2:"m2", -1:"m", 0:"0", +1:"p", +2:"p2"}
     word = {-1:"Neg", +1:"Pos"}
+    wordcomp = {-1:"Imag", +1:"Real"}
     L = {0:"s", 1:"p", 2:"d", 3:"f", 4:"g"}
     common = "angle fraction dalitz"
 
@@ -81,39 +89,40 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
         loopName = "LOOPAMP" + jp
         loopMName = "LOOPM" + jp
         loopLName = "LOOPL" + jp
-        
+        naturality = parity * math.pow(-1,j)
+
         jpComment = "############################ spin %d parity %+d ##################################\n\n" % (j,parity)
         if jpComment not in comments:
             fout.write(jpComment)
             comments += jpComment
         
         # 4 coherent sums for reflectivity and sign of (1 +/- P_gamma)
-        for reflsign in [[-1,-1],[+1,-1],[+1,+1],[-1,+1]]:
-            refl = reflsign[0]
-            sign = reflsign[1]
+        for realsign in [[-1,-1,"ImagNegSign"],[+1,-1,"RealNegSign"],[-1,+1,"ImagPosSign"],[+1,+1,"RealPosSign"]]:
+            real = realsign[0]
+            sign = realsign[1]
             
+            # real or imaginary for particular sum is given by naturality
+            refl = 0
+            if sign*real > 0:
+                if naturality > 0: # natural
+                    refl = +1
+                else: # unnatural
+                    refl = -1
+            else:
+                if naturality > 0: # natural
+                    refl = -1
+                else: # unnatural
+                    refl = +1
+
             # option to force reflectivity if desired
             if forceRefl and refl != forceRefl:
                 continue
-            
-            # real or imaginary for particular sum is given by naturality
-            naturality = parity * math.pow(-1,j)
-            real = 0
-            if sign*refl > 0:
-                if naturality > 0: # natural
-                    real = +1
-                else: # unnatural
-                    real = -1
-            else:
-                if naturality > 0: # natural
-                    real = -1
-                else: # unnatural
-                    real = +1
 
             # write individual amplitudes
-            sum = word[refl] + "Refl" + word[sign] + "Sign"
+            sum = realsign[2] #wordcomp[real] + word[sign] + "Sign"
             amplitude = reaction + "::" + sum + "::" + loopName
             amplitudeLine = "amplitude " + amplitude + " " + className
+
             amplitudeLine += " %d %s %s  %+d  %+d  %s" % (j, loopMName, loopLName, real, sign, common)
             if amplitudeLine not in amplitudeLines:
                 amplitudeLines += amplitudeLine
@@ -144,10 +153,11 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                     Lloop += " %d" % wave["l"]
                     
                 # select amplitude for fixed phase
-                if refl not in fixedPhaseRefl and spin_proj == 0: # fix phase for one of the amplitudes in each reflectivity
-                    fixedPhaseRefl.append(refl)
-                    fixedPhase += initializationLine.replace(loopName,amp)
-                    fixedPhase += " real\n"
+                if real not in fixedPhaseRefl and spin_proj == 0: # fix phase for one of the amplitudes in each reflectivity
+                    fixedPhaseRefl.append(real)
+		    initphase = initializationLine.replace(loopName,amp)
+                    fixedPhase += initphase.rsplit(' ', 1)[0] 
+                    fixedPhase += " 0 real\n"
         
         # if more waves with the same J^P are in waveset, wait to print loop
         skipPrinting = False
@@ -174,8 +184,9 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
         fout.write(initializationLines)
     
         # constrain common parameters from different sums
-        fout.write("constrain omegapi PosReflPosSign %s omegapi PosReflNegSign %s\n" % (loopName,loopName))
-        fout.write("constrain omegapi NegReflPosSign %s omegapi NegReflNegSign %s\n" % (loopName,loopName))
+        fout.write("constrain omegapi ImagNegSign %s omegapi RealPosSign %s\n" % (loopName,loopName))
+        fout.write("constrain omegapi RealNegSign %s omegapi ImagPosSign %s\n" % (loopName,loopName))
+            
         fout.write("\n")
         
         amplitudes_jp = []
@@ -190,7 +201,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
     
     # loop over amplitudes and constrain between S and D waves from same sum
     fout.write("\n# constrain S and D waves to the same amplitude and set scale factor for D/S ratio\n")
-    fout.write("loop LOOPSUM NegReflNegSign PosReflNegSign PosReflPosSign NegReflPosSign\n")
+    fout.write("loop LOOPSUM ImagNegSign RealNegSign RealPosSign ImagPosSign\n")
     previousSumName = ""
     scaleLines = ""
     scaleParName = "dsratio"

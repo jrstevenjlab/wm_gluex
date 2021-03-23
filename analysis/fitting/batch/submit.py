@@ -37,7 +37,7 @@ def main(argv):
 	MyCluster = "x5672"
 	MyFitType = "refl_1p1m"
 
-	MyEnv = "/work/halld2/home/jrsteven/analysisGluexI/builds/setup_gluex.csh"
+	MyEnv = "/work/halld2/home/jrsteven/2021-amptools/builds/setup_gluex.csh"
 	MyCodeDir = "/work/halld2/home/jrsteven/analysisGluexI/builds/wm_gluex/analysis/fitting/batch/"
 	MyDataInDir = "/work/halld3/home/jrsteven/fromWM/fitting/%s/selector/" % MyFit
 	MyPeriod = "2017_01" 

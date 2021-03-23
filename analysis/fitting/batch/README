@@ -1,0 +1,20 @@
+Batch submission scripts for omega-pi fitter
+
+submit.py
+- submits batch jobs to run fits with randomized starting parameters
+- user provides list of upper and lower bounds for omega-pi mass range included in fit
+- user provides path to input files for fitting
+
+runFit.csh
+- script which is executed by the batch job
+- copy necessary config files and scripts to local directory
+- execute runOrientation.py to fit single orientation
+- move results to output directory
+
+runOrientation.py
+- link input files for fit in local directory
+- replace temporary strings in config file like polarization angle (ANGLE) and t, E, mass cuts (TEMSTRING)
+- run fit with randomized starting parameters which can be changed with numRand
+- run omegapi_plotter to compute fit fractions and fill histograms of intensity for certain amplitudes
+
+

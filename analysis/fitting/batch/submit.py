@@ -20,7 +20,7 @@ TRACK      = "analysis" # https://scicomp.jlab.org/docs/batch_job_tracks
 # RESOURCES
 NCORES     = "2"               # Number of CPU cores
 DISK       = "50GB"            # Max Disk usage
-RAM        = "30000MB"         # Max RAM usage
+RAM        = "10000MB"         # Max RAM usage
 TIMELIMIT  = "2400minutes"     # Max walltime
 OS         = "centos77"        # Specify CentOS65 machines
 
@@ -79,7 +79,7 @@ def main(argv):
 
 			# PREPARE NAMES
 		        STUBNAME = MyFitName + "_%0.3f_%0.3f" % (MyMassLow, MyMassHigh)
-		        JOBNAME = WORKFLOW + "_" + STUBNAME
+		        JOBNAME = STUBNAME
 
 			# CREATE ADD-JOB COMMAND
 		        command = "swif add-job -workflow " + WORKFLOW + " -name " + JOBNAME

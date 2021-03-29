@@ -10,14 +10,14 @@
 
 PPN=8
 MyProcess=p2ketapr
-MyCluster=x5672
+MyCluster=hurricane
 echo $MyProcess
 
-MyEnv=$WM_GLUEX/
+MyEnv=/sciclone/home10/$USER/wm_gluex/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
 MyRunningDir=/sciclone/scr20/$USER/TMPDIR/$MyProcess/
 
-MyDataInDir=/sciclone/gluex10/RunPeriod-2018-08/analysis/ver11/tree_kpkmetapr__B4_M35_M17/merged/ #replace with your channels directory
+MyDataInDir=/sciclone/gluex10/RunPeriod-2018-08/analysis/ver14/tree_kpkmetapr__B4_M35_M17/merged/ #replace with your channels directory
 MyDataOutDir=/sciclone/gluex10/$USER/$MyProcess/
 
 MyLogDir=$MyDataOutDir/log/
@@ -30,7 +30,7 @@ echo $MyProcessDir
 echo $MyLogDir
 
 # data run numbers
-#for MyRun in 030496; do
+#for MyRun in 030471.root; do
 for MyRun in ${MyDataInDir}/*; do # all run numbers in input directory
 
 MyRun=`basename ${MyRun}`

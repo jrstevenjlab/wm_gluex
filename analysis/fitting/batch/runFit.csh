@@ -3,7 +3,11 @@
 echo $HOSTNAME
 
 setenv MyAngle $1
+<<<<<<< HEAD
 setenv MyFit $2
+=======
+setenv MyFit $2 
+>>>>>>> origin/master
 setenv MyPeriod $3
 setenv MyFitName $4
 setenv MyDataInDir $5

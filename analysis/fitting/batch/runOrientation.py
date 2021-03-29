@@ -19,7 +19,7 @@ def main(argv):
 	highE = 8.8
         lowMass = 1.165
         highMass = 1.3
-	numRand = 10
+	numRand = 20
         fitName = "omegapi"
 	period = "allPeriods"
 

@@ -17,4 +17,6 @@ runOrientation.py
 - run fit with randomized starting parameters which can be changed with numRand
 - run omegapi_plotter to compute fit fractions and fill histograms of intensity for certain amplitudes
 
+Notes:  
+- Once you submit your jobs with submit.py you can check their status with `swif list` where you'll see a list of your workflows and can monitor which jobs have completed
 

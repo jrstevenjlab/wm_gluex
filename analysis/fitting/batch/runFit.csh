@@ -1,6 +1,18 @@
 #!/bin/csh
 
 echo $HOSTNAME
+
+setenv MyAngle $1
+setenv MyFit $2
+setenv MyPeriod $3
+setenv MyFitName $4
+setenv MyDataInDir $5
+setenv MyDataOutDir $6
+setenv MyCodeDir $7
+setenv MyEnv $8
+setenv MyMassLow $9
+setenv MyMassHigh ${10}
+
 echo $MyAngle
 echo $MyFit
 echo $MyFitName
@@ -12,7 +24,7 @@ echo $MyMassLow
 echo $MyMassHigh
 
 source ~/.cshrc 
-source $MyEnv/setup.csh
+source $MyEnv
 
 pwd
 ls -al

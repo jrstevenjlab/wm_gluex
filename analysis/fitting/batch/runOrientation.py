@@ -38,7 +38,7 @@ def main(argv):
 		highMass = float(args[5])
  
 	print(orientation, angle)
-        cfgTempl = "fit_omegapi_amplitude_template.cfg"
+        cfgTempl = "fit_omegapi_amplitude_DeltaLowerVertex_b1.cfg"
 
         os.system("ln -s %s/AmpToolsInputTree_sum_%s_%s.root anglesOmegaPiAmplitude.root" % (inDataDir,orientation,period) )
         os.system("ln -s %s/anglesOmegaPiPhaseSpaceAcc_%s.root anglesOmegaPiPhaseSpaceAcc.root" % (inDataDir,period) )

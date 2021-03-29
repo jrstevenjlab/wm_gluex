@@ -10,7 +10,7 @@ cat ~/.login
 cat ~/.cshrc
 
 source ~/.cshrc 
-source $MyEnv/setup_custom.csh
+source $MyEnv/setup.csh
 env
 
 pwd
@@ -26,14 +26,15 @@ cp $MyCodeDir/selector/runSelector.C ./
 
 ls -al
 
-#echo $MyDataInDir/tree_*_0$MyRun.root
+echo $MyDataInDir/tree_*_0$MyRun.root
 cp $MyDataInDir/tree_*_0$MyRun.root ./
 
 ls -al
 
 root.exe -l -b -q runSelector.C\(\"$MyRun\",\"./\"\)
 mv hist*.acc.root $MyDataOutDir
-mv tree*.acc.root $MyDataOutDir
+mv tree_flat*.acc.root $MyDataOutDir/tree_flat_p2gamma_$MyRun.acc.root
+mv AmpToolsInputTree.root $MyDataOutDir/AmpToolsInputTree_$MyRun.root
 
 cd ../
 rm -rf $MyRun/

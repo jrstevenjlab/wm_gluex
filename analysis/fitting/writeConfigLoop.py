@@ -32,6 +32,7 @@ def main(argv):
     
     # add desired waves to list (could come from command line or short file input)
     waves = []
+    waves.append( {"spin":0, "parity":-1, "l":1} ) #0- P-wave (special case without loops)
     waves.append( {"spin":1, "parity":+1, "l":0} ) #1+ S-wave
     waves.append( {"spin":1, "parity":+1, "l":2} ) #1+ D-wave
     waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave
@@ -50,6 +51,19 @@ def main(argv):
     # write amplitudes based on above input
     writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initReMag, initImMag, constrainDSamps)
     fout.close()
+
+# special case for printing without loops
+def write0m(fout):
+    fout.write("amplitude omegapi::ImagNegSign::0m0p Vec_ps_refl 0 0 1  -1  -1  angle fraction dalitz\n")
+    fout.write("amplitude omegapi::RealNegSign::0m0p Vec_ps_refl 0 0 1  +1  -1  angle fraction dalitz\n")
+    fout.write("amplitude omegapi::ImagPosSign::0m0p Vec_ps_refl 0 0 1  -1  +1  angle fraction dalitz\n")
+    fout.write("amplitude omegapi::RealPosSign::0m0p Vec_ps_refl 0 0 1  +1  +1  angle fraction dalitz\n")
+    fout.write("initialize omegapi::ImagNegSign::0m0p cartesian 100 100\n")
+    fout.write("initialize omegapi::RealNegSign::0m0p cartesian 100 100\n")
+    fout.write("initialize omegapi::ImagPosSign::0m0p cartesian 100 100\n")
+    fout.write("initialize omegapi::RealPosSign::0m0p cartesian 100 100\n")
+    fout.write("constrain omegapi ImagNegSign 0m0p omegapi RealPosSign 0m0p\n")
+    fout.write("constrain omegapi RealNegSign 0m0p omegapi ImagPosSign 0m0p\n\n")
     
 ####################### WRITE AMPLITUDES #######################
 def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initReMag, initImMag, constrainDSamps):
@@ -96,6 +110,10 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
             fout.write(jpComment)
             comments += jpComment
         
+	if wave["spin"] == 0:
+	    write0m(fout)
+	    continue
+
         # 4 coherent sums for reflectivity and sign of (1 +/- P_gamma)
         for realsign in [[-1,-1,"ImagNegSign"],[+1,-1,"RealNegSign"],[-1,+1,"ImagPosSign"],[+1,+1,"RealPosSign"]]:
             real = realsign[0]

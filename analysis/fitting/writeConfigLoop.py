@@ -32,7 +32,7 @@ def main(argv):
     
     # add desired waves to list (could come from command line or short file input)
     waves = []
-    waves.append( {"spin":0, "parity":-1, "l":0} ) #0- S-wave (special case without loops)
+    waves.append( {"spin":0, "parity":-1, "l":1} ) #0- P-wave (special case without loops)
     waves.append( {"spin":1, "parity":+1, "l":0} ) #1+ S-wave
     waves.append( {"spin":1, "parity":+1, "l":2} ) #1+ D-wave
     waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave

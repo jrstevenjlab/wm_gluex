@@ -37,6 +37,9 @@ vecps_plotter Kpipi.fit
 mv vecps_plot.root vecps_plot_refl-_unconstrained.root
 mv Kpipi.fit Kpipi_refl-_unconstrained.fit
 
+cp vecps_plot_refl-.root vecps_plot.root
+root -l plot_plotter.C
+
 # cleanup 
 # rm ./*.root
 # rm ./*.ni

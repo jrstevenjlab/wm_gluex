@@ -1,6 +1,6 @@
 Documentation and scripts for GlueX groups use of W&M HPC resources:
 
-To get started clone this repository in your home directory on one of the HPC machines (eg. vortex.sciclone.wm.edu) by executing the following commands:
+To get started clone this repository in your home directory on one of the HPC machines (eg. hurricane.sciclone.wm.edu) by executing the following commands:
 
 `cd ~/`
 

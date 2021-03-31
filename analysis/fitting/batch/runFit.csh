@@ -3,11 +3,7 @@
 echo $HOSTNAME
 
 setenv MyAngle $1
-<<<<<<< HEAD
-setenv MyFit $2
-=======
 setenv MyFit $2 
->>>>>>> origin/master
 setenv MyPeriod $3
 setenv MyFitName $4
 setenv MyFitType $5
@@ -55,6 +51,10 @@ mv bin_*.ni $MyDataOutDir
 mv omegapi_fitPars.txt $MyDataOutDir
 mv omegapi_plot.root $MyDataOutDir
 mv param_seeds.cfg $MyDataOutDir
+
+ln -s $MyDataInDir/AmpToolsInputTree_sum_${MyAngle}_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiAmplitude.root
+ln -s $MyDataInDir/anglesOmegaPiPhaseSpaceAcc_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiPhaseSpaceAcc.root
+ln -s $MyDataInDir/anglesOmegaPiPhaseSpaceGen_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiPhaseSpace.root
 
 cd ../
 rm -rf Mass_${MyMassLow}_${MyMassHigh}

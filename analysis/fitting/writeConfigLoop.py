@@ -9,11 +9,14 @@ from optparse import OptionParser
 def main(argv):
     
     name = "neutralb1"
-    parser_usage = "runOrientation.py [orientation_name angle]"
+    amps = "1p"
+    parser_usage = "writeConfigLoop.py [template_name amps]"
     parser = OptionParser(usage = parser_usage)
     (options, args) = parser.parse_args(argv)
-    if len(args) == 1:
+    if len(args) > 0:
 	name = args[0]
+	if len(args) > 1:
+	    amps = args[1]
 
     reaction = "omegapi"
     configName = "template"  # file label for output configuration
@@ -32,10 +35,18 @@ def main(argv):
     
     # add desired waves to list (could come from command line or short file input)
     waves = []
-    waves.append( {"spin":0, "parity":-1, "l":1} ) #0- P-wave (special case without loops)
-    waves.append( {"spin":1, "parity":+1, "l":0} ) #1+ S-wave
-    waves.append( {"spin":1, "parity":+1, "l":2} ) #1+ D-wave
-    waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave
+    if "0m" in amps: # (special case without loops)
+	waves.append( {"spin":0, "parity":-1, "l":1} ) #0- P-wave
+    if "1p" in amps:
+    	waves.append( {"spin":1, "parity":+1, "l":0} ) #1+ S-wave
+    	waves.append( {"spin":1, "parity":+1, "l":2} ) #1+ D-wave
+    if "1m" in amps:
+    	waves.append( {"spin":1, "parity":-1, "l":1} ) #1- P-wave
+    if "2p" in amps:
+        waves.append( {"spin":2, "parity":+1, "l":2} ) #2+ D-wave
+    if "2m" in amps:
+        waves.append( {"spin":2, "parity":-1, "l":1} ) #2- P-wave
+	waves.append( {"spin":2, "parity":-1, "l":3} ) #2- F-wave
     
     # read template data for initial portion of config file defining common parameters and input file setup
     cfgTempl = templateName

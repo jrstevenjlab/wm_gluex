@@ -10,16 +10,18 @@ setenv MyFit $2
 >>>>>>> origin/master
 setenv MyPeriod $3
 setenv MyFitName $4
-setenv MyDataInDir $5
-setenv MyDataOutDir $6
-setenv MyCodeDir $7
-setenv MyEnv $8
-setenv MyMassLow $9
-setenv MyMassHigh ${10}
+setenv MyFitType $5
+setenv MyDataInDir $6
+setenv MyDataOutDir $7
+setenv MyCodeDir $8
+setenv MyEnv $9
+setenv MyMassLow ${10}
+setenv MyMassHigh ${11}
 
 echo $MyAngle
 echo $MyFit
 echo $MyFitName
+echo $MyFitType
 echo $MyPeriod
 echo $MyCodeDir
 echo $MyDataInDir
@@ -37,7 +39,7 @@ pwd
 cp $MyCodeDir/runOrientation.py ./
 cp $MyCodeDir/../writeConfigLoop.py ./ 
 cp $MyCodeDir/../template_$MyFit.cfg ./
-python writeConfigLoop.py $MyFit
+python writeConfigLoop.py $MyFit $MyFitType
 #cp  $MyCodeDir/../fit_helicity.cfg fit_omegapi_amplitude_template.cfg
 
 ls -al

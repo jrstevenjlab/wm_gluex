@@ -63,7 +63,7 @@ def main(argv):
 	f.close()
 
 	# do the fit for given bin
-        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -s param_seeds.cfg")
+        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 50000 -s param_seeds.cfg")
 
 	# make plotter
 	os.system("omegapi_plotter "+bin_name+".fit") 

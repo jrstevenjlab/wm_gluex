@@ -18,9 +18,9 @@ PROJECT    = "gluex"    # http://scicomp.jlab.org/scicomp/#/projects
 TRACK      = "analysis" # https://scicomp.jlab.org/docs/batch_job_tracks
 
 # RESOURCES
-NCORES     = "2"               # Number of CPU cores
+NCORES     = "4"               # Number of CPU cores
 DISK       = "50GB"            # Max Disk usage
-RAM        = "10000MB"         # Max RAM usage
+RAM        = "30000MB"         # Max RAM usage
 TIMELIMIT  = "2400minutes"     # Max walltime
 OS         = "centos77"        # Specify CentOS65 machines
 
@@ -32,10 +32,10 @@ def main(argv):
         global VERBOSE # so can modify here
 
 	PPN = 2
-	#MyFit = "neutralb1"
-	MyFit = "deltaPlusPlus_b1Minus"
+	MyFit = "neutralb1"
+	#MyFit = "deltaPlusPlus_b1Minus"
 	MyCluster = "x5672"
-	MyFitType = "refl_1p1m"
+	MyFitType = "refl_0m1p1m2m" # writeConfigLoop.py uses to define waveset
 
 	MyEnv = "/work/halld2/home/jrsteven/2021-amptools/builds/setup_gluex.csh"
 	MyCodeDir = "/work/halld2/home/jrsteven/analysisGluexI/builds/wm_gluex/analysis/fitting/batch/"
@@ -54,8 +54,11 @@ def main(argv):
 	# CREATE WORKFLOW IF IT DOESN'T ALREADY EXIST
 	WORKFLOW = MyFit+MyFitType
         WORKFLOW_LIST = subprocess.check_output(["swif", "list"])
-        if WORKFLOW not in WORKFLOW_LIST:
-            status = subprocess.call(["swif", "create", "-workflow", WORKFLOW])
+	foundWorkflow = False
+	for WORKFLOW_EXISTING in WORKFLOW_LIST:
+        	if WORKFLOW == WORKFLOW_EXISTING: foundWorkflow = True
+	if not foundWorkflow:
+		status = subprocess.call(["swif", "create", "-workflow", WORKFLOW])
 
 	for MyAngle,MyFitName in zip(angles,names):
 
@@ -92,11 +95,13 @@ def main(argv):
         		# log output
         		command += " -stdout " + MyLogDir + "/stdout." + STUBNAME + ".out"
         		command += " -stderr " + MyLogDir + "/stderr." + STUBNAME + ".err"
-        		command += " " + SCRIPTFILE + " %0.2f" % MyAngle + " " + MyFit + " " + MyPeriod + " " + MyFitName + " " + MyDataInDir + " " + MyDataOutDir + " " + MyCodeDir + " " + MyEnv + " %0.3f %0.3f" % (MyMassLow, MyMassHigh)
+        		command += " " + SCRIPTFILE + " %0.2f" % MyAngle + " " + MyFit + " " + MyPeriod + " " + MyFitName + " " + MyFitType + " " + MyDataInDir + " " + MyDataOutDir + " " + MyCodeDir + " " + MyEnv + " %0.3f %0.3f" % (MyMassLow, MyMassHigh)
 
 			print(command)
 			print("")
         		status = subprocess.call(command.split(" "))
+
+	subprocess.call(["swif", "run", WORKFLOW])
 
 if __name__ == "__main__":
    main(sys.argv[1:])

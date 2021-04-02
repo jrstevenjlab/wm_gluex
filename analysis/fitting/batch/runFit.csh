@@ -56,7 +56,7 @@ mv omegapi_fitPars.txt $MyDataOutDir
 mv omegapi_plot.root $MyDataOutDir
 mv param_seeds.cfg $MyDataOutDir
 
-ln -s $MyDataInDir/AmpToolsInputTree_sum_${MyAngle}_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiAmplitude.root
+ln -s $MyDataInDir/AmpToolsInputTree_sum_${MyFitName}_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiAmplitude.root
 ln -s $MyDataInDir/anglesOmegaPiPhaseSpaceAcc_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiPhaseSpaceAcc.root
 ln -s $MyDataInDir/anglesOmegaPiPhaseSpaceGen_${MyPeriod}.root $MyDataOutDir/anglesOmegaPiPhaseSpace.root
 

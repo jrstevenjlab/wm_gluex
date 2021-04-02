@@ -13,6 +13,8 @@ setenv MyCodeDir $8
 setenv MyEnv $9
 setenv MyMassLow ${10}
 setenv MyMassHigh ${11}
+setenv MytLow ${12}
+setenv MytHigh ${13}
 
 echo $MyAngle
 echo $MyFit
@@ -24,6 +26,8 @@ echo $MyDataInDir
 echo $MyDataOutDir
 echo $MyMassLow
 echo $MyMassHigh
+echo $MytLow
+echo $MytHigh
 
 source ~/.cshrc 
 source $MyEnv
@@ -41,7 +45,7 @@ python writeConfigLoop.py $MyFit $MyFitType
 ls -al
 
 echo $MyAngle
-python runOrientation.py $MyFitName $MyAngle $MyDataInDir $MyPeriod $MyMassLow $MyMassHigh
+python runOrientation.py $MyFitName $MyAngle $MyDataInDir $MyPeriod $MyMassLow $MyMassHigh $MytLow $MytHigh
 
 ls -al
 

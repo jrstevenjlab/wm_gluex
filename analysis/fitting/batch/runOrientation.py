@@ -36,7 +36,16 @@ def main(argv):
 		period = args[3]
 		lowMass = float(args[4])
 		highMass = float(args[5])
- 
+	if len(args) == 8:
+		orientation = args[0]
+		angle = args[1]
+		inDataDir = args[2]
+		period = args[3]
+		lowMass = float(args[4])
+		highMass = float(args[5])
+		lowt = float(args[6])
+		hight = float(args[7]) 
+	 
 	print(orientation, angle)
         cfgTempl = "fit_omegapi_amplitude_template.cfg"
 
@@ -63,7 +72,7 @@ def main(argv):
 	f.close()
 
 	# do the fit for given bin
-        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -s param_seeds.cfg")
+        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 50000 -s param_seeds.cfg")
 
 	# make plotter
 	os.system("omegapi_plotter "+bin_name+".fit") 

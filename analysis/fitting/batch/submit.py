@@ -134,7 +134,7 @@ def main(argv):
 					slurmOut.write("#SBATCH --error=%s/%s.err \n" % (MyLogDir,STUBNAME))
 					slurmOut.write("#SBATCH --output=%s/%s.out \n" % (MyLogDir,STUBNAME))
 					slurmOut.write("#SBATCH --job-name=%s \n" % JOBNAME)
-					slurmOut.write("%s %0.2f" % (SCRIPTFILE,MyAngle) + " " + MyFit + " " + MyPeriod + " " + MyFitName + " " + MyFitType + " " + MyDataInDir + " " + MyDataOutDir + " " + MyCodeDir + " " + MyEnv + " %0.3f %0.3f \n" % (MyMassLow, MyMassHigh) + " %0.2f %0.2f \n" % (MytLow, MytHigh))
+					slurmOut.write("%s %0.2f" % (SCRIPTFILE,MyAngle) + " " + MyFit + " " + MyPeriod + " " + MyFitName + " " + MyFitType + " " + MyDataInDir + " " + MyDataOutDir + " " + MyCodeDir + " " + MyEnv + " %0.3f %0.3f" % (MyMassLow, MyMassHigh) + " %0.2f %0.2f \n" % (MytLow, MytHigh))
 					slurmOut.close()
 					subprocess.call(["sbatch", "tempSlurm.txt"])
 

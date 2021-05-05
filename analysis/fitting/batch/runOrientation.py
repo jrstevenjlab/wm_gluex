@@ -13,13 +13,13 @@ import ROOT
 def main(argv):
         global VERBOSE # so can modify here
 
-	lowt = 0.15
-	hight = 0.3
+	lowt = 0.3
+	hight = 0.5
 	lowE = 8.2
 	highE = 8.8
         lowMass = 1.165
         highMass = 1.3
-	numRand = 20
+	numRand = 10
         fitName = "omegapi"
 	period = "allPeriods"
 
@@ -63,7 +63,7 @@ def main(argv):
 	f.close()
 
 	# do the fit for given bin
-        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 50000 -s param_seeds.cfg")
+        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 100000 -s param_seeds.cfg")
 
 	# make plotter
 	os.system("omegapi_plotter "+bin_name+".fit") 

@@ -2,10 +2,13 @@ Batch submission scripts for omega-pi fitter
 
 submit.py
 - submits batch jobs to run fits with randomized starting parameters
-- user provides list of upper and lower bounds for omega-pi mass range included in fit
+- user provides list of upper and lower bounds for omega-pi mass and -t ranges to be used in fit
 - user provides path to input files for fitting
+- flags can be chosen to run with
+	-CPU: isSWIF=True  and isGPU_JLab=False
+	-GPU: isSWIF=False and isGPU_JLab=True
 
-runFit.csh
+runFit.csh(.sh)
 - script which is executed by the batch job
 - copy necessary config files and scripts to local directory
 - execute runOrientation.py to fit single orientation
@@ -15,8 +18,14 @@ runOrientation.py
 - link input files for fit in local directory
 - replace temporary strings in config file like polarization angle (ANGLE) and t, E, mass cuts (TEMSTRING)
 - run fit with randomized starting parameters which can be changed with numRand
-- run omegapi_plotter to compute fit fractions and fill histograms of intensity for certain amplitudes
 
-Notes:  
-- Once you submit your jobs with submit.py you can check their status with `swif list` where you'll see a list of your workflows and can monitor which jobs have completed
+Notes: 
+- Memory requirements:
+	CPU: you may need to request a large amount of memory for the CPU jobs as the normalization integral has a large memory footprint.  In some cases this means you'll need to request more than 1 core to get get a job slot with larger memory (I think the hard limit is 4GB memory per core?) 
+	GPU: when you get a GPU care it automatically has 24GB of memory associated with it, so you don't need to request a large amount of memory in submit.py
+ 
+- Checking job status:
+	CPU: once you submit your jobs with SWIF you can check their status with `swif list` where you'll see a list of your workflows and can monitor which jobs have completed
+	GPU: your jobs are submitted via the Slurm scheduler so they can be accessed with Slurm commands such as `slurmJobs | grep "username"` to see what the status of jobs associated with your username are
 
+- Limited GPU availability: there are only a small number of GPU cards available on the ifarm currently, so you may only get 4-5 jobs running in parallel, but they're much faster than the CPU jobs for a large number of randomized starting values.

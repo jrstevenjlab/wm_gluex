@@ -17,6 +17,9 @@ from optparse import OptionParser
 ########################################################## MAIN ##########################################################
 def main(argv):
 
+	isSWIF=False    #set True for CPU
+	isGPU_JLab=True #set True for GPU
+
 	# PROJECT INFO
 	PROJECT    = "gluex"    # http://scicomp.jlab.org/scicomp/#/projects
 	TRACK      = "analysis" # https://scicomp.jlab.org/docs/batch_job_tracks
@@ -28,17 +31,14 @@ def main(argv):
 	TIMELIMIT  = "2400minutes"     # Max walltime
 	OS         = "centos77"        # Specify CentOS7.7 machines
 
-	SCRIPTFILE	= "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/runFit.sh"
-
-        global VERBOSE # so can modify here
-
-	isSWIF = False
-	isGPU_JLab = True
+	SCRIPTFILE	= "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/runFit.csh"
+	if isGPU_JLab:
+		SCRIPTFILE = "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/runFit.sh" # GPU template uses bash
 
 	MyFit = "neutralb1"
 	#MyFit = "deltaPlusPlus_b1Minus"
 	MyCluster = "x5672"
-	MyFitType = "gpu_refl_1p1m" # writeConfigLoop.py uses to define waveset
+	MyFitType = "gpu_refl_1p1m" # writeConfigLoop.py used to define waveset
 
 	MyEnv = "/work/halld2/home/jrsteven/2021-amptools/builds_gpu/setup_gluex.sh"
 	MyCodeDir = "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/"
@@ -65,7 +65,7 @@ def main(argv):
 	tLow =  [0.15] #, 0.3, 0.5]
 	tHigh = [0.3]  #, 0.5, 1.0]
 
-	# CREATE WORKFLOW IF IT DOESN'T ALREADY EXIST
+	# CREATE WORKFLOW IF IT DOESN'T ALREADY EXIST (for SWIF only)
 	if isSWIF:
 		WORKFLOW = MyFit+MyFitType
         	WORKFLOW_LIST = subprocess.check_output(["swif", "list"])

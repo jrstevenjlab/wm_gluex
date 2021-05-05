@@ -5,11 +5,11 @@ void plot_plotter(TString dir = "./") {
 
 	const int maxPlots = 9;
 	TString plotNames[maxPlots] = {"MOmegaPi","CosTheta","Phi","CosTheta_H","Phi_H","Prod_Ang","MRecoil","MProtonPi","MRecoilPi"};
-	const int maxAmps = 3;
-	TString ampNames[maxAmps] = {"","_1p","_1m"};
-    TString ampTitles[maxAmps] = {"Weighted Phasespace","#[]{1^{#plus}}^{(#pm)} (S+D)","#[]{1^{#minus}}^{(#pm)} P"};
-    TString ampDrawOpt[maxAmps] = {"h","ep","ep"};
-    int ampColors[maxAmps] = {1, 4, 2};
+	const int maxAmps = 6;
+	TString ampNames[maxAmps] = {"","_0m","_1p","_1m","_2m","_3m"};
+    TString ampTitles[maxAmps] = {"Weighted Phasespace","#[]{0^{#minus}}^{(#pm)} P","#[]{1^{#plus}}^{(#pm)} (S+D)","#[]{1^{#minus}}^{(#pm)} P","#[]{2^{#minus}}^{(#pm)} (P+F)", "#[]{3^{#mius}}^{(#pm)} (F)"};
+    TString ampDrawOpt[maxAmps] = {"h","ep","ep","ep","ep","ep"};
+    int ampColors[maxAmps] = {1, 6, 4, 2, 7, 8};
     
     TFile *f = TFile::Open(dir+"/omegapi_plot.root");
 

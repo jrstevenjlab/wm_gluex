@@ -47,6 +47,8 @@ def main(argv):
     if "2m" in amps:
         waves.append( {"spin":2, "parity":-1, "l":1} ) #2- P-wave
 	waves.append( {"spin":2, "parity":-1, "l":3} ) #2- F-wave
+    if "3m" in amps:
+	waves.append( {"spin":3, "parity":-1, "l":3} ) #3- F-wave
     
     # read template data for initial portion of config file defining common parameters and input file setup
     cfgTempl = templateName
@@ -171,6 +173,9 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
             
             # loop over spin projections
             for spin_proj in range(j,-(j+1),-1):
+		if abs(spin_proj) > 2:
+		    continue # conly consider m <=2 for photon beam
+
                 amp = jp+char[spin_proj]+l
                 if amp not in amplitudes:
                     amplitudes.append(amp)
@@ -192,7 +197,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
         skipPrinting = False
         for jwave in range(iwave,len(waves)):
             if wave == waves[jwave]: continue
-            
+           
             later_jp = str(waves[jwave]["spin"]) + char[waves[jwave]["parity"]]
             if later_jp == jp:
                 skipPrinting = True
@@ -223,6 +228,9 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
         initializationLines = ""
         Mloop = ""
         Lloop = ""
+
+    fout.write("\n# fix phase\n");
+    fout.write(fixedPhase);
     
     # option to constrain phase between S and D wave amplitudes (use real-valued D/S ratio as scale)
     if not constrainDSamps:
@@ -230,6 +238,11 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
     
     # loop over amplitudes and constrain between S and D waves from same sum
     fout.write("\n# constrain S and D waves to the same amplitude and set scale factor for D/S ratio\n")
+
+    fout.write("parameter dsratio 0.27 bounded 0 1\n\n")
+    fout.write("keyword parRange 3 3\n")
+    fout.write("parRange 0.2 0.34\n\n")
+
     fout.write("loop LOOPSUM ImagNegSign RealNegSign RealPosSign ImagPosSign\n")
     previousSumName = ""
     scaleLines = ""
@@ -244,8 +257,5 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                     
     fout.write(scaleLines)
     
-    fout.write("\n# fix phase\n")
-    fout.write(fixedPhase)
-
 if __name__ == "__main__":
     main(sys.argv[1:])

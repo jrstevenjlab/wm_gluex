@@ -75,7 +75,7 @@ def main(argv):
         os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 100000 -s param_seeds.cfg")
 
 	# make plotter
-	os.system("omegapi_plotter "+bin_name+".fit") 
+	#os.system("omegapi_plotter "+bin_name+".fit") 
 
 if __name__ == "__main__":
    main(sys.argv[1:])

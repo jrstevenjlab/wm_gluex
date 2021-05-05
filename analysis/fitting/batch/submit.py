@@ -4,6 +4,7 @@ import sys
 import os
 import subprocess
 import math
+import pwd
 from optparse import OptionParser
 
 #qsub -l nodes={# of nodes}:{node type}:ppn={# of processors per node} -l walltime={HH:MM:SS} scriptname
@@ -34,15 +35,15 @@ def main(argv):
 	isSWIF = False
 	isGPU_JLab = True
 
-	#MyFit = "neutralb1"
-	MyFit = "deltaPlusPlus_b1Minus"
+	MyFit = "neutralb1"
+	#MyFit = "deltaPlusPlus_b1Minus"
 	MyCluster = "x5672"
-	MyFitType = "refl_1p1m" # writeConfigLoop.py uses to define waveset
+	MyFitType = "gpu_refl_1p1m" # writeConfigLoop.py uses to define waveset
 
 	MyEnv = "/work/halld2/home/jrsteven/2021-amptools/builds_gpu/setup_gluex.sh"
 	MyCodeDir = "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/"
 	MyDataInDir = "/work/halld3/home/jrsteven/fromWM/fitting/%s/selector/" % MyFit
-	MyOutDir = "/volatile/halld/home/" + os.getuid()
+	MyOutDir = "/volatile/halld/home/" + pwd.getpwuid( os.getuid() )[0]
 
 	MyTemplate = open("slurm_template.txt","r")
 	MyTemplateData = MyTemplate.read() 
@@ -61,8 +62,8 @@ def main(argv):
 	masslow =  [1.165]
 	masshigh = [1.3]
 
-	tLow =  [0.15, 0.3, 0.5]
-	tHigh = [0.3, 0.5, 1.0]
+	tLow =  [0.15] #, 0.3, 0.5]
+	tHigh = [0.3]  #, 0.5, 1.0]
 
 	# CREATE WORKFLOW IF IT DOESN'T ALREADY EXIST
 	if isSWIF:

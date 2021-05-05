@@ -27,5 +27,6 @@ Notes:
 - Checking job status:
 	CPU: once you submit your jobs with SWIF you can check their status with `swif list` where you'll see a list of your workflows and can monitor which jobs have completed
 	GPU: your jobs are submitted via the Slurm scheduler so they can be accessed with Slurm commands such as `slurmJobs | grep "username"` to see what the status of jobs associated with your username are
+		-Slurm jobs can be canceled with `scancel jobid`
 
 - Limited GPU availability: there are only a small number of GPU cards available on the ifarm currently, so you may only get 4-5 jobs running in parallel, but they're much faster than the CPU jobs for a large number of randomized starting values.

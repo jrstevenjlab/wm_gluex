@@ -36,7 +36,16 @@ def main(argv):
 		period = args[3]
 		lowMass = float(args[4])
 		highMass = float(args[5])
- 
+	if len(args) == 8:
+		orientation = args[0]
+		angle = args[1]
+		inDataDir = args[2]
+		period = args[3]
+		lowMass = float(args[4])
+		highMass = float(args[5])
+		lowt = float(args[6])
+		hight = float(args[7]) 
+	 
 	print(orientation, angle)
         cfgTempl = "fit_omegapi_amplitude_template.cfg"
 

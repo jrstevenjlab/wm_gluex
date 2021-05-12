@@ -38,7 +38,7 @@ def main(argv):
 	MyFit = "neutralb1"
 	#MyFit = "deltaPlusPlus_b1Minus"
 	MyCluster = "x5672"
-	MyFitType = "gpu_refl_1p1m" # writeConfigLoop.py used to define waveset
+	MyFitType = "gpu_refl_1p1miso" # writeConfigLoop.py used to define waveset
 
 	MyEnv = "/work/halld2/home/jrsteven/2021-amptools/builds_gpu/setup_gluex.sh"
 	MyCodeDir = "/work/halld2/home/jrsteven/2021-amptools/builds/wm_gluex/analysis/fitting/batch/"
@@ -53,14 +53,14 @@ def main(argv):
 	if "deltaPlusPlus" in MyFit:
 		MyPeriod = "allPeriods"
 
-	names = ["PARA_0"] #, "PERP_45", "PERP_90", "PARA_135"]
+	names = ["ALL"] #"PARA_0"] #, "PERP_45", "PERP_90", "PARA_135"]
 	angles = [0] #, 45, 90, 135]
 
-	#masslow =  [1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.165]
-        #masshigh = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.3]
+	masslow =  [1.2] #, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.155]
+        masshigh = [1.3] #, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.315]
 
-	masslow =  [1.165]
-	masshigh = [1.3]
+	#masslow =  [1.165]
+	#masshigh = [1.3]
 
 	tLow =  [0.15] #, 0.3, 0.5]
 	tHigh = [0.3]  #, 0.5, 1.0]

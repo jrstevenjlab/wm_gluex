@@ -8,7 +8,7 @@ from optparse import OptionParser
 ####################### MAIN #######################
 def main(argv):
     
-    name = "neutralb1"
+    name = "neutralb1_all"
     amps = "1p"
     parser_usage = "writeConfigLoop.py [template_name amps]"
     parser = OptionParser(usage = parser_usage)
@@ -66,19 +66,6 @@ def main(argv):
     # write amplitudes based on above input
     writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initReMag, initImMag, constrainDSamps)
     fout.close()
-
-# special case for printing without loops
-def write0m(fout):
-    fout.write("amplitude omegapi::ImagNegSign::0m0p Vec_ps_refl 0 0 1  -1  -1  angle fraction dalitz\n")
-    fout.write("amplitude omegapi::RealNegSign::0m0p Vec_ps_refl 0 0 1  +1  -1  angle fraction dalitz\n")
-    fout.write("amplitude omegapi::ImagPosSign::0m0p Vec_ps_refl 0 0 1  -1  +1  angle fraction dalitz\n")
-    fout.write("amplitude omegapi::RealPosSign::0m0p Vec_ps_refl 0 0 1  +1  +1  angle fraction dalitz\n")
-    fout.write("initialize omegapi::ImagNegSign::0m0p cartesian 100 100\n")
-    fout.write("initialize omegapi::RealNegSign::0m0p cartesian 100 100\n")
-    fout.write("initialize omegapi::ImagPosSign::0m0p cartesian 100 100\n")
-    fout.write("initialize omegapi::RealPosSign::0m0p cartesian 100 100\n")
-    fout.write("constrain omegapi ImagNegSign 0m0p omegapi RealPosSign 0m0p\n")
-    fout.write("constrain omegapi RealNegSign 0m0p omegapi ImagPosSign 0m0p\n\n")
     
 ####################### WRITE AMPLITUDES #######################
 def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initReMag, initImMag, constrainDSamps):

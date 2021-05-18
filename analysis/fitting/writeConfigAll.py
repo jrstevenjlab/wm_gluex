@@ -51,7 +51,9 @@ def main(argv):
 	waves.append( {"spin":3, "parity":-1, "l":3} ) #3- F-wave
     if "iso" in amps:
         waves.append( {"spin":-9, "parity":0, "l":-9} ) # isotropic background
-    
+    if "dfree" in amps:
+	constrainDSamps = False # remove constraint on 1+ D-wave
+   
     # read template data for initial portion of config file defining common parameters and input file setup
     cfgTempl = templateName
     ftemplate = open(cfgTempl,'r')
@@ -190,7 +192,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                     initializationLines += "\n"
                     
                 # select amplitude for fixed phase
-                if real not in fixedPhaseRefl and spin_proj == 0: # fix phase for one of the amplitudes in each reflectivity
+                if real not in fixedPhaseRefl and spin_proj == 0 and j != 0: # fix phase for one of the amplitudes in each reflectivity
                     fixedPhaseRefl.append(real)
                     initphase = initializationLine
                     fixedPhase += initphase.rsplit(' ', 1)[0] 

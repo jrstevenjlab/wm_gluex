@@ -1,0 +1,8 @@
+#!/bin/sh
+#slurm sbatch requesting one K20 GPU. CUDA_VISIBLE_DEVICES will be set.
+#SBATCH --nodes 1
+#SBATCH --partition gpu
+#SBATCH --cpus-per-task 1
+#SBATCH --gres=gpu:TitanRTX:1
+#SBATCH --time=24:00:00
+ 

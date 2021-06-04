@@ -13,13 +13,13 @@ import ROOT
 def main(argv):
         global VERBOSE # so can modify here
 
-	lowt = 0.15
-	hight = 0.3
+	lowt = 0.3
+	hight = 0.5
 	lowE = 8.2
 	highE = 8.8
         lowMass = 1.165
         highMass = 1.3
-	numRand = 20
+	numRand = 25
         fitName = "omegapi"
 	period = "allPeriods"
 
@@ -49,9 +49,15 @@ def main(argv):
 	print(orientation, angle)
         cfgTempl = "fit_omegapi_amplitude_template.cfg"
 
-        os.system("ln -s %s/AmpToolsInputTree_sum_%s_%s.root anglesOmegaPiAmplitude.root" % (inDataDir,orientation,period) )
-        os.system("ln -s %s/anglesOmegaPiPhaseSpaceAcc_%s.root anglesOmegaPiPhaseSpaceAcc.root" % (inDataDir,period) )
-	os.system("ln -s %s/anglesOmegaPiPhaseSpaceGen_%s.root anglesOmegaPiPhaseSpace.root" % (inDataDir,period) )
+	if "ALL" in orientation: # simultaneous fit to all orientations
+		os.system("ln -sf %s/AmpToolsInputTree_sum_PARA_0_%s.root anglesOmegaPiAmplitude_PARA_0.root" % (inDataDir,period) )
+                os.system("ln -sf %s/AmpToolsInputTree_sum_PERP_45_%s.root anglesOmegaPiAmplitude_PERP_45.root" % (inDataDir,period) )
+                os.system("ln -sf %s/AmpToolsInputTree_sum_PERP_90_%s.root anglesOmegaPiAmplitude_PERP_90.root" % (inDataDir,period) )
+                os.system("ln -sf %s/AmpToolsInputTree_sum_PARA_135_%s.root anglesOmegaPiAmplitude_PARA_135.root" % (inDataDir,period) )
+	else:
+        	os.system("ln -sf %s/AmpToolsInputTree_sum_%s_%s.root anglesOmegaPiAmplitude.root" % (inDataDir,orientation,period) )
+        os.system("ln -sf %s/anglesOmegaPiPhaseSpaceAcc_%s.root anglesOmegaPiPhaseSpaceAcc.root" % (inDataDir,period) )
+	os.system("ln -sf %s/anglesOmegaPiPhaseSpaceGen_%s.root anglesOmegaPiPhaseSpace.root" % (inDataDir,period) )
 
 	TEM = "%0.3f %0.3f %0.3f %0.3f %0.3f %0.3f" % (lowt,hight,lowE,highE,lowMass,highMass)
 
@@ -72,10 +78,10 @@ def main(argv):
 	f.close()
 
 	# do the fit for given bin
-        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 50000 -s param_seeds.cfg")
+        os.system("fit -c "+cfgBin+" -r %d"%numRand+" -m 100000 -s param_seeds.cfg")
 
 	# make plotter
-	os.system("omegapi_plotter "+bin_name+".fit") 
+	#os.system("omegapi_plotter "+bin_name+".fit") 
 
 if __name__ == "__main__":
    main(sys.argv[1:])

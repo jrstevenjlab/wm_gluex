@@ -34,7 +34,7 @@ void DSelector_gpi0pippim::Init(TTree *locTree)
 	//PID
 	dAnalysisActions.push_back(new DHistogramAction_ParticleID(dComboWrapper, false));
 	//below: value: +/- N ns, Unknown: All PIDs, SYS_NULL: all timing systems
-	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.2, Proton, SYS_TOF));
+	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.3, Proton, SYS_TOF));
 	dAnalysisActions.push_back(new DCutAction_PIDDeltaT(dComboWrapper, false, 0.6, Gamma, SYS_FCAL));
 	dAnalysisActions.push_back(new DCutAction_dEdx(dComboWrapper, false, Proton, SYS_CDC));
 
@@ -42,7 +42,6 @@ void DSelector_gpi0pippim::Init(TTree *locTree)
 
 	//KINFIT RESULTS
 	dAnalysisActions.push_back(new DHistogramAction_KinFitResults(dComboWrapper));
-	dAnalysisActions.push_back(new DCutAction_KinFitChiSq(dComboWrapper, 5.0));
 
 	//CUT MISSING MASS
 	dAnalysisActions.push_back(new DCutAction_MissingMassSquared(dComboWrapper, false, -0.05, 0.05));
@@ -64,70 +63,27 @@ void DSelector_gpi0pippim::Init(TTree *locTree)
 	/******************************** EXAMPLE USER INITIALIZATION: STAND-ALONE HISTOGRAMS *******************************/
 
 	//EXAMPLE MANUAL HISTOGRAMS:
-	dHist_MissingMassSquared = new TH1I("MissingMassSquared", ";Missing Mass Squared (GeV/c^{2})^{2}", 600, -0.06, 0.06);
+	dHist_Pi0Mass = new TH1F("Pi0Mass", ";#gamma#gamma Mass (GeV)", 600, 0.07, 0.20);
+	dHist_Pi02Mass = new TH1F("Pi02Mass", ";#gamma#gamma Mass (GeV)", 600, 0.0, 1.0);
+	dHist_Pi03Mass = new TH1F("Pi03Mass", ";#gamma#gamma Mass (GeV)", 600, 0.0, 1.0);
 
-	dHist_Pi0Mass = new TH1I("Pi0Mass", ";#gamma#gamma Mass (GeV)", 600, 0.07, 0.20);
-	dHist_Pi02Mass = new TH1I("Pi02Mass", ";#gamma#gamma Mass (GeV)", 600, 0.0, 1.0);
-	dHist_Pi03Mass = new TH1I("Pi03Mass", ";#gamma#gamma Mass (GeV)", 600, 0.0, 1.0);
+	dHist_3PiMass = new TH1F("3PiMass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
+	dHist_3Pi2Mass = new TH1F("3Pi2Mass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
+	dHist_3Pi3Mass = new TH1F("3Pi3Mass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
 
-	dHist_3PiMass = new TH1I("3PiMass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
-	dHist_3Pi2Mass = new TH1I("3Pi2Mass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
-	dHist_3Pi3Mass = new TH1I("3Pi3Mass", ";#pi^{+}#pi^{-}#gamma#gamma Mass (GeV)", 600, 0.1, 1.3);
+	dHist_ProtonPiPlusMass = new TH1F("ProtonPiPlusMass", ";p#pi^{+} Mass (GeV)", 600, 1.0, 2.5);
 
-	dHist_ProtonPiPlusMass = new TH1I("ProtonPiPlusMass", ";p#pi^{+} Mass (GeV)", 600, 1.0, 2.5);
+	dHist_Pi0GammaVsPi0Mass = new TH2F("Pi0GammaVsPi0", "; #gamma#gamma Mass (GeV); #gamma#gamma#gamma Mass (GeV)", 100, 0.07, 0.20, 100, 0.1, 1.3);
+	dHist_Pi0GammaMass = new TH1F("Pi0GammaMass", ";#pi^{0}#gamma Mass (GeV)", 600, 0.1, 1.3);
 
-	dHist_Pi0GammaVsPi0Mass = new TH2I("Pi0GammaVsPi0", "; #gamma#gamma Mass (GeV); #gamma#gamma#gamma Mass (GeV)", 100, 0.07, 0.20, 100, 0.1, 1.3);
-	dHist_Pi0GammaMass = new TH1I("Pi0GammaMass", ";#pi^{0}#gamma Mass (GeV)", 600, 0.1, 1.3);
+	dHist_Pi0PiMinusMass = new TH1F("Pi0PiMinusMass", ";#pi^{0}#pi^{-} Mass (GeV)", 600, 0.1, 1.3);
+	dHist_Pi0PiMinusVsPi0Gamma = new TH2F("Pi0PiMinusVsPi0Gamma", "; #pi^{0}#gamma Mass (GeV); #pi^{0}#pi^{-} Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 1.3);
+	dHist_KinFitChiSqVsPi0GammaMass = new TH2F("KinFitChiSqVsPi0GammaMass", "; #pi^{0}#gamma Mass (GeV); KinFit #chi^{2}", 100, 0.1, 1.3, 200, 0, 20);
 
-	dHist_Pi0PiMinusMass = new TH1I("Pi0PiMinusMass", ";#pi^{0}#pi^{-} Mass (GeV)", 600, 0.1, 1.3);
-	dHist_Pi0PiMinusVsPi0Gamma = new TH2I("Pi0PiMinusVsPi0Gamma", "; #pi^{0}#gamma Mass (GeV); #pi^{0}#pi^{-} Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 1.3);
-	dHist_Pi0PiMinusVsPi0GammaDiff = new TH2I("Pi0PiMinusVsPi0GammaDiff", "; #pi^{0}#gamma - #pi^{0} Mass (GeV); #pi^{0}#pi^{-} Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 1.3);
-	dHist_KinFitChiSqVsPi0GammaMass = new TH2I("KinFitChiSqVsPi0GammaMass", "; #pi^{0}#gamma Mass (GeV); KinFit #chi^{2}", 100, 0.1, 1.3, 200, 0, 20);
-
-	dHist_Pi0PiMinusGammaVsPi0Gamma = new TH2I("Pi0PiMinusGammaVsPi0Gamma", "; #pi^{0}#gamma Mass (GeV); #pi^{0}#pi^{-}#gamma Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 2.1);
-	dHist_Pi0PiMinusGammaDiffVsPi0Gamma = new TH2I("Pi0PiMinusGammaDiffVsPi0Gamma", "; #pi^{0}#gamma Mass (GeV); #pi^{0}#pi^{-}#gamma - #pi^{0}#pi^{-} Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 2.1);
-	dHist_Pi0PiMinusGammaVsPi0PiMinus = new TH2I("Pi0PiMinusGammaVsPi0PiMinus", "; #pi^{0}#pi^{-} Mass (GeV); #pi^{0}#pi^{-}#gamma Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 2.1);
+	dHist_Pi0PiMinusGammaVsPi0Gamma = new TH2F("Pi0PiMinusGammaVsPi0Gamma", "; #pi^{0}#gamma Mass (GeV); #pi^{0}#pi^{-}#gamma Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 2.1);
+	dHist_Pi0PiMinusGammaVsPi0PiMinus = new TH2F("Pi0PiMinusGammaVsPi0PiMinus", "; #pi^{0}#pi^{-} Mass (GeV); #pi^{0}#pi^{-}#gamma Mass (GeV)", 100, 0.1, 1.3, 100, 0.1, 2.1);
 	
-	dHist_OmegaPiMinusMass = new TH1I("OmegaPiMinusMass", ";#omega#pi^{-} Mass (GeV)", 600, 0.9, 2.1);
-	dHist_BeamEnergy = new TH1I("BeamEnergy", ";Beam Energy (GeV)", 600, 0.0, 12.0);
-
-	/************************** EXAMPLE USER INITIALIZATION: CUSTOM OUTPUT BRANCHES - MAIN TREE *************************/
-
-	//EXAMPLE MAIN TREE CUSTOM BRANCHES (OUTPUT ROOT FILE NAME MUST FIRST BE GIVEN!!!! (ABOVE: TOP)):
-	//The type for the branch must be included in the brackets
-	//1st function argument is the name of the branch
-	//2nd function argument is the name of the branch that contains the size of the array (for fundamentals only)
-	/*
-	dTreeInterface->Create_Branch_Fundamental<Int_t>("my_int"); //fundamental = char, int, float, double, etc.
-	dTreeInterface->Create_Branch_FundamentalArray<Int_t>("my_int_array", "my_int");
-	dTreeInterface->Create_Branch_FundamentalArray<Float_t>("my_combo_array", "NumCombos");
-	dTreeInterface->Create_Branch_NoSplitTObject<TLorentzVector>("my_p4");
-	dTreeInterface->Create_Branch_ClonesArray<TLorentzVector>("my_p4_array");
-	*/
-
-	/************************** EXAMPLE USER INITIALIZATION: CUSTOM OUTPUT BRANCHES - FLAT TREE *************************/
-
-	//EXAMPLE FLAT TREE CUSTOM BRANCHES (OUTPUT ROOT FILE NAME MUST FIRST BE GIVEN!!!! (ABOVE: TOP)):
-	//The type for the branch must be included in the brackets
-	//1st function argument is the name of the branch
-	//2nd function argument is the name of the branch that contains the size of the array (for fundamentals only)
-	/*
-	dFlatTreeInterface->Create_Branch_Fundamental<Int_t>("flat_my_int"); //fundamental = char, int, float, double, etc.
-	dFlatTreeInterface->Create_Branch_FundamentalArray<Int_t>("flat_my_int_array", "flat_my_int");
-	dFlatTreeInterface->Create_Branch_NoSplitTObject<TLorentzVector>("flat_my_p4");
-	dFlatTreeInterface->Create_Branch_ClonesArray<TLorentzVector>("flat_my_p4_array");
-	*/
-
-	/************************************* ADVANCED EXAMPLE: CHOOSE BRANCHES TO READ ************************************/
-
-	//TO SAVE PROCESSING TIME
-		//If you know you don't need all of the branches/data, but just a subset of it, you can speed things up
-		//By default, for each event, the data is retrieved for all branches
-		//If you know you only need data for some branches, you can skip grabbing data from the branches you don't need
-		//Do this by doing something similar to the commented code below
-
-	//dTreeInterface->Clear_GetEntryBranches(); //now get none
-	//dTreeInterface->Register_GetEntryBranch("Proton__P4"); //manually set the branches you want
+	dHist_OmegaPiMinusMass = new TH1F("OmegaPiMinusMass", ";#omega#pi^{-} Mass (GeV)", 600, 0.9, 2.1);
 
 	/************************************** DETERMINE IF ANALYZING SIMULATED DATA *************************************/
 
@@ -260,24 +216,28 @@ Bool_t DSelector_gpi0pippim::Process(Long64_t locEntry)
 
 		/******************************************** EXECUTE ANALYSIS ACTIONS *******************************************/
 
+		//if the active combo fails a cut, IsComboCutFlag automatically set
+		if(!Execute_Actions()) 
+			continue;
+
 		// t cut
 		double t = ( (locProtonP4+locPiPlusP4) - dTargetP4 ).M2();
 		if( fabs(t) > 0.5 ) continue;
 
 		// kinematic fit cut
 		double kinFitChiSq = dComboWrapper->Get_ChiSq_KinFit()/dComboWrapper->Get_NDF_KinFit();
-		if(kinFitChiSq > 20.0) continue;
+		if(kinFitChiSq > 5.0) continue;
 
-		// remove events with additional unused showers
+		// possible cut to remove events with additional unused showers
 		double energyUnusedShowers = dComboWrapper->Get_Energy_UnusedShowers();
 		double numUnusedShowers = dComboWrapper->Get_NumUnusedShowers();
-		if(numUnusedShowers > 0) continue;
+		//if(numUnusedShowers > 0) continue;
 
-		// select photons with good quality (reduce split-offs, hadronic deposit)
-		if( dPhoton1Wrapper->Get_Shower_Quality() < 0.75 ) continue;
-		if( dPhoton1Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton1Wrapper->Get_Energy_FCAL() < 0.5 ) continue;
-		if( dPhoton2Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton2Wrapper->Get_Energy_FCAL() < 0.25 ) continue;
-		if( dPhoton3Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton3Wrapper->Get_Energy_FCAL() < 0.25 ) continue;
+		// possible cuts to select photons with good quality (reduce split-offs, hadronic deposit)
+		//if( dPhoton1Wrapper->Get_Shower_Quality() < 0.75 ) continue;
+		//if( dPhoton1Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton1Wrapper->Get_Energy_FCAL() < 0.5 ) continue;
+		//if( dPhoton2Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton2Wrapper->Get_Energy_FCAL() < 0.25 ) continue;
+		//if( dPhoton3Wrapper->Get_Energy_BCAL() <= 0.0 && dPhoton3Wrapper->Get_Energy_FCAL() < 0.25 ) continue;
 
 		dHist_Pi0Mass->Fill(locPi0P4.M(), locHistAccidWeightFactor);
 		dHist_Pi02Mass->Fill((locPhoton1P4+locPhoton2P4).M(), locHistAccidWeightFactor);
@@ -291,35 +251,32 @@ Bool_t DSelector_gpi0pippim::Process(Long64_t locEntry)
 		dHist_3Pi2Mass->Fill(loc3Pi2P4.M(), locHistAccidWeightFactor);
 		dHist_3Pi3Mass->Fill(loc3Pi3P4.M(), locHistAccidWeightFactor);
 		
-		if( loc3PiP4.M() < 0.9 ) continue; // veto omega->3pi decay
+		// veto omega->3pi decay
+		if( loc3PiP4.M() < 0.9 ) continue; 
 
+		// plot and select Delta++ 
 		dHist_ProtonPiPlusMass->Fill(locDeltaPlusPlus.M(), locHistAccidWeightFactor);
-		if( locDeltaPlusPlus.M() > 1.3 ) continue; // select Delta++ 
-
-		//if the active combo fails a cut, IsComboCutFlag automatically set
-		if(!Execute_Actions()) 
-			continue;
+		if( locDeltaPlusPlus.M() > 1.3 ) continue; 
 
 		dHist_Pi0Mass->Fill(locPi0P4.M(), locHistAccidWeightFactor);
 		dHist_Pi0GammaVsPi0Mass->Fill(locPi0P4.M(), locPi0GammaP4.M(), locHistAccidWeightFactor);
 
+		// select pi0
 		if( fabs(locPi0P4.M() - 0.135) > 0.015 ) continue;
 
+		// plot and select events by Kinematic Fit cut
 		dHist_KinFitChiSqVsPi0GammaMass->Fill(locPi0GammaP4.M(), kinFitChiSq, locHistAccidWeightFactor);
 		if(kinFitChiSq > 2.0) continue;
 
+		// Lots of mass distributions...
 		dHist_Pi0GammaMass->Fill(locPi0GammaP4.M(), locHistAccidWeightFactor); // omega radiative
 		dHist_Pi0PiMinusMass->Fill((locPi0P4+locPiMinusP4).M(), locHistAccidWeightFactor); // rho -> pi0 pi-
 		dHist_Pi0PiMinusVsPi0Gamma->Fill(locPi0GammaP4.M(), (locPi0P4+locPiMinusP4).M(), locHistAccidWeightFactor);
-		dHist_Pi0PiMinusVsPi0GammaDiff->Fill(locPi0GammaP4.M() - locPi0P4.M(), (locPi0P4+locPiMinusP4).M(), locHistAccidWeightFactor);
 		
-
 		dHist_Pi0PiMinusGammaVsPi0Gamma->Fill(locPi0GammaP4.M(), (locPi0GammaP4+locPiMinusP4).M(), locHistAccidWeightFactor);
-		dHist_Pi0PiMinusGammaDiffVsPi0Gamma->Fill(locPi0GammaP4.M(), (locPi0GammaP4+locPiMinusP4).M() - (locPi0P4+locPiMinusP4).M(), locHistAccidWeightFactor);
-
 		dHist_Pi0PiMinusGammaVsPi0PiMinus->Fill((locPi0P4+locPiMinusP4).M(), (locPi0GammaP4+locPiMinusP4).M(), locHistAccidWeightFactor);
 
-		// fill weighted omega-pi spectrum
+		// fill sideband weighted omega-pi spectrum
 		if( fabs(locPi0GammaP4.M() - 0.782) < 0.04 )
 			dHist_OmegaPiMinusMass->Fill(locOmegaPiMinusP4.M(), locHistAccidWeightFactor);
 		else if( fabs(locPi0GammaP4.M() - 0.670) < 0.02 )

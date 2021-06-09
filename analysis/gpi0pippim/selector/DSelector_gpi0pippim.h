@@ -7,8 +7,8 @@
 #include "DSelector/DHistogramActions.h"
 #include "DSelector/DCutActions.h"
 
-#include "TH1I.h"
-#include "TH2I.h"
+#include "TH1F.h"
+#include "TH2F.h"
 
 class DSelector_gpi0pippim : public DSelector
 {
@@ -53,16 +53,15 @@ class DSelector_gpi0pippim : public DSelector
 
 		// DEFINE YOUR HISTOGRAMS HERE
 		// EXAMPLES:
-		TH1I* dHist_MissingMassSquared;
-		TH1I* dHist_BeamEnergy;
-		TH1I* dHist_Pi0Mass, *dHist_Pi0GammaMass, *dHist_OmegaPiMinusMass;
-		TH2I* dHist_Pi0GammaVsPi0Mass;
-		TH1I* dHist_3PiMass, *dHist_3Pi2Mass, *dHist_3Pi3Mass;
-		TH1I* dHist_Pi02Mass, *dHist_Pi03Mass;
-		TH1I* dHist_ProtonPiPlusMass, *dHist_Pi0PiMinusMass;
-		TH2I* dHist_Pi0PiMinusGammaVsPi0Gamma, *dHist_Pi0PiMinusGammaDiffVsPi0Gamma;
-		TH2I* dHist_Pi0PiMinusGammaVsPi0PiMinus, *dHist_KinFitChiSqVsPi0GammaMass;
-		TH2I* dHist_Pi0PiMinusVsPi0Gamma, *dHist_Pi0PiMinusVsPi0GammaDiff;
+		TH1F* dHist_Pi0Mass, *dHist_Pi0GammaMass, *dHist_OmegaPiMinusMass;
+		TH2F* dHist_Pi0GammaVsPi0Mass;
+		TH1F* dHist_3PiMass, *dHist_3Pi2Mass, *dHist_3Pi3Mass;
+		TH1F* dHist_Pi02Mass, *dHist_Pi03Mass;
+		TH1F* dHist_ProtonPiPlusMass, *dHist_Pi0PiMinusMass;
+		TH2F* dHist_Pi0PiMinusGammaVsPi0Gamma;
+		TH2F* dHist_Pi0PiMinusGammaVsPi0PiMinus;
+		TH2F* dHist_KinFitChiSqVsPi0GammaMass;
+		TH2F* dHist_Pi0PiMinusVsPi0Gamma;
 
 	ClassDef(DSelector_gpi0pippim, 0);
 };

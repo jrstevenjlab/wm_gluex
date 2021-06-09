@@ -28,7 +28,7 @@ Once you are logged into the interactive batch session you can now execute your 
 
 `cd ~/myanalysis/`
 
-`source ~/wm_gluex/setup_custom.csh`
+`source ~/wm_gluex/setup.csh`
 
 `root -b -q runSelector.C`
 

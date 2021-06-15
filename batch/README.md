@@ -2,7 +2,7 @@ Documentation for submitting batch jobs on the W&M HPC cluster:
 
 First, setup your environment by sourcing the setup script
 
-`source ~/wm_gluex/setup_custom.csh`
+`source ~/wm_gluex/setup.csh`
 
 Then `cd` to the batch directory
 

@@ -241,7 +241,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
 
     fout.write("parameter dsratio 0.27 bounded 0 1\n\n")
     fout.write("keyword parRange 3 3\n")
-    fout.write("parRange 0.2 0.34\n\n")
+    fout.write("parRange dsratio 0.2 0.34\n\n")
 
     fout.write("loop LOOPSUM ImagNegSign RealNegSign RealPosSign ImagPosSign\n")
     previousSumName = ""

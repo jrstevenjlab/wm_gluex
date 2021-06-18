@@ -10,7 +10,7 @@
 
 PPN=8
 MyProcess=p2ketapr
-MyCluster=hurricane
+MyCluster=vortex
 echo $MyProcess
 
 MyEnv=/sciclone/home10/$USER/wm_gluex/

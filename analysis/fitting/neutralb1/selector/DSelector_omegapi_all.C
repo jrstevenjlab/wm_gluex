@@ -115,13 +115,15 @@ Bool_t DSelector_omegapi_all::Process(Long64_t locEntry)
                         if(locThrownPID==8 || locThrownPID==9 || locThrownPID==14)
 				locFinalStateThrownP4.push_back(dThrownWrapper->Get_P4());
 			if(locFinalStateThrownP4.size() == 1) {
-				locFinalStateThrownP4.push_back(locPi0ThrownP4[1]);
-				locFinalStateThrownP4.push_back(locPi0ThrownP4[0]);
+				if(locPi0ThrownP4.size() > 0) {
+					locFinalStateThrownP4.push_back(locPi0ThrownP4[0]);
+					locFinalStateThrownP4.push_back(locPi0ThrownP4[1]);
+				}
 			}
                         if(locFinalStateThrownP4.size() == 5) break;
                 }
         }
-	
+
 	// fill generated from Thrown_Tree
 	if(dOption.Contains("thrown") && dTreeInterface->Get_Branch("NumCombos") == NULL) {
                 dFlatTreeInterface->Fill_Fundamental<Float_t>("Weight", 1.0);

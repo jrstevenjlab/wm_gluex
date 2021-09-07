@@ -84,7 +84,7 @@ void fit(TString sample = "bggen_2017_ver03_misspim", bool save = true, const ch
   TFile* fhist;
   TFile* outROOT;
 
-  fhist = TFile::Open(Form("/sciclone/gluex10/jrstevens01/omega_misspi/hist_%s.root", sample.Data());
+  fhist = TFile::Open(Form("/sciclone/gluex10/jrstevens01/omega_misspi/hist_%s.root", sample.Data()));
   if(save == true)    
     outROOT = new TFile(Form("mmop_%s_params_%scut.root", sample.Data(), whichcut), "recreate");
 

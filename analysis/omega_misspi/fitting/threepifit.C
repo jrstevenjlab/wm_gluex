@@ -52,10 +52,9 @@ void threepifit(TString sample = "bggen_2017_ver03_misspim", bool save = true, c
   TFile* fhist;
   TFile* outROOT;
 
-  fhist = TFile::Open(Form("/sciclone/gluex10/jrstevens01/omega_misspi/hist_%s_total.root", sample.Data());
-    if(save == true)
-      outROOT = new TFile(Form("method2_%s_params_%scut.root", sample.Data(), whichcut), "recreate");
-  }
+  fhist = TFile::Open(Form("/sciclone/gluex10/jrstevens01/omega_misspi/hist_%s.root", sample.Data()));
+  if(save == true)
+    outROOT = new TFile(Form("method2_%s_params_%scut.root", sample.Data(), whichcut), "recreate");
 
   TString plotDir = sample += "/fits_paramTest";
   TString plotData = sample;

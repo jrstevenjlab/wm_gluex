@@ -7,7 +7,7 @@
 #include "TSystem.h"
    
 
-void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex10/RunPeriod-2017-01/analysis/ver33/tree_pi0pipmisspim__B1_T1_U1_M7_Effic/merged/", TString myTreeName = "pi0pipmisspim__B1_T1_U1_M7_Effic_Tree") //use for mc
+void runSelector(TString runNumber = "30496", TString myPath = "/sciclone/gluex10/gluex_simulations/REQUESTED_MC/2017_ver03_28_bggen_batch01/tree_pi0pipmisspim__B1_T1_U1_M7_Effic/", TString myTree = "pi0pipmisspim__B1_T1_U1_M7_Effic", TString myOption = "")
 {
   bool mc;
   if(myPath.Contains("REQUESTED_MC")) {
@@ -18,14 +18,18 @@ void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex1
   }
   // Load DSelector library
   gROOT->ProcessLine(".x $(ROOT_ANALYSIS_HOME)/scripts/Load_DSelector.C");
-  int Proof_Nthreads = 1;
+  int Proof_Nthreads = 8;
 
   // process signal 
-  TString sampleDir = myPath;
+  TString sampleDir = myPath; // + "/tree_" + myTree + "/";
   //sampleDir += Form("0%s/", runNumber.Data());
   cout<<"running selector on files in: "<<sampleDir.Data()<<endl;
   
-  TChain *chain = new TChain(myTreeName);
+  // name for output histograms
+  TString sampleName = "misspip";
+  if(sampleDir.Contains("misspim")) sampleName = "misspim"; 
+
+  TChain *chain = new TChain(myTree + "_Tree");
   TSystemDirectory dir(sampleDir, sampleDir);
   TList *files = dir.GetListOfFiles();
   int ifile = 0;
@@ -59,10 +63,10 @@ void runSelector(TString runNumber = "30730", TString myPath = "/sciclone/gluex1
 
 	  cout<<"total entries in TChain = "<<chain->GetEntries()<<" from "<<ifile<<" files"<<endl;
 	  if(mc == true){
-	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspi.C+", Proof_Nthreads, Form("hist_omega_misspi_gen_%s.acc.root", runNumber.Data()));
+	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspi.C+", Proof_Nthreads, Form("hist_omega_%s_gen_%s.acc.root", sampleName.Data(), runNumber.Data()), "", myOption.Data());
 	  }
 	  else {
-	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspi.C+", Proof_Nthreads, Form("hist_omega_misspi_data_%s.acc.root", runNumber.Data()));
+	    DPROOFLiteManager::Process_Chain(chain, "DSelector_omega_misspi.C+", Proof_Nthreads, Form("hist_omega_%s_data_%s.acc.root", sampleName.Data(), runNumber.Data()), "", myOption.Data());
 	  }
   }
 

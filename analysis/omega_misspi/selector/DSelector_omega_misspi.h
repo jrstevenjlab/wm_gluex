@@ -156,8 +156,13 @@ class DSelector_omega_misspi : public DSelector
 		TH2F* dHist_OmegaMassVsTheta_1track_pcut_p[9][7];
 		TH2F* dHist_3PiMassVsTheta_pcut_p[9][7];
 
+		TH1F* dHistThrownTopologies;
+		map<TString, TH1I*> dHist3piMass_ThrownTopology;
+		map<TString, TH1I*> dHistMMOP_ThrownTopology;
 
-	ClassDef(DSelector_omega_misspi, 3);
+		bool isThrownTopology; // toggle background isolation and topology analysis
+
+	ClassDef(DSelector_omega_misspi, 0);
 };
 
 void DSelector_omega_misspi::Get_ComboWrappers(void)

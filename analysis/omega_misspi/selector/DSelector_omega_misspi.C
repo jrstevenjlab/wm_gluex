@@ -27,6 +27,9 @@ void DSelector_omega_misspi::Init(TTree *locTree)
 
 	/*********************************** EXAMPLE USER INITIALIZATION: ANALYSIS ACTIONS **********************************/
 
+	//------>>> Background topology analysis on/off  <<<------//
+	isThrownTopology = dOption.Contains("topology");
+
 	//ANALYSIS ACTIONS: //Executed in order if added to dAnalysisActions
 	//false/true below: use measured/kinfit data
 
@@ -175,6 +178,27 @@ void DSelector_omega_misspi::Init(TTree *locTree)
 	dHist_DeltaTheta3D_miss = new TH3F("DeltaTheta3D_miss", "#Delta#theta vs #theta vs p;#theta_{reco} - #theta_{miss} (deg);#theta_{miss} (deg);p_{miss} (GeV)", 60, -30., 30., 60, 0., 30., 60, 0., 10.);
 	dHist_DeltaP3D_miss = new TH3F("DeltaP3D_miss", "#Delta p vs #theta vs p;p_{reco} - p_{miss} (GeV);#theta_{miss} (deg);p_{miss} (GeV)", 60, -3., 3., 60, 0., 30., 60, 0., 10.);
 
+
+	// Histogram of thrown topologies in bggen datasets
+	dHistThrownTopologies = new TH1F("hThrownTopologies","hThrownTopologies", 10, -0.5, 9.5);
+
+	vector<TString> locThrownTopologies;
+	locThrownTopologies.push_back("2#gamma#pi^{#plus}#pi^{#minus}p[#pi^{0}]");
+	locThrownTopologies.push_back("#pi^{#plus}#pi^{#minus}p");
+	locThrownTopologies.push_back("4#gamma#pi^{#plus}#pi^{#minus}p[2#pi^{0}]");
+	locThrownTopologies.push_back("2#gamma#pi^{#plus}#pi^{#minus}p[#pi^{0},#phi]");
+	locThrownTopologies.push_back("4#gamma#pi^{#plus}#pi^{#minus}p[2#pi^{0},#omega]");
+	locThrownTopologies.push_back("2#gamma2#pi^{#plus}#pi^{#minus}n[#pi^{0}]");
+	locThrownTopologies.push_back("2#gamma#pi^{#plus}#pi^{#minus}p[#pi^{0},#eta]");
+	locThrownTopologies.push_back("6#gamma#pi^{#plus}#pi^{#minus}p[3#pi^{0},#eta]");
+	locThrownTopologies.push_back("4#gamma2#pi^{#plus}#pi^{#minus}n[2#pi^{0}]");
+	locThrownTopologies.push_back("4#gamma2#pi^{#plus}#pi^{#minus}n[2#pi^{0},#omega]");
+	locThrownTopologies.push_back("4#gamma#pi^{#plus}#pi^{#minus}p[2#pi^{0},#eta]");
+	for(uint i=0; i < locThrownTopologies.size(); i++){
+		dHist3piMass_ThrownTopology[locThrownTopologies[i]] = new TH1I(Form("h3piMass_ThrownTopology_%d", i),Form("3pi Mass Topology: %s", locThrownTopologies[i].Data()), 1000, 0.5, 2.0);
+		dHistMMOP_ThrownTopology[locThrownTopologies[i]] = new TH1I(Form("hMMOP_ThrownTopology_%d", i),Form("MMOP Topology: %s", locThrownTopologies[i].Data()), 1000, 0.5, 1.2);
+	}
+
 	/************************** EXAMPLE USER INITIALIZATION: CUSTOM OUTPUT BRANCHES - MAIN TREE *************************/
 
 	//EXAMPLE MAIN TREE CUSTOM BRANCHES (OUTPUT ROOT FILE NAME MUST FIRST BE GIVEN!!!! (ABOVE: TOP)):
@@ -243,6 +267,17 @@ Bool_t DSelector_omega_misspi::Process(Long64_t locEntry)
       dIsPolarizedFlag = dAnalysisUtilities.Get_IsPolarizedBeam(locRunNumber, dIsPARAFlag);
       dPreviousRunNumber = locRunNumber;
     }
+
+  /************************************************* PARSE THROWN TOPOLOGY ***************************************/
+
+  TString locThrownTopology = Get_ThrownTopologyString();
+  if(isThrownTopology){
+    cout<<locThrownTopology.Data()<<endl;
+
+    // skip exclusive omega -> pi+pi-pi0 from bggen events
+    if(locThrownTopology.Contains("2#gamma#pi^{#plus}#pi^{#minus}p[#pi^{0},#omega]"))
+      return kFALSE;
+  }
   
   /********************************************* SETUP UNIQUENESS TRACKING ********************************************/
 
@@ -439,10 +474,10 @@ Bool_t DSelector_omega_misspi::Process(Long64_t locEntry)
       Particle_t PiMissID = PiMinus;
       Particle_t PiRecoID = PiPlus;
       if(dPiRecoWrapper->Get_PID() == PiMinus) {
-	  PiMissID = PiPlus;
-	  PiRecoID = PiMinus;
+	PiMissID = PiPlus;
+	PiRecoID = PiMinus;
       }
-
+ 
       //Loop over charged track hypotheses
       for(UInt_t loc_i = 0; loc_i < Get_NumChargedHypos(); ++loc_i)
 	{
@@ -478,6 +513,7 @@ Bool_t DSelector_omega_misspi::Process(Long64_t locEntry)
 	      dHist_MassCorrelation[0]->Fill(loc3PiMass_reco, locOmegaMass_mmop, locAccWeight);
 	      locUsedSoFar_MassCorrelation01.insert(locUsedThisCombo_MassCorrelation01);
 	    }
+	
 	}
 
       
@@ -1028,6 +1064,13 @@ Bool_t DSelector_omega_misspi::Process(Long64_t locEntry)
 	    }
 	  }
 
+	  // Thrown topology 3Pi mass histogram
+	  if(isThrownTopology){
+	    if(dHist3piMass_ThrownTopology.find(locThrownTopology) != dHist3piMass_ThrownTopology.end())
+		dHist3piMass_ThrownTopology[locThrownTopology]->Fill(loc3PiMass_reco);
+	  }
+
+
 	  //Perform cuts on theta_reco
 	  double locthetaCut[7] = {0., 0.5, 1., 1.5, 2., 3., 4.};
 
@@ -1146,6 +1189,16 @@ Bool_t DSelector_omega_misspi::Process(Long64_t locEntry)
 	    }  
 	}
 
+	/***************************************** HISTOGRAM THROWN TOPOLOGIES FOR BGGEN **********************************/
+	
+	if(isThrownTopology){
+	  // Fill thrown topology histogram
+	  dHistThrownTopologies->Fill(locThrownTopology.Data(),1);
+	
+	  // Thrown topology MMOP histogram
+	  if(dHistMMOP_ThrownTopology.find(locThrownTopology) != dHistMMOP_ThrownTopology.end())
+			dHistMMOP_ThrownTopology[locThrownTopology]->Fill(locOmegaMass_mmop);
+	}
 
 
       /******************************************** EXECUTE ANALYSIS ACTIONS *******************************************/

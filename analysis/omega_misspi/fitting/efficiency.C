@@ -1,12 +1,18 @@
-void efficiency(const char *whichcut = "pv", bool print = false, bool save = false, const char *name = "30274_31057", const char *charge = "PiPlus"){
-  TFile *fdata = TFile::Open(Form("%s/mmop_data_%scut_%s.root", charge, whichcut, name));
-  TFile *fgen = TFile::Open(Form("%s/mmop_gen_%scut_%s.root", charge, whichcut, name));
+void efficiency(TString sample1 = "data_2017_01", TString sample2 = "bggen_2017_ver03", TString miss = "misspim", const char *whichcut = "pv", bool print = false, bool save = false){
+  TFile *fdata = TFile::Open(Form("mmop_%s_%s_params_%scut.root", sample1.Data(), whichcut));
+  TFile *fgen  = TFile::Open(Form("mmop_%s_%s_params_%scut.root", sample2.Data(), whichcut));
 
-  TFile *fdata_m2 = TFile::Open(Form("%s/method2_data_%scut_%s.root", charge, whichcut, name));
-  TFile *fgen_m2 = TFile::Open(Form("%s/method2_gen_%scut_%s.root", charge, whichcut, name));
+  TFile *fdata_m2 = TFile::Open(Form("method2_%s_%s_params_%scut.root", sample1.Data(), whichcut));
+  TFile *fgen_m2  = TFile::Open(Form("method2_%s_%s_params_%scut.root", sample2.Data(), whichcut));
+
+  // make labels unique for missing charge
+  TString latexpi = "#pi^{-}";
+  if(miss.Contains("misspip")) latexpi = "#pi^{+}";
+
+  // setup output image directories (set filenames below)
 
   if(save == true)
-    TFile *outROOT = new TFile(Form("%s/efficiency_%s_%scut.root", charge, whichcut, name), "recreate");
+    TFile *outROOT = new TFile(Form("%s_efficiency_%s_%s_%scut.root", miss.Data(), sample1.Data(), sample2.Data(), whichcut), "recreate");
 
   //New histograms of sigma_D ("detected") and sigma_U ("undetected")
   TH1F* locHist_sigmaD_theta_gen_m2 = new TH1F("sigmaD_theta_gen_m2", ";#theta (deg)", 20, 0., 30.);
@@ -14,6 +20,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 
   //Method 1
   TH1F* locHist_phi_data[7];
+  TH1F* locHist_phi_missing_data[7];
   TH1F* locHist_phi_denom_data[7];
   double phi_errorD_data[20][7];
   double phi_data[20][7];
@@ -21,28 +28,44 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double phi_denom_data[20][7];
   for(int im = 0; im < 7; im++){
     locHist_phi_data[im] = (TH1F*)fdata->Get(Form("phi_mmop_reco_%d", im+1));
-    locHist_phi_denom_data[im] = (TH1F*)fdata->Get(Form("phi_mmop_denom_%d", im+1));
+    locHist_phi_data[im]->SetName(Form("phi_data_m1_%d", im+1));
+    locHist_phi_missing_data[im] = (TH1F*)fdata->Get(Form("phi_mmop_missing_%d", im+1));
+    //locHist_phi_denom_data[im] = (TH1F*)fdata->Get(Form("phi_mmop_denom_%d", im+1));
+    locHist_phi_denom_data[im] = (TH1F*)locHist_phi_data[im]->Clone(Form("phi_denom_data_m1_%d", im+1));
+    locHist_phi_denom_data[im]->Sumw2();
+    locHist_phi_denom_data[im]->Add(locHist_phi_missing_data[im]);
+
     for(int i = 0; i < 20; i++) {
       phi_errorD_data[i][im] = locHist_phi_data[im]->GetBinError(i+1);
       phi_data[i][im] = locHist_phi_data[im]->GetBinContent(i+1);
-      phi_errorU_data[i][im] = locHist_phi_denom_data[im]->GetBinError(i+1);
+      phi_errorU_data[i][im] = locHist_phi_missing_data[im]->GetBinError(i+1);
       phi_denom_data[i][im] = locHist_phi_denom_data[im]->GetBinContent(i+1);
+      //cout << "(pv " << im << " phi bin " << i << ") Denom yield: " << phi_denom_data[i][im] << "; Missing yield error: " << phi_errorU_data[i][im] << endl;
     }
     locHist_phi_data[im]->Sumw2();
     locHist_phi_denom_data[im]->Sumw2();
     locHist_phi_data[im]->Divide(locHist_phi_denom_data[im]);
   }
 
+  //TCanvas* cEffTest = new TCanvas("cEffTest", "Compare Numerator/Denominator/Missing", 600, 600); // testing m2 MC issue, use theta bins
+  //cEffTest->Divide(2,2);
+
   TH1F* locHist_theta_num_data[7];
   TH1F* locHist_theta_data[7];
   double theta_errorD_data[20][7];
   double theta_data[20][7];
   TH1F* locHist_theta_denom_data[7];
+  TH1F* locHist_theta_missing_data[7];
   double theta_errorU_data[20][7];
   double theta_denom_data[20][7];
   for(int im = 0; im < 7; im++){
     locHist_theta_num_data[im] = (TH1F*)fdata->Get(Form("theta_mmop_reco_%d", im+1));
-    locHist_theta_denom_data[im] = (TH1F*)fdata->Get(Form("theta_mmop_denom_%d", im+1));
+    locHist_theta_num_data[im]->SetName(Form("theta_num_data_m1_%d", im+1));
+    //locHist_theta_denom_data[im] = (TH1F*)fdata->Get(Form("theta_mmop_denom_%d", im+1));
+    locHist_theta_missing_data[im] = (TH1F*)fdata->Get(Form("theta_mmop_missing_%d", im+1));
+    locHist_theta_denom_data[im] = (TH1F*)locHist_theta_num_data[im]->Clone(Form("theta_denom_data_m1_%d", im+1));
+    locHist_theta_denom_data[im]->Sumw2();
+    locHist_theta_denom_data[im]->Add(locHist_theta_missing_data[im]);
     locHist_theta_data[im] = new TH1F(Form("theta_data_efficiency_%d", im+1), ";#theta (deg)", 20, 0., 30.);
     for(int i = 0; i < 20; i++) {
       if(locHist_theta_num_data[im]->GetBinContent(i+1) == locHist_theta_denom_data[im]->GetBinContent(i+1))
@@ -51,7 +74,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 	continue;
       theta_errorD_data[i][im] = locHist_theta_num_data[im]->GetBinError(i+1);
       theta_data[i][im] = locHist_theta_num_data[im]->GetBinContent(i+1);
-      theta_errorU_data[i][im] = locHist_theta_denom_data[im]->GetBinError(i+1);
+      theta_errorU_data[i][im] = locHist_theta_missing_data[im]->GetBinError(i+1);
       theta_denom_data[i][im] = locHist_theta_denom_data[im]->GetBinContent(i+1);
       double content = theta_data[i][im] / theta_denom_data[i][im];
       double error = TMath::Sqrt((TMath::Power((theta_denom_data[i][im] - theta_data[i][im])/(theta_denom_data[i][im]*theta_denom_data[i][im]), 2.)*theta_errorD_data[i][im]*theta_errorD_data[i][im] + TMath::Power(theta_data[i][im]/(theta_denom_data[i][im]*theta_denom_data[i][im]), 2.)*theta_errorU_data[i][im]*theta_errorU_data[i][im]));
@@ -61,19 +84,40 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
     locHist_theta_data[im]->Sumw2();
   }
 
+  /*cEffTest->cd(1);
+  locHist_theta_num_data[0]->SetTitle("Data (Method 1) theta;#theta (deg);#pi^{-} yield (data method 1)");
+  locHist_theta_num_data[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_num_data[0]->SetMarkerColor(kAzure+10);
+  locHist_theta_num_data[0]->SetLineColor(kAzure+10);
+  locHist_theta_missing_data[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_missing_data[0]->SetMarkerColor(kBlue);
+  locHist_theta_missing_data[0]->SetLineColor(kBlue);
+  locHist_theta_denom_data[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_denom_data[0]->SetMarkerColor(kRed);
+  locHist_theta_denom_data[0]->SetLineColor(kRed);
+  locHist_theta_num_data[0]->Draw();
+  locHist_theta_denom_data[0]->Draw("same");
+  locHist_theta_missing_data[0]->Draw("same");*/
+
   TH1F* locHist_p_data[7];
   TH1F* locHist_p_denom_data[7];
+  TH1F* locHist_p_missing_data[7];
   double p_errorD_data[20][7];
   double p_data[20][7];
   double p_errorU_data[20][7];
   double p_denom_data[20][7];
   for(int im = 0; im < 7; im++){
     locHist_p_data[im] = (TH1F*)fdata->Get(Form("p_mmop_reco_%d", im+1));
-    locHist_p_denom_data[im] = (TH1F*)fdata->Get(Form("p_mmop_denom_%d", im+1));
+    locHist_p_data[im]->SetName(Form("p_data_m1_%d", im+1));
+    //locHist_p_denom_data[im] = (TH1F*)fdata->Get(Form("p_mmop_denom_%d", im+1));
+    locHist_p_missing_data[im] = (TH1F*)fdata->Get(Form("p_mmop_missing_%d", im+1));
+    locHist_p_denom_data[im] = (TH1F*)locHist_p_data[im]->Clone(Form("p_denom_data_m1_%d", im+1));
+    locHist_p_denom_data[im]->Sumw2();
+    locHist_p_denom_data[im]->Add(locHist_p_missing_data[im]);
     for(int i = 0; i < 20; i++) {
       p_errorD_data[i][im] = locHist_p_data[im]->GetBinError(i+1);
       p_data[i][im] = locHist_p_data[im]->GetBinContent(i+1);
-      p_errorU_data[i][im] = locHist_p_denom_data[im]->GetBinError(i+1);
+      p_errorU_data[i][im] = locHist_p_missing_data[im]->GetBinError(i+1);
       p_denom_data[i][im] = locHist_p_denom_data[im]->GetBinContent(i+1);
     }
     locHist_p_data[im]->Sumw2();
@@ -83,17 +127,23 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 
   TH1F* locHist_phi_gen[7];
   TH1F* locHist_phi_denom_gen[7];
+  TH1F* locHist_phi_missing_gen[7];
   double phi_errorD_gen[20][7];
   double phi_gen[20][7];
   double phi_errorU_gen[20][7];
   double phi_denom_gen[20][7];
   for(int im = 0; im < 7; im++){
     locHist_phi_gen[im] = (TH1F*)fgen->Get(Form("phi_mmop_reco_%d", im+1));
-    locHist_phi_denom_gen[im] = (TH1F*)fgen->Get(Form("phi_mmop_denom_%d", im+1));
+    locHist_phi_gen[im]->SetName(Form("phi_gen_m1_%d", im+1));
+    locHist_phi_missing_gen[im] = (TH1F*)fgen->Get(Form("phi_mmop_missing_%d", im+1));
+    //locHist_phi_denom_gen[im] = (TH1F*)fgen->Get(Form("phi_mmop_denom_%d", im+1));
+    locHist_phi_denom_gen[im] = (TH1F*)locHist_phi_gen[im]->Clone(Form("phi_denom_gen_m1_%d", im+1));
+    locHist_phi_denom_gen[im]->Sumw2();
+    locHist_phi_denom_gen[im]->Add(locHist_phi_missing_gen[im]);
     for(int i = 0; i < 20; i++) {
       phi_errorD_gen[i][im] = locHist_phi_gen[im]->GetBinError(i+1);
       phi_gen[i][im] = locHist_phi_gen[im]->GetBinContent(i+1);
-      phi_errorU_gen[i][im] = locHist_phi_denom_gen[im]->GetBinError(i+1);
+      phi_errorU_gen[i][im] = locHist_phi_missing_gen[im]->GetBinError(i+1);
       phi_denom_gen[i][im] = locHist_phi_denom_gen[im]->GetBinContent(i+1);
     }
     locHist_phi_gen[im]->Sumw2();
@@ -106,11 +156,17 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double theta_errorD_gen[20][7];
   double theta_gen[20][7];
   TH1F* locHist_theta_denom_gen[7];
+  TH1F* locHist_theta_missing_gen[7];
   double theta_errorU_gen[20][7];
   double theta_denom_gen[20][7];
   for(int im = 0; im < 7; im++){
     locHist_theta_num_gen[im] = (TH1F*)fgen->Get(Form("theta_mmop_reco_%d", im+1));
-    locHist_theta_denom_gen[im] = (TH1F*)fgen->Get(Form("theta_mmop_denom_%d", im+1));
+    locHist_theta_num_gen[im]->SetName(Form("theta_num_gen_m1_%d", im+1));
+    //locHist_theta_denom_gen[im] = (TH1F*)fgen->Get(Form("theta_mmop_denom_%d", im+1));
+    locHist_theta_missing_gen[im] = (TH1F*)fgen->Get(Form("theta_mmop_missing_%d", im+1));
+    locHist_theta_denom_gen[im] = (TH1F*)locHist_theta_num_gen[im]->Clone(Form("theta_denom_gen_m1_%d", im+1));
+    locHist_theta_denom_gen[im]->Sumw2();
+    locHist_theta_denom_gen[im]->Add(locHist_theta_missing_gen[im]);
     locHist_theta_gen[im] = new TH1F(Form("theta_gen_efficiency_%d", im+1), ";#theta (deg)", 20, 0., 30.);
     for(int i = 0; i < 20; i++) {
       if(locHist_theta_num_gen[im]->GetBinContent(i+1) == locHist_theta_denom_gen[im]->GetBinContent(i+1))
@@ -119,7 +175,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 	continue;
       theta_errorD_gen[i][im] = locHist_theta_num_gen[im]->GetBinError(i+1);
       theta_gen[i][im] = locHist_theta_num_gen[im]->GetBinContent(i+1);
-      theta_errorU_gen[i][im] = locHist_theta_denom_gen[im]->GetBinError(i+1);
+      theta_errorU_gen[i][im] = locHist_theta_missing_gen[im]->GetBinError(i+1);
       theta_denom_gen[i][im] = locHist_theta_denom_gen[im]->GetBinContent(i+1);
       double content = theta_gen[i][im] / theta_denom_gen[i][im];
       double error = TMath::Sqrt((TMath::Power((theta_denom_gen[i][im] - theta_gen[i][im])/(theta_denom_gen[i][im]*theta_denom_gen[i][im]), 2.)*theta_errorD_gen[i][im]*theta_errorD_gen[i][im] + TMath::Power(theta_gen[i][im]/(theta_denom_gen[i][im]*theta_denom_gen[i][im]), 2.)*theta_errorU_gen[i][im]*theta_errorU_gen[i][im]));
@@ -129,19 +185,40 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
     locHist_theta_gen[im]->Sumw2();
   }
 
+  /*cEffTest->cd(2);
+  locHist_theta_num_gen[0]->SetTitle("MC (Method 1) theta;#theta (deg);#pi^{-} yield (MC method 1)");
+  locHist_theta_num_gen[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_num_gen[0]->SetMarkerColor(kAzure+10);
+  locHist_theta_num_gen[0]->SetLineColor(kAzure+10);
+  locHist_theta_missing_gen[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_missing_gen[0]->SetMarkerColor(kBlue);
+  locHist_theta_missing_gen[0]->SetLineColor(kBlue);
+  locHist_theta_denom_gen[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_denom_gen[0]->SetMarkerColor(kRed);
+  locHist_theta_denom_gen[0]->SetLineColor(kRed);
+  locHist_theta_num_gen[0]->Draw();
+  locHist_theta_denom_gen[0]->Draw("same");
+  locHist_theta_missing_gen[0]->Draw("same");*/
+
   TH1F* locHist_p_gen[7];
   TH1F* locHist_p_denom_gen[7];
+  TH1F* locHist_p_missing_gen[7];
   double p_errorD_gen[12][7];
   double p_gen[12][7];
   double p_errorU_gen[12][7];
   double p_denom_gen[12][7];
   for(int im = 0; im < 7; im++){
     locHist_p_gen[im] = (TH1F*)fgen->Get(Form("p_mmop_reco_%d", im+1));
-    locHist_p_denom_gen[im] = (TH1F*)fgen->Get(Form("p_mmop_denom_%d", im+1));
+    locHist_p_gen[im]->SetName(Form("p_gen_m1_%d", im+1));
+    locHist_p_missing_gen[im] = (TH1F*)fgen->Get(Form("p_mmop_missing_%d", im+1));
+    //locHist_p_denom_gen[im] = (TH1F*)fgen->Get(Form("p_mmop_denom_%d", im+1));
+    locHist_p_denom_gen[im] = (TH1F*)locHist_p_gen[im]->Clone(Form("p_denom_gen_m1_%d", im+1));
+    locHist_p_denom_gen[im]->Sumw2();
+    locHist_p_denom_gen[im]->Add(locHist_p_missing_gen[im]);
     for(int i = 0; i < 12; i++) {
       p_errorD_gen[i][im] = locHist_p_gen[im]->GetBinError(i+1);
       p_gen[i][im] = locHist_p_gen[im]->GetBinContent(i+1);
-      p_errorU_gen[i][im] = locHist_p_denom_gen[im]->GetBinError(i+1);
+      p_errorU_gen[i][im] = locHist_p_missing_gen[im]->GetBinError(i+1);
       p_denom_gen[i][im] = locHist_p_denom_gen[im]->GetBinContent(i+1);
     }
     locHist_p_gen[im]->Sumw2();
@@ -199,11 +276,14 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double phi_denom_data_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_phi_data_m2[im] = (TH1F*)fdata_m2->Get(Form("phi_yield_%d", im+1));
-    locHist_phi_denom_data_m2[im] = (TH1F*)fdata_m2->Get(Form("phi_yield_denom_%d", im+1));
+    locHist_phi_data_m2[im]->SetName(Form("phi_data_m2_%d", im+1));
+    locHist_phi_denom_data_m2[im] = (TH1F*)locHist_phi_data_m2[im]->Clone(Form("phi_denom_data_m2_%d", im+1));
+    locHist_phi_denom_data_m2[im]->Sumw2();
+    locHist_phi_denom_data_m2[im]->Add(locHist_phi_missing_data[im]);
     for(int i = 0; i < 20; i++) {
       phi_errorD_data_m2[i][im] = locHist_phi_data_m2[im]->GetBinError(i+1);
       phi_data_m2[i][im] = locHist_phi_data_m2[im]->GetBinContent(i+1);
-      phi_errorU_data_m2[i][im] = locHist_phi_denom_data_m2[im]->GetBinError(i+1);
+      phi_errorU_data_m2[i][im] = locHist_phi_missing_data[im]->GetBinError(i+1);
       phi_denom_data_m2[i][im] = locHist_phi_denom_data_m2[im]->GetBinContent(i+1);
     }
     locHist_phi_data_m2[im]->Sumw2();
@@ -220,7 +300,10 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double theta_denom_data_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_theta_num_data_m2[im] = (TH1F*)fdata_m2->Get(Form("theta_yield_%d", im+1));
-    locHist_theta_denom_data_m2[im] = (TH1F*)fdata_m2->Get(Form("theta_yield_denom_%d", im+1));
+    locHist_theta_num_data_m2[im]->SetName(Form("theta_num_data_m2_%d", im+1));
+    locHist_theta_denom_data_m2[im] = (TH1F*)locHist_theta_num_data_m2[im]->Clone(Form("theta_denom_data_m2_%d", im+1));
+    locHist_theta_denom_data_m2[im]->Sumw2();
+    locHist_theta_denom_data_m2[im]->Add(locHist_theta_missing_data[im]);
     locHist_theta_data_m2[im] = new TH1F(Form("theta_data_m2_efficiency_%d", im+1), ";#theta (deg)", 20, 0., 30.);
     for(int i = 0; i < 20; i++) {
       if(locHist_theta_num_data_m2[im]->GetBinContent(i+1) == locHist_theta_denom_data_m2[im]->GetBinContent(i+1))
@@ -229,7 +312,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 	continue;
       theta_errorD_data_m2[i][im] = locHist_theta_num_data_m2[im]->GetBinError(i+1);
       theta_data_m2[i][im] = locHist_theta_num_data_m2[im]->GetBinContent(i+1);
-      theta_errorU_data_m2[i][im] = locHist_theta_denom_data_m2[im]->GetBinError(i+1);
+      theta_errorU_data_m2[i][im] = locHist_theta_missing_data[im]->GetBinError(i+1);
       theta_denom_data_m2[i][im] = locHist_theta_denom_data_m2[im]->GetBinContent(i+1);
       double content = theta_data_m2[i][im] / theta_denom_data_m2[i][im];
       double error = TMath::Sqrt((TMath::Power((theta_denom_data_m2[i][im] - theta_data_m2[i][im])/(theta_denom_data_m2[i][im]*theta_denom_data_m2[i][im]), 2.)*theta_errorD_data_m2[i][im]*theta_errorD_data_m2[i][im] + TMath::Power(theta_data_m2[i][im]/(theta_denom_data_m2[i][im]*theta_denom_data_m2[i][im]), 2.)*theta_errorU_data_m2[i][im]*theta_errorU_data_m2[i][im]));
@@ -239,6 +322,21 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
     locHist_theta_data_m2[im]->Sumw2();
   }
 
+  /*cEffTest->cd(3);
+  locHist_theta_num_data_m2[0]->SetTitle("Data (Method 2) theta;#theta (deg);#pi^{-} yield (data method 2)");
+  locHist_theta_num_data_m2[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_num_data_m2[0]->SetMarkerColor(kAzure+10);
+  locHist_theta_num_data_m2[0]->SetLineColor(kAzure+10);
+  //locHist_theta_missing_data[0]->SetMarkerStyle(kFullCircle);
+  //locHist_theta_missing_data[0]->SetMarkerColor(kBlue);
+  //locHist_theta_missing_data[0]->SetLineColor(kBlue);
+  locHist_theta_denom_data_m2[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_denom_data_m2[0]->SetMarkerColor(kRed);
+  locHist_theta_denom_data_m2[0]->SetLineColor(kRed);// stuff
+  locHist_theta_num_data_m2[0]->Draw();
+  locHist_theta_denom_data_m2[0]->Draw("same");
+  locHist_theta_missing_data[0]->Draw("same");*/
+
   TH1F* locHist_p_data_m2[7];
   TH1F* locHist_p_denom_data_m2[7];
   double p_errorD_data_m2[20][7];
@@ -247,11 +345,14 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double p_denom_data_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_p_data_m2[im] = (TH1F*)fdata_m2->Get(Form("p_yield_%d", im+1));
-    locHist_p_denom_data_m2[im] = (TH1F*)fdata_m2->Get(Form("p_yield_denom_%d", im+1));
+    locHist_p_data_m2[im]->SetName(Form("p_data_m2_%d", im+1));
+    locHist_p_denom_data_m2[im] = (TH1F*)locHist_p_data_m2[im]->Clone(Form("p_denom_data_m2_%d", im+1));
+    locHist_p_denom_data_m2[im]->Sumw2();
+    locHist_p_denom_data_m2[im]->Add(locHist_p_missing_data[im]);
     for(int i = 0; i < 20; i++) {
       p_errorD_data_m2[i][im] = locHist_p_data_m2[im]->GetBinError(i+1);
       p_data_m2[i][im] = locHist_p_data_m2[im]->GetBinContent(i+1);
-      p_errorU_data_m2[i][im] = locHist_p_denom_data_m2[im]->GetBinError(i+1);
+      p_errorU_data_m2[i][im] = locHist_p_missing_data[im]->GetBinError(i+1);
       p_denom_data_m2[i][im] = locHist_p_denom_data_m2[im]->GetBinContent(i+1);
     }
     locHist_p_data_m2[im]->Sumw2();
@@ -267,12 +368,14 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double phi_denom_gen_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_phi_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("phi_yield_%d", im+1));
-    locHist_phi_denom_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("phi_yield_denom_%d", im+1));
-    if(!locHist_phi_gen_m2[im]) continue;
+    locHist_phi_gen_m2[im]->SetName(Form("phi_gen_m2_%d", im+1));
+    locHist_phi_denom_gen_m2[im] = (TH1F*)locHist_phi_gen_m2[im]->Clone(Form("phi_denom_gen_m2_%d", im+1));
+    locHist_phi_denom_gen_m2[im]->Sumw2();
+    locHist_phi_denom_gen_m2[im]->Add(locHist_phi_missing_gen[im]);
     for(int i = 0; i < 20; i++) {
       phi_errorD_gen_m2[i][im] = locHist_phi_gen_m2[im]->GetBinError(i+1);
       phi_gen_m2[i][im] = locHist_phi_gen_m2[im]->GetBinContent(i+1);
-      phi_errorU_gen_m2[i][im] = locHist_phi_denom_gen_m2[im]->GetBinError(i+1);
+      phi_errorU_gen_m2[i][im] = locHist_phi_missing_gen[im]->GetBinError(i+1);
       phi_denom_gen_m2[i][im] = locHist_phi_denom_gen_m2[im]->GetBinContent(i+1);
     }
     locHist_phi_gen_m2[im]->Sumw2();
@@ -289,7 +392,10 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double theta_denom_gen_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_theta_num_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("theta_yield_%d", im+1));
-    locHist_theta_denom_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("theta_yield_denom_%d", im+1));
+    locHist_theta_num_gen_m2[im]->SetName(Form("theta_num_gen_m2_%d", im+1));
+    locHist_theta_denom_gen_m2[im] = (TH1F*)locHist_theta_num_gen_m2[im]->Clone(Form("theta_denom_gen_m2_%d", im+1));
+    locHist_theta_denom_gen_m2[im]->Sumw2();
+    locHist_theta_denom_gen_m2[im]->Add(locHist_theta_missing_gen[im]);
     locHist_theta_gen_m2[im] = new TH1F(Form("theta_gen_m2_efficiency_%d", im+1), ";#theta (deg)", 20, 0., 30.);
     for(int i = 0; i < 20; i++) {
       if(locHist_theta_num_gen_m2[im]->GetBinContent(i+1) == locHist_theta_denom_gen_m2[im]->GetBinContent(i+1))
@@ -298,7 +404,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
 	continue;
       theta_errorD_gen_m2[i][im] = locHist_theta_num_gen_m2[im]->GetBinError(i+1);
       theta_gen_m2[i][im] = locHist_theta_num_gen_m2[im]->GetBinContent(i+1);
-      theta_errorU_gen_m2[i][im] = locHist_theta_denom_gen_m2[im]->GetBinError(i+1);
+      theta_errorU_gen_m2[i][im] = locHist_theta_missing_gen[im]->GetBinError(i+1);
       theta_denom_gen_m2[i][im] = locHist_theta_denom_gen_m2[im]->GetBinContent(i+1);
       double content = theta_gen_m2[i][im] / theta_denom_gen_m2[i][im];
       double error = TMath::Sqrt((TMath::Power((theta_denom_gen_m2[i][im] - theta_gen_m2[i][im])/(theta_denom_gen_m2[i][im]*theta_denom_gen_m2[i][im]), 2.)*theta_errorD_gen_m2[i][im]*theta_errorD_gen_m2[i][im] + TMath::Power(theta_gen_m2[i][im]/(theta_denom_gen_m2[i][im]*theta_denom_gen_m2[i][im]), 2.)*theta_errorU_gen_m2[i][im]*theta_errorU_gen_m2[i][im]));
@@ -308,7 +414,20 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
     locHist_theta_gen_m2[im]->Sumw2();
   }
 
-
+  /*cEffTest->cd(4);
+  locHist_theta_num_gen_m2[0]->SetTitle("MC (Method 2) theta;#theta (deg);#pi^{-} yield (MC method 2)");
+  locHist_theta_num_gen_m2[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_num_gen_m2[0]->SetMarkerColor(kAzure+10);
+  locHist_theta_num_gen_m2[0]->SetLineColor(kAzure+10);
+  //locHist_theta_missing_gen[0]->SetMarkerStyle(kFullCircle);
+  //locHist_theta_missing_gen[0]->SetMarkerColor(kBlue);
+  //locHist_theta_missing_gen[0]->SetLineColor(kBlue);
+  locHist_theta_denom_gen_m2[0]->SetMarkerStyle(kFullCircle);
+  locHist_theta_denom_gen_m2[0]->SetMarkerColor(kRed);
+  locHist_theta_denom_gen_m2[0]->SetLineColor(kRed);
+  locHist_theta_num_gen_m2[0]->Draw();
+  locHist_theta_denom_gen_m2[0]->Draw("same");
+  locHist_theta_missing_gen[0]->Draw("same");*/
   
   TH1F* locHist_p_gen_m2[7];
   TH1F* locHist_p_denom_gen_m2[7];
@@ -318,11 +437,14 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   double p_denom_gen_m2[20][7];
   for(int im = 0; im < 7; im++){
     locHist_p_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("p_yield_%d", im+1));
-    locHist_p_denom_gen_m2[im] = (TH1F*)fgen_m2->Get(Form("p_yield_denom_%d", im+1));
+    locHist_p_gen_m2[im]->SetName(Form("p_gen_m2_%d", im+1));
+    locHist_p_denom_gen_m2[im] = (TH1F*)locHist_p_gen_m2[im]->Clone(Form("p_denom_gen_m2_%d", im+1));
+    locHist_p_denom_gen_m2[im]->Sumw2();
+    locHist_p_denom_gen_m2[im]->Add(locHist_p_missing_gen[im]);
     for(int i = 0; i < 20; i++) {
       p_errorD_gen_m2[i][im] = locHist_p_gen_m2[im]->GetBinError(i+1);
       p_gen_m2[i][im] = locHist_p_gen_m2[im]->GetBinContent(i+1);
-      p_errorU_gen_m2[i][im] = locHist_p_denom_gen_m2[im]->GetBinError(i+1);
+      p_errorU_gen_m2[i][im] = locHist_p_missing_gen[im]->GetBinError(i+1);
       p_denom_gen_m2[i][im] = locHist_p_denom_gen_m2[im]->GetBinContent(i+1);
     }
     locHist_p_gen_m2[im]->Sumw2();
@@ -340,15 +462,19 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   for(int im = 0; im < 7; im++){
     for(int i = 0; i < 20; i++) {
       phi_err_data_m2[im] = TMath::Sqrt((TMath::Power((phi_denom_data_m2[i][im] - phi_data_m2[i][im])/(phi_denom_data_m2[i][im]*phi_denom_data_m2[i][im]), 2.)*phi_errorD_data_m2[i][im]*phi_errorD_data_m2[i][im] + TMath::Power(phi_data_m2[i][im]/(phi_denom_data_m2[i][im]*phi_denom_data_m2[i][im]), 2.)*phi_errorU_data_m2[i][im]*phi_errorU_data_m2[i][im]));
+
       locHist_phi_data_m2[im]->SetBinError(i+1, phi_err_data_m2[im]);
 
       p_err_data_m2[im] = TMath::Sqrt((TMath::Power((p_denom_data_m2[i][im] - p_data_m2[i][im])/(p_denom_data_m2[i][im]*p_denom_data_m2[i][im]), 2.)*p_errorD_data_m2[i][im]*p_errorD_data_m2[i][im] + TMath::Power(p_data_m2[i][im]/(p_denom_data_m2[i][im]*p_denom_data_m2[i][im]), 2.)*p_errorU_data_m2[i][im]*p_errorU_data_m2[i][im]));
+
       locHist_p_data_m2[im]->SetBinError(i+1, p_err_data_m2[im]);
 
       phi_err_gen_m2[im] = TMath::Sqrt((TMath::Power((phi_denom_gen_m2[i][im] - phi_gen_m2[i][im])/(phi_denom_gen_m2[i][im]*phi_denom_gen_m2[i][im]), 2.)*phi_errorD_gen_m2[i][im]*phi_errorD_gen_m2[i][im] + TMath::Power(phi_gen_m2[i][im]/(phi_denom_gen_m2[i][im]*phi_denom_gen_m2[i][im]), 2.)*phi_errorU_gen_m2[i][im]*phi_errorU_gen_m2[i][im]));
+
       locHist_phi_gen_m2[im]->SetBinError(i+1, phi_err_gen_m2[im]);
 
       p_err_gen_m2[im] = TMath::Sqrt((TMath::Power((p_denom_gen_m2[i][im] - p_gen_m2[i][im])/(p_denom_gen_m2[i][im]*p_denom_gen_m2[i][im]), 2.)*p_errorD_gen_m2[i][im]*p_errorD_gen_m2[i][im] + TMath::Power(p_gen_m2[i][im]/(p_denom_gen_m2[i][im]*p_denom_gen_m2[i][im]), 2.)*p_errorU_gen_m2[i][im]*p_errorU_gen_m2[i][im]));
+
       locHist_p_gen_m2[im]->SetBinError(i+1, p_err_gen_m2[im]);
     }
   }
@@ -356,8 +482,10 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   //Repeat method 1 for theta vs p:
   TH1F* locHist_thetap_data[9][7];
   TH1F* locHist_thetap_denom_data[9][7];
+  TH1F* locHist_thetap_missing_data[9][7];
   TH1F* locHist_thetap_gen[9][7];
   TH1F* locHist_thetap_denom_gen[9][7];
+  TH1F* locHist_thetap_missing_gen[9][7];
   TH1F* locHist_thetap_eff_data[9][7];
   TH1F* locHist_thetap_eff_gen[9][7];
 
@@ -373,18 +501,31 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   for(int im = 0; im < 7; im++){
     for(int ip = 0; ip < 9; ip++){
       locHist_thetap_data[ip][im] = (TH1F*)fdata->Get(Form("theta_yield_%d_m%d", ip+1, im+1));
-      locHist_thetap_denom_data[ip][im] = (TH1F*)fdata->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_data[ip][im]->SetName(Form("thetap_num_data_m1_p%d_%d", ip+1, im+1));
+      //locHist_thetap_denom_data[ip][im] = (TH1F*)fdata->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_missing_data[ip][im] = (TH1F*)fdata->Get(Form("theta_yield_missing_%d_m%d", ip+1, im+1));
+      locHist_thetap_denom_data[ip][im] = (TH1F*)locHist_thetap_data[ip][im]->Clone(Form("thetap_denom_data_m1_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_data[ip][im]->Sumw2();
+      locHist_thetap_denom_data[ip][im]->Add(locHist_thetap_missing_data[ip][im]);
+
       locHist_thetap_gen[ip][im] = (TH1F*)fgen->Get(Form("theta_yield_%d_m%d", ip+1, im+1));
-      locHist_thetap_denom_gen[ip][im] = (TH1F*)fgen->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_gen[ip][im]->SetName(Form("thetap_num_gen_m1_p%d_%d", ip+1, im+1));
+      //locHist_thetap_denom_gen[ip][im] = (TH1F*)fgen->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_missing_gen[ip][im] = (TH1F*)fgen->Get(Form("theta_yield_missing_%d_m%d", ip+1, im+1));
+      locHist_thetap_denom_gen[ip][im] = (TH1F*)locHist_thetap_gen[ip][im]->Clone(Form("thetap_denom_gen_m1_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_gen[ip][im]->Sumw2();
+      locHist_thetap_denom_gen[ip][im]->Add(locHist_thetap_missing_gen[ip][im]);
+
       locHist_thetap_eff_data[ip][im] = new TH1F(Form("thetap_efficiency_data_%d_m%d", ip+1, im+1), ";#theta (deg);#pi^{-} efficiency / 1.5#circ", 20, 0., 30.);
       locHist_thetap_eff_gen[ip][im] = new TH1F(Form("thetap_efficiency_gen_%d_m%d", ip+1, im+1), ";#theta (deg);#pi^{-} efficiency / 1.5#circ", 20, 0., 30.);
+
     for(int i = 0; i < 20; i++){
       if(locHist_thetap_data[ip][im]->GetBinContent(i+1) == locHist_thetap_denom_data[ip][im]->GetBinContent(i+1))
 	continue;
       thetap_data[ip][im][i] = locHist_thetap_data[ip][im]->GetBinContent(i+1);
       thetap_errorD_data[ip][im][i] = locHist_thetap_data[ip][im]->GetBinError(i+1);
       thetap_denom_data[ip][im][i] = locHist_thetap_denom_data[ip][im]->GetBinContent(i+1);
-      thetap_errorU_data[ip][im][i] = locHist_thetap_denom_data[ip][im]->GetBinError(i+1); 
+      thetap_errorU_data[ip][im][i] = locHist_thetap_missing_data[ip][im]->GetBinError(i+1); 
       double content = thetap_data[ip][im][i] / thetap_denom_data[ip][im][i];
       double error = TMath::Sqrt((TMath::Power((thetap_denom_data[ip][im][i] - thetap_data[ip][im][i])/(thetap_denom_data[ip][im][i]*thetap_denom_data[ip][im][i]), 2.)*thetap_errorD_data[ip][im][i]*thetap_errorD_data[ip][im][i] + TMath::Power(thetap_data[ip][im][i]/(thetap_denom_data[ip][im][i]*thetap_denom_data[ip][im][i]), 2.)*thetap_errorU_data[ip][im][i]*thetap_errorU_data[ip][im][i]));
       locHist_thetap_eff_data[ip][im]->SetBinContent(i+1, content);
@@ -396,7 +537,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
       thetap_gen[ip][im][i] = locHist_thetap_gen[ip][im]->GetBinContent(i+1);
       thetap_errorD_gen[ip][im][i] = locHist_thetap_gen[ip][im]->GetBinError(i+1);
       thetap_denom_gen[ip][im][i] = locHist_thetap_denom_gen[ip][im]->GetBinContent(i+1);
-      thetap_errorU_gen[ip][im][i] = locHist_thetap_denom_gen[ip][im]->GetBinError(i+1);
+      thetap_errorU_gen[ip][im][i] = locHist_thetap_missing_gen[ip][im]->GetBinError(i+1);
       double content = thetap_gen[ip][im][i] / thetap_denom_gen[ip][im][i];
       double error = TMath::Sqrt((TMath::Power((thetap_denom_gen[ip][im][i] - thetap_gen[ip][im][i])/(thetap_denom_gen[ip][im][i]*thetap_denom_gen[ip][im][i]), 2.)*thetap_errorD_gen[ip][im][i]*thetap_errorD_gen[ip][im][i] + TMath::Power(thetap_gen[ip][im][i]/(thetap_denom_gen[ip][im][i]*thetap_denom_gen[ip][im][i]), 2.)*thetap_errorU_gen[ip][im][i]*thetap_errorU_gen[ip][im][i]));
       locHist_thetap_eff_gen[ip][im]->SetBinContent(i+1, content);
@@ -455,9 +596,15 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   for(int im = 0; im < 7; im++){
     for(int ip = 0; ip < 9; ip++){
       locHist_thetap_data_m2[ip][im] = (TH1F*)fdata_m2->Get(Form("theta_yield_%d_m%d", ip+1, im+1));
-      locHist_thetap_denom_data_m2[ip][im] = (TH1F*)fdata_m2->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_data_m2[ip][im]->SetName(Form("thetap_num_data_m2_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_data_m2[ip][im] = (TH1F*)locHist_thetap_data_m2[ip][im]->Clone(Form("thetap_denom_data_m2_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_data_m2[ip][im]->Sumw2();
+      locHist_thetap_denom_data_m2[ip][im]->Add(locHist_thetap_missing_data[ip][im]);
       locHist_thetap_gen_m2[ip][im] = (TH1F*)fgen_m2->Get(Form("theta_yield_%d_m%d", ip+1, im+1));
-      locHist_thetap_denom_gen_m2[ip][im] = (TH1F*)fgen_m2->Get(Form("theta_yield_denom_%d_m%d", ip+1, im+1));
+      locHist_thetap_gen_m2[ip][im]->SetName(Form("thetap_num_gen_m2_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_gen_m2[ip][im] = (TH1F*)locHist_thetap_gen_m2[ip][im]->Clone(Form("thetap_denom_gen_m2_p%d_%d", ip+1, im+1));
+      locHist_thetap_denom_gen_m2[ip][im]->Sumw2();
+      locHist_thetap_denom_gen_m2[ip][im]->Add(locHist_thetap_missing_gen[ip][im]);
       locHist_thetap_eff_data_m2[ip][im] = new TH1F(Form("thetap_efficiency_data_m2_%d_m%d", ip+1, im+1), ";#theta (deg);#pi^{-} efficiency / 1.5#circ", 20, 0., 30.);
       locHist_thetap_eff_gen_m2[ip][im] = new TH1F(Form("thetap_efficiency_gen_m2_%d_m%d", ip+1, im+1), ";#theta (deg);#pi^{-} efficiency / 1.5#circ", 20, 0., 30.);
     for(int i = 0; i < 20; i++){
@@ -466,7 +613,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
       thetap_data_m2[ip][im][i] = locHist_thetap_data_m2[ip][im]->GetBinContent(i+1);
       thetap_errorD_data_m2[ip][im][i] = locHist_thetap_data_m2[ip][im]->GetBinError(i+1);
       thetap_denom_data_m2[ip][im][i] = locHist_thetap_denom_data_m2[ip][im]->GetBinContent(i+1);
-      thetap_errorU_data_m2[ip][im][i] = locHist_thetap_denom_data_m2[ip][im]->GetBinError(i+1); 
+      thetap_errorU_data_m2[ip][im][i] = locHist_thetap_missing_data[ip][im]->GetBinError(i+1); 
       double content = thetap_data_m2[ip][im][i] / thetap_denom_data_m2[ip][im][i];
       double error = TMath::Sqrt((TMath::Power((thetap_denom_data_m2[ip][im][i] - thetap_data_m2[ip][im][i])/(thetap_denom_data_m2[ip][im][i]*thetap_denom_data_m2[ip][im][i]), 2.)*thetap_errorD_data_m2[ip][im][i]*thetap_errorD_data_m2[ip][im][i] + TMath::Power(thetap_data_m2[ip][im][i]/(thetap_denom_data_m2[ip][im][i]*thetap_denom_data_m2[ip][im][i]), 2.)*thetap_errorU_data_m2[ip][im][i]*thetap_errorU_data_m2[ip][im][i]));
       locHist_thetap_eff_data_m2[ip][im]->SetBinContent(i+1, content);
@@ -478,7 +625,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
       thetap_gen_m2[ip][im][i] = locHist_thetap_gen_m2[ip][im]->GetBinContent(i+1);
       thetap_errorD_gen_m2[ip][im][i] = locHist_thetap_gen_m2[ip][im]->GetBinError(i+1);
       thetap_denom_gen_m2[ip][im][i] = locHist_thetap_denom_gen_m2[ip][im]->GetBinContent(i+1);
-      thetap_errorU_gen_m2[ip][im][i] = locHist_thetap_denom_gen_m2[ip][im]->GetBinError(i+1);
+      thetap_errorU_gen_m2[ip][im][i] = locHist_thetap_missing_gen[ip][im]->GetBinError(i+1);
       double content = thetap_gen_m2[ip][im][i] / thetap_denom_gen_m2[ip][im][i];
       double error = TMath::Sqrt((TMath::Power((thetap_denom_gen_m2[ip][im][i] - thetap_gen_m2[ip][im][i])/(thetap_denom_gen_m2[ip][im][i]*thetap_denom_gen_m2[ip][im][i]), 2.)*thetap_errorD_gen_m2[ip][im][i]*thetap_errorD_gen_m2[ip][im][i] + TMath::Power(thetap_gen_m2[ip][im][i]/(thetap_denom_gen_m2[ip][im][i]*thetap_denom_gen_m2[ip][im][i]), 2.)*thetap_errorU_gen_m2[ip][im][i]*thetap_errorU_gen_m2[ip][im][i]));
       locHist_thetap_eff_gen_m2[ip][im]->SetBinContent(i+1, content);
@@ -629,7 +776,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   gStyle->SetOptStat("");
 
   TString pcut[7] = {"0", "0.000001", "0.00001", "0.0001", "0.001", "0.01", "0.1"};
-
+  
 
   //TCanvas* c1[7];
   for(int im = 0; im < 7; im++){
@@ -941,7 +1088,11 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   locHist_p_gen[0]->Draw("same");
   locHist_p_gen_m2[0]->Draw("same");
 
-  c3->Print(Form("plots_%s/%s_Efficiency.C",name,charge));
+  //***************  The usual 1-D efficiencies  **************//  <----  <------ <------
+  //c3->Print("plots_F2018_bggen_final/PiMinus_Efficiency.C");
+  //c3->Print("plots_F2018_bggen_final/PiMinus_Efficiency.pdf");
+  c3->Print("plots_S2018_bggen_new/effics_paramTest/PiMinus_Efficiency.C");
+  c3->Print("plots_S2018_bggen_new/effics_paramTest/PiMinus_Efficiency.pdf");
   
 
   /*
@@ -980,15 +1131,15 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   }
   */
 
-  locHist_thetap_eff_data[0][0]->SetTitle("0.5 < p < 0.75 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[1][0]->SetTitle("0.75 < p < 1.0 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[2][0]->SetTitle("1.0 < p < 1.25 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[3][0]->SetTitle("1.25 < p < 1.5 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[4][0]->SetTitle("1.5 < p < 2.0 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[5][0]->SetTitle("2.0 < p < 3.0 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[6][0]->SetTitle("3.0 < p < 4.0 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[7][0]->SetTitle("4.0 < p < 5.0 GeV;#theta (deg);#pi^{+} efficiency");
-  locHist_thetap_eff_data[8][0]->SetTitle("5.0 < p < 6.0 GeV;#theta (deg);#pi^{+} efficiency");
+  locHist_thetap_eff_data[0][0]->SetTitle("0.5 < p < 0.75 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[1][0]->SetTitle("0.75 < p < 1.0 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[2][0]->SetTitle("1.0 < p < 1.25 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[3][0]->SetTitle("1.25 < p < 1.5 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[4][0]->SetTitle("1.5 < p < 2.0 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[5][0]->SetTitle("2.0 < p < 3.0 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[6][0]->SetTitle("3.0 < p < 4.0 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[7][0]->SetTitle("4.0 < p < 5.0 GeV;#theta (deg);#pi^{-} efficiency");
+  locHist_thetap_eff_data[8][0]->SetTitle("5.0 < p < 6.0 GeV;#theta (deg);#pi^{-} efficiency");
 
   
   TCanvas* cgrid = new TCanvas("cgrid", "pi- efficiencies vs theta, p", 900, 900);
@@ -1028,7 +1179,9 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   lgrid->AddEntry(locHist_thetap_eff_gen_m2[8][0], "MC (Method 2)");
   lgrid->Draw();
 
-  cgrid->Print(Form("plots_%s/%s_PostageStamp.pdf",name,charge));
+  //*****************  Set of 9 binned effics   ******************//  <----  <-----  <------
+  //cgrid->Print("plots_F2018_bggen_final/PiMinus_PostageStamp.pdf");
+  cgrid->Print("plots_S2018_bggen_new/effics_paramTest/PiMinus_PostageStamp.pdf");
   
   /*
   locHist_thetap_eff_data_m2[0][0]->SetTitle("0.5 < p < 0.75 GeV;#theta (deg);#pi^{-} efficiency");
@@ -1157,6 +1310,7 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   c5->Divide(3,1);
   c5->cd(1);
   locHist_phi_ratio[0]->SetTitle(";#phi (deg);Data/MC Ratio");
+//  locHist_phi_ratio[0]->SetTitle(";#phi (deg);New/Old bggen Ratio");
   locHist_phi_ratio[0]->SetMinimum(0.9);
   locHist_phi_ratio[0]->SetMaximum(1.1);
   locHist_phi_ratio[0]->SetMarkerStyle(kFullCircle);
@@ -1196,7 +1350,8 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   l5->AddEntry(locHist_p_ratio_m2[0], "Method 2");
   l5->Draw();
 
-  c5->Print(Form("plots_%s/%s_Ratio_Int.pdf",name,charge));
+  //c5->Print("plots_F2018_bggen_final/PiMinus_Ratio_Int.pdf");
+  c5->Print("plots_S2018_bggen_new/effics_paramTest/PiMinus_Ratio_Int.pdf");
   
 
   /*
@@ -1305,7 +1460,10 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   locHist_thetap_2D_gen_m2[0]->SetMaximum(1.0);
   locHist_thetap_2D_gen_m2[0]->Draw("colz");
 
-  c2D->Print(Form("plots_%s/%sEff_Absolute.pdf",name,charge));
+
+  //************** 2-D effics ****************//      <------   <-------   <------
+  //c2D->Print("plots_F2018_bggen_final/PiMinusEff_Absolute.pdf");
+  c2D->Print("plots_S2018_bggen_new/effics_paramTest/PiMinusEff_Absolute.pdf");
 
   TCanvas* c2D_ratio = new TCanvas("c2D_ratio", "c2D_ratio", 1);
   c2D_ratio->Divide(2,2);
@@ -1340,9 +1498,10 @@ void efficiency(const char *whichcut = "pv", bool print = false, bool save = fal
   cm2->cd(1);
   gPad->SetRightMargin(0.2);
   locHist_thetap_ratio_2D_m2[0]->Draw("colz text");
-    cm1->Print(Form("plots_%s/%sEff_Ratio_m1.pdf",name,charge));
-    cm2->Print(Form("plots_%s/%sEff_Ratio_m2.pdf",name,charge));
- 
+    //cm1->Print("plots_F2018_bggen_final/PiMinusEff_Ratio_m1.pdf");
+    //cm2->Print("plots_F2018_bggen_final/PiMinusEff_Ratio_m2.pdf");
+    cm1->Print("plots_S2018_bggen_new/effics_paramTest/PiMinusEff_Ratio_m1.pdf");
+    cm2->Print("plots_S2018_bggen_new/effics_paramTest/PiMinusEff_Ratio_m2.pdf");
 
 
   if(save == true){

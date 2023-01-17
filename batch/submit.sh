@@ -10,33 +10,35 @@
 #   x5672 (both vortex and hurricane)
 
 PPN=8
-MyProcess=p2ketapr
-MyCluster=x5672
+MyProcess=gpi0pippim
+MyCluster=hurricane
 echo $MyProcess
 
-MyEnv=/sciclone/home10/$USER/wm_gluex/
+MyEnv=/sciclone/home20/$USER/wm_gluex/
 MyCodeDir=$WM_GLUEX/analysis/$MyProcess/
-MyRunningDir=/sciclone/scr20/$USER/TMPDIR/$MyProcess/
+MyDataInDir=/sciclone/gluex10/gluex_simulations/REQUESTED_MC/F2018_ver02_21_bggen_batch04/tree_gpi0pippim__B4_M7/
 
-MyDataInDir=/sciclone/gluex10/RunPeriod-2018-08/analysis/ver14/tree_kpkmetapr__B4_M35_M17/merged/ #replace with your channels directory
-MyDataOutDir=/sciclone/gluex10/$USER/$MyProcess/
-
+MyRunningDir=/sciclone/scr20/$USER/TMPDIR/mc_$MyProcess/batch04/ # CHANGE IF MC (mc_$MyProcess)
+MyDataOutDir=/sciclone/data10/$USER/mc_$MyProcess/batch04/	# CHANGE IF MC
 MyLogDir=$MyDataOutDir/log/
 
 mkdir -p $MyRunningDir
 mkdir -p $MyDataOutDir
 mkdir -p $MyLogDir
 
-echo $MyProcessDir
+chmod 777 $MyRunningDir # allows for run directories to be deleted in runDSelector.csh
+
+# echo $MyProcessDir # Deprecated variable?
 echo $MyLogDir
 
 # data run numbers
-#for MyRun in 030471.root; do
+#for MyRun in ${MyDataInDir}/*302*.root; do # all certain run numbers in input directory
 for MyRun in ${MyDataInDir}/*; do # all run numbers in input directory
 
 MyRun=`basename ${MyRun}`
 
-MyRun=${MyRun: -10:5} # get run number from filename (in this case 18 characters from the beginning of the filename: tree_pi0kpkm__B3_030496.root)
+# get run number from filename 
+MyRun=${MyRun: -10:5} # works for all files, as long as in form "*#####.root"
 
 echo $MyRun
 

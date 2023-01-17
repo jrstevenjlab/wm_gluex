@@ -7,6 +7,9 @@ setenv HOSTNAME `hostname`
 set VORTEX_WORKER=`echo $HOSTNAME | grep -c "vx"`
 set HURRICANE_WORKER=`echo $HOSTNAME | grep -c "hu"`
 set WHIRLWIND_WORKER=`echo $HOSTNAME | grep -c "wh"`
+
+module list
+
 if ($HOSTNAME == "hurricane.sciclone.wm.edu" || $HURRICANE_WORKER == 1 || $HOSTNAME == "whirlwind.sciclone.wm.edu" || $WHIRLWIND_WORKER == 1) then
      module load python/2.7.2
      module load cmake/3.15.3

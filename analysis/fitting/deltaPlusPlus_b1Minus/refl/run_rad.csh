@@ -14,8 +14,8 @@ cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpaceAcc.root
 cp anglesOmegaPiAmplitude_refl+_rad.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_refl+_DeltaLowerVertex_b1_loop_rad.cfg
 vecps_plotter omegapi.fit 
-mv vecps_plot.root omegapi_plot_refl+_rad.root
-mv omegapi.fit omegapi_refl+_rad.fit
+mv vecps_plot.root omegapi_plot_refl+.root
+mv omegapi.fit omegapi_refl+.fit
 
 # fit refl- signal with fixed refl- model
 cp anglesOmegaPiAmplitude_refl-_rad.root anglesOmegaPiAmplitude.root
@@ -28,7 +28,7 @@ mv omegapi.fit omegapi_refl-.fit
 cp anglesOmegaPiAmplitude_refl+_rad.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1_loop_rad.cfg
 vecps_plotter omegapi.fit
-mv vec_ps_plot.root omegapi_plot_refl+_unconstrained.root
+mv vecps_plot.root omegapi_plot_refl+_unconstrained.root
 mv omegapi.fit omegapi_refl+_unconstrained.fit
 
 # fit refl- signal with unconstrained reflectivity

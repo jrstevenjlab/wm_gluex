@@ -5,7 +5,7 @@ mv gen_omegapi_diagnostic.root gen_omegapiAmplitude_b1_refl+_diagnostic.root
 gen_omegapi -c gen_omegapi_amplitude_refl-_neutral_b1.cfg -o anglesOmegaPiAmplitude_refl-.root -l 1.165 -u 1.3 -n 10000 -tmin 0.1 -tmax 0.3
 mv gen_omegapi_diagnostic.root gen_omegapiAmplitude_b1_refl-_diagnostic.root
 
-gen_omegapi -c gen_omegapi_phasespace_neutral_b1.cfg -o anglesOmegaPiPhaseSpace.root -l 1.165 -u 1.3 -n 100000 -tmin 0.1 -tmax 0.3
+gen_omegapi -c gen_omegapi_phasespace_neutral_b1.cfg -o anglesOmegaPiPhaseSpace.root -l 1.165 -u 1.3 -n 1000000 -tmin 0.1 -tmax 0.3
 mv gen_omegapi_diagnostic.root gen_omegapiPhaseSpace_diagnostic.root
 cp anglesOmegaPiPhaseSpace.root anglesOmegaPiPhaseSpaceAcc.root
 

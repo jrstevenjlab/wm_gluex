@@ -22,21 +22,21 @@ cp anglesOmegaPiAmplitude_refl-_rad.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_refl-_DeltaLowerVertex_b1_loop_rad.cfg
 vecps_plotter omegapi.fit
 mv vecps_plot.root omegapi_plot_refl-.root
-mv omegapi.fit omegapi_refl-.fit
+mv omegapi.fit omegapi_refl-_rad.fit
 
 # fit refl+ signal with unconstrained reflectivity
 cp anglesOmegaPiAmplitude_refl+_rad.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1_loop_rad.cfg
 vecps_plotter omegapi.fit
 mv vec_ps_plot.root omegapi_plot_refl+_unconstrained.root
-mv omegapi.fit omegapi_refl+_unconstrained.fit
+mv omegapi.fit omegapi_refl+_unconstrained_rad.fit
 
 # fit refl- signal with unconstrained reflectivity
 cp anglesOmegaPiAmplitude_refl-_rad.root anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1_loop_rad.cfg
 vecps_plotter omegapi.fit
 mv vecps_plot.root omegapi_plot_refl-_unconstrained.root
-mv omegapi.fit omegapi_refl-_unconstrained.fit
+mv omegapi.fit omegapi_refl-_unconstrained_rad.fit
 
 # cleanup 
 # rm ./*.root

@@ -17,11 +17,11 @@ mv omegapi_plot.root omegapi_plot_refl+.root
 mv omegapi.fit omegapi_refl+.fit
 
 # fit refl- signal with fixed refl- model
-cp anglesOmegaPiAmplitude_refl-.root anglesOmegaPiAmplitude.root
-fit -c fit_omegapi_amplitude_refl-_neutral_b1_loop.cfg
-omegapi_plotter omegapi.fit
-mv omegapi_plot.root omegapi_plot_refl-.root
-mv omegapi.fit omegapi_refl-.fit
+#cp anglesOmegaPiAmplitude_refl-.root anglesOmegaPiAmplitude.root
+#fit -c fit_omegapi_amplitude_refl-_neutral_b1_loop.cfg
+#omegapi_plotter omegapi.fit
+#mv omegapi_plot.root omegapi_plot_refl-.root
+#mv omegapi.fit omegapi_refl-.fit
 
 # fit refl+ signal with unconstrained reflectivity
 cp anglesOmegaPiAmplitude_refl+.root anglesOmegaPiAmplitude.root
@@ -29,6 +29,8 @@ fit -c fit_omegapi_amplitude_neutral_b1_loop.cfg # -r 25
 omegapi_plotter omegapi.fit
 mv omegapi_plot.root omegapi_plot_refl+_unconstrained.root
 mv omegapi.fit omegapi_refl+_unconstrained.fit
+
+exit
 
 # fit refl- signal with unconstrained reflectivity
 cp anglesOmegaPiAmplitude_refl-.root anglesOmegaPiAmplitude.root

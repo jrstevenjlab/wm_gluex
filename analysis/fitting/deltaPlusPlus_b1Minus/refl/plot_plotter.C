@@ -1,5 +1,6 @@
 
-void plot_plotter(TString fileName = "omegapi_plot.root", TString dir = "./", TString reac = "") {
+void plot_plotter(TString fileName = "omegapi_plot.root", 
+		  TString dir = "./", TString reac = "") {
 
   gStyle->SetOptStat(0);
 

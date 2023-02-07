@@ -5,3 +5,4 @@
 *.swp
 *.pcm
 *.d
+/analysis/fitting/deltaPlusPlus_b1Minus/refl/rad/seed_*/

@@ -1,8 +1,8 @@
 #####
 # Setup Parameters
 #####
-set N_SEEDS = 1 # num seeds to iterate over
-set N_RANDFITS = 50 # num fits to attempt on one seed
+set N_SEEDS = 5 # num seeds to iterate over
+set N_RANDFITS = 10 # num fits to attempt on one seed
 set N_EVENTS = 10000 # num events in each seed
 set i = 1 # iterator sourcing/tracking seed number
 

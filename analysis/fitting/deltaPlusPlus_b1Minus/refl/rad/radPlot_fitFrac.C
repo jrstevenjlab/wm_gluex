@@ -11,30 +11,31 @@
 /* Loop through files in current directory to count # of directories
  * starting with "seed_". Assumes same dir as "run_rad.csh" script
  */
-int getNumSeeds() {
-  int countSeeds{0};
+int getNumberOfSeeds() {
+  int seedCount{0};
+  
   // Find directories named "seed_*"
   TSystemDirectory dir("myDir", "./");
   TList *files = dir.GetListOfFiles();
-  if(files) {
-    TSystemFile *file;
-    TString fileName;
-    TIter next(files);
-    while ((file=(TSystemFile*)next())) {
-      fileName = file->GetName();
-      if(file->IsDirectory() && fileName.BeginsWith("seed_"))
-	countSeeds += 1;
-    }
-  }
-  else {
+
+  if(!files) {
     cout << "No files found" << "\n";
-    exit(1);
+    return seedCount;
   }
-  return countSeeds;
+
+  TSystemFile *file;
+  TString fileName;
+  TIter next(files);
+  while ( (file=(TSystemFile*)next()) ) {
+    fileName = file->GetName();
+    if(file->IsDirectory() && fileName.BeginsWith("seed_"))
+      seedCount += 1;
+  }
+  return seedCount;
 }
 
 /* Opens fit parameters file produced by vecps, and stores fit
- * fractions (and other specified params) in TTrees.
+ * fractions (and other params) in the array that link to the TTrees
  *
  * Uses the same naming conventions as cfg files for amplitudes,
  * and assumes that amplitude fit fracs are written such that 
@@ -45,60 +46,56 @@ int getNumSeeds() {
  * In future, try using some sort of dictionary to match the line
  * entries to the associated amplitude column in the TTree
  */
-void fillTrees(int seedNum, double *valArray[], double *errArray[],
-	       int arraySize) {
+void fillArrays(int seedNum, double *categories[], int numberOfCategories) {
   TString fileName = Form("seed_%i/vecps_fitPars_reflRatio_rad.root",
 			  seedNum); // generalize this later  
   fstream dataFile;
   dataFile.open(fileName, std::fstream::in);
   
-  if(dataFile.is_open()) {
-    cout << Form("\n____Opening File: %s____\n", fileName.Data());
-    string line;
-    int arrayPosition = 1; // start at 1 to skip dsRatio position
-    int arrayLimit = arraySize - arrayPosition;
+  if(!dataFile.is_open()) {
+    cout << Form("Skipping %s, file could not be opened\n", fileName.Data());
+    return;
+  }
 
-    // read opened file line by line
-    while (std::getline(dataFile, line)) {
-      std::istringstream iss(line);
-      vector<string> lineVec;
-      string entry;
+  cout << Form("\n____Opening File: %s____\n", fileName.Data());
+  string line;
+  int arrayPosition = 2; // start at 2 to skip dsRatio value/error
+  int arrayLimit = numberOfCategories - arrayPosition;
+
+  // read opened file line by line
+  while (std::getline(dataFile, line)) {
+    std::istringstream iss(line);
       
-      // for some reason vec_ps spits out dsratio with tab delim,
-      // so handle that special case here. Could break in future!
-      if(line.find("\t") < 15) {
-	int i = 0;
-	while(std::getline(iss, entry, '\t')) {
-	  if (i==0) **valArray = std::stod(entry);
-	  if (i==1) **errArray = std::stod(entry);
-	  i++;
-	}
-      }
-      else {	
-	// convert line into vector, broken up by spaces
-	while (std::getline(iss, entry, ' '))
-	  lineVec.push_back(entry);
-	// find "coherent sum" line and get value with error
-	if(lineVec[2] == "(coherent") {
-	  if(arrayPosition > arrayLimit) {
-	    cout << "Number of coherent sums has exceeded number of "
-	      "given parameters" << "\n";
-	    continue;
-	  }
-	  cout << line << "\n";
-	  // this assumes val and err will always be in same position
-	  **(valArray + arrayPosition) = std::stod(lineVec[7]);
-	  **(errArray + arrayPosition) = std::stod(lineVec[9]);
-	  arrayPosition++;
-	}
-      }
-    } // end getline
-  } // end dataFile.is_open
-  else {
-    cout << "Could not open data file!" << "\n";
-    exit(1);
-  }    
+    // for some reason vec_ps spits out dsratio with tab delim,
+    // so handle that special case here. Could break in future!
+    if(line.find("\t") < 15) {
+      string ratio, err;       
+      iss >> ratio >> err;
+      **categories     = std::stod(ratio);
+      **(categories+1) = std::stod(err);
+      continue;
+    }
 
+    // convert line into vector, broken up by spaces
+    vector<string> lineVec;
+    string entry;
+    while (std::getline(iss, entry, ' ')) {lineVec.push_back(entry); }
+
+    // check if we're on a coherent sum line
+    if(lineVec[2] != "(coherent") {continue;}
+    if(arrayPosition > arrayLimit) {
+      cout << "Number of coherent sums has exceeded number of "
+	      "given parameters" << "\n";
+      continue;
+    }
+
+    cout << line << "\n";
+    // below assumes val/err always in same line position
+    **(categories + arrayPosition) = std::stod(lineVec[7]);
+    **(categories + arrayPosition + 1) = std::stod(lineVec[9]);
+
+    arrayPosition+=2;
+  }
   dataFile.close();
 }
 
@@ -109,92 +106,94 @@ void fillTrees(int seedNum, double *valArray[], double *errArray[],
 
 
 void radPlot_fitFrac() { 
-  // first, determine # of seeds we're working with
-  TString genSpinProjs; // later, expand to vec to handle multiple m's
-  int numSeeds = getNumSeeds();
+  // may have user pass generated spin proj's here
+  // determine # of seeds we're working with
+  int numSeeds = getNumberOfSeeds();
   if(numSeeds == 0) {
     cout << "No seed directories found" << "\n"; 
     return;
   }
-  else 
-    cout << Form("\nFound %i seed directories", numSeeds) << "\n";
+
+  cout << Form("\nFound %i seed directories", numSeeds) << "\n";
   
   // Create NTuple of type double for each parameter and its error
-  TTree *paramVals = new TTree("paramVals", "Parameter Values");
-  TTree *paramErrs = new TTree("paramErrs", "Parameter Errors");
+  TTree *fitParameters = new TTree("fitParameters", "Fit Parameters");
 
-  // param list is hard coded for now
-  double dsRatio, p1pps, m1pps, p1p0s, m1p0s, p1pms, m1pms,
-    p1ppd, m1ppd, p1p0d, m1p0d, p1pmd, m1pmd, p1p, m1p; 
-  double dsRatio_err, p1pps_err, m1pps_err, p1p0s_err, m1p0s_err, 
-    p1pms_err, m1pms_err, p1ppd_err, m1ppd_err, p1p0d_err, m1p0d_err,
-    p1pmd_err, m1pmd_err, p1p_err, m1p_err; 
-  double *valArray[] = {&dsRatio, &p1pps, &m1pps, &p1p0s, &m1p0s, &p1pms,
-			 &m1pms, &p1ppd, &m1ppd, &p1p0d, &m1p0d, &p1pmd,
-			 &m1pmd, &p1p, &m1p};
-  double *errArray[] = {&dsRatio_err, &p1pps_err, &m1pps_err, &p1p0s_err,
-		       &m1p0s_err, &p1pms_err, &m1pms_err, &p1ppd_err, 
-		       &m1ppd_err, &p1p0d_err, &m1p0d_err, &p1pmd_err,
-		       &m1pmd_err, &p1p_err, &m1p_err};
+  // Make categories for the tree (parameters from fitPars files)
+  double dsRatio, dsRatio_err, 
+    p1pps, p1pps_err, m1pps, m1pps_err, p1p0s, p1p0s_err, m1p0s, m1p0s_err,
+    p1pms, p1pms_err, m1pms, m1pms_err, p1ppd, p1ppd_err, m1ppd, m1ppd_err, 
+    p1p0d, p1p0d_err, m1p0d, m1p0d_err, p1pmd, p1pmd_err, m1pmd, m1pmd_err, 
+    p1p, p1p_err, m1p, m1p_err; 
+  double *categories[] = {&dsRatio, &dsRatio_err, 
+			  &p1pps, &p1pps_err, &m1pps, &m1pps_err, 
+			  &p1p0s, &p1p0s_err, &m1p0s, &m1p0s_err, 
+			  &p1pms, &p1pms_err, &m1pms, &m1pms_err, 
+			  &p1ppd, &p1ppd_err, &m1ppd, &m1ppd_err, 
+			  &p1p0d, &p1p0d_err, &m1p0d, &m1p0d_err, 
+			  &p1pmd, &p1pmd_err, &m1pmd, &m1pmd_err, 
+			  &p1p, &p1p_err, &m1p, &m1p_err};
+  TString categoryNames[] = {"dsRatio", "dsRatio_err", 
+			  "p1pps", "p1pps_err", "m1pps", "m1pps_err", 
+			  "p1p0s", "p1p0s_err", "m1p0s", "m1p0s_err", 
+			  "p1pms", "p1pms_err", "m1pms", "m1pms_err", 
+			  "p1ppd", "p1ppd_err", "m1ppd", "m1ppd_err", 
+			  "p1p0d", "p1p0d_err", "m1p0d", "m1p0d_err", 
+			  "p1pmd", "p1pmd_err", "m1pmd", "m1pmd_err", 
+			  "p1p", "p1p_err", "m1p", "m1p_err"};
+  
+  int numberOfCategories = sizeof(categories) / sizeof(*categories);
 
-  // awaiting ROOT forums to tell me how to fix this nightmare below
-  paramVals->Branch("dsRatio", &dsRatio, "dsRatio/D");
-  paramVals->Branch("p1pps", &p1pps, "p1pps/D");
-  paramVals->Branch("m1pps", &m1pps, "m1pps/D");
-  paramVals->Branch("p1p0s", &p1p0s, "p1p0s/D");
-  paramVals->Branch("m1p0s", &m1p0s, "m1p0s/D");
-  paramVals->Branch("p1pms", &p1pms, "p1pms/D");
-  paramVals->Branch("m1pms", &m1pms, "m1pms/D");
-  paramVals->Branch("p1ppd", &p1ppd, "p1ppd/D");
-  paramVals->Branch("m1ppd", &m1ppd, "m1ppd/D");
-  paramVals->Branch("p1p0d", &p1p0d, "p1p0d/D");
-  paramVals->Branch("m1p0d", &m1p0d, "m1p0d/D");
-  paramVals->Branch("p1pmd", &p1pmd, "p1pmd/D");
-  paramVals->Branch("m1pmd", &m1pmd, "m1pmd/D");
-  paramVals->Branch("p1p", &p1p, "p1p/D");
-  paramVals->Branch("m1p", &m1p, "m1p/D");
-  
-  paramErrs->Branch("dsRatio_err", &dsRatio_err, "dsRatio_err/D");
-  paramErrs->Branch("p1pps_err", &p1pps_err, "p1pps_err/D");
-  paramErrs->Branch("m1pps_err", &m1pps_err, "m1pps_err/D");
-  paramErrs->Branch("p1p0s_err", &p1p0s_err, "p1p0s_err/D");
-  paramErrs->Branch("m1p0s_err", &m1p0s_err, "m1p0s_err/D");
-  paramErrs->Branch("p1pms_err", &p1pms_err, "p1pms_err/D");
-  paramErrs->Branch("m1pms_err", &m1pms_err, "m1pms_err/D");
-  paramErrs->Branch("p1ppd_err", &p1ppd_err, "p1ppd_err/D");
-  paramErrs->Branch("m1ppd_err", &m1ppd_err, "m1ppd_err/D");
-  paramErrs->Branch("p1p0d_err", &p1p0d_err, "p1p0d_err/D");
-  paramErrs->Branch("m1p0d_err", &m1p0d_err, "m1p0d_err/D");
-  paramErrs->Branch("p1pmd_err", &p1pmd_err, "p1pmd_err/D");
-  paramErrs->Branch("m1pmd_err", &m1pmd_err, "m1pmd_err/D");
-  paramErrs->Branch("p1p_err", &p1p_err, "p1p_err/D");
-  paramErrs->Branch("m1p_err", &m1p_err, "m1p_err/D");
-  
-  int arraySize = sizeof(valArray) / sizeof(*valArray);
-  if(arraySize != sizeof(errArray) / sizeof(*errArray)) {
-    cout << "Mismatch in # of Parameter Values and Errors!" << "\n";
-    exit(1);
+  // Create branches for each category
+  for(int i=0; i<numberOfCategories; i++) {
+    fitParameters->Branch(categoryNames[i], *(categories+i), 
+			  categoryNames[i]+"/D");
   }
-    
+  
+  // fill TTree with values from fit of each seed
   for(int seedNum=1; seedNum <= numSeeds; seedNum++) {
-    fillTrees(seedNum, valArray, errArray, arraySize);
+    fillArrays(seedNum, categories, numberOfCategories);    
+    fitParameters->Fill();
+  } 
 
-    paramVals->Fill();
-    paramErrs->Fill();
-    /* 
-       In loop here make the plots using the array of pars & errs
-       above. Seperate the plots by reflectivity, since 50/50 
-       would cause a headache. 
+  // Plots change style past 10 seeds, as plotting by individual seed
+  // number becomes impractical 
+  if(numSeeds <= 10) {
+    TCanvas *cc = new TCanvas("cc", "cc", 800, 600);
+    /* Go through tree line by line, and somehow access the array of
+     * params. Then add each point of interest to graphs corresponding
+     * to the line (or seed #). May move this to above for-loop
+     * since each array already has these points built in
+     */
+  }
 
-       The TTree has a built in hist method, that won't work for 
-       low stats like how I want to show it, but seems like its 
-       perfect for the high # of seeds case
-   */
-  }  
+  if(numSeeds > 10) {
+    TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
+    
+    // below is all testing
+    fitParameters->Draw("dsRatio>>h_dsRatio(60, 0.24, 0.30)");
+    c1->Print("dsRatio.pdf"); c1->Clear();
 
-  TFile outFile("testTree.root", "RECREATE");
-  paramVals->Write();
-  paramErrs->Write();
+    fitParameters->Draw("m1pms>>m1pms(30, 0.6, 0.9)");
+    c1->Print("m1pms.pdf"); c1->Clear();
+    fitParameters->Draw("m1pps>>m1pps(15, 0.0, 0.15)");
+    c1->Print("m1pps.pdf"); c1->Clear();
+    fitParameters->Draw("p1pms>>p1pms(15, 0.0, 0.15)");
+    c1->Print("p1pms.pdf"); c1->Clear();
+    fitParameters->Draw("p1pps>>p1pps(15, 0.0, 0.15)");
+    c1->Print("p1pps.pdf"); c1->Clear();
+    
+    fitParameters->Draw("m1p>>m1p(20, 0.8, 1.0)");
+    c1->Print("m1p.pdf"); c1->Clear();
+    fitParameters->Draw("p1p>>p1p(20, 0.0, 0.20)");
+    c1->Print("p1p.pdf"); c1->Clear();
+    
+    
+    TH1F *h_dsRatio = (TH1F*)gDirectory->Get("h_dsRatio");
+  }
+
+  TFile outFile("seedTree.root", "RECREATE");
+  fitParameters->Write();
   outFile.Close();
 
   return;

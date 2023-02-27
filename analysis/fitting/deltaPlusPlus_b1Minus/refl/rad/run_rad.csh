@@ -3,7 +3,7 @@
 #####
 set N_SEEDS = 100 # num seeds to iterate over
 set N_RANDFITS = 20 # num fits to attempt on one seed
-set N_EVENTS = 20000 # num events in each seed
+set N_EVENTS = 100000 # num events in each seed
 set i = 1 # iterator sourcing/tracking seed number
 
 ######

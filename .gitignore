@@ -6,4 +6,7 @@
 *.pcm
 *.d
 *.pdf
+*.fit
+*.ni
 /analysis/fitting/deltaPlusPlus_b1Minus/refl/rad/seed_*/
+/analysis/fitting/deltaPlusPlus_b1Minus/refl/rad/events*/

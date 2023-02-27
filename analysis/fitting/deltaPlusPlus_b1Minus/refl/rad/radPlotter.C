@@ -9,27 +9,28 @@
 /* FUTURE WORK:
  * 1. Change arrays to vectors and use iterators of those vectors, will make 
  *    current naming of array iterators more clear
- * 2. Determine why "SetDotsSpacing" for ParaCoords dissapears for half of 
- *    the first axis plotted. Also why LineColors seem pre-fixed unchangeable
  */
 
 #include <fstream>
 #include <iostream>
 #include "glueXstyle.C"
 
-int getNumberOfSeeds();
-void fillValues(int seedNum, double *categories[], int numberOfCategories,
-		double expectedValues[]);
+int getNumberOfSeeds(TString subDir);
+void fillValues(int seedNum, TString subDir, double *categories[], 
+		int numberOfCategories, double expectedValues[]);
 void plotSingleSeeds();
 void plotManySeeds(TTree *fitParameters);
 void plotParallelCoords(TTree *fitParameters);
-
+void fitGaussToPullDist(TTree *fitParameters, TString categoryNames[],
+			int numberOfCategories);
 
 void radPlotter() { 
   gluex_style(); // call in this TStyle first thing
+
+  TString subDir = "events-20k_randFits-20/"; // change if seeds are in subdirectory
   
   // determine # of seeds we're working with
-  int numSeeds = getNumberOfSeeds();
+  int numSeeds = getNumberOfSeeds(subDir);
   if(numSeeds == 0) {
     cout << "No seed directories found" << "\n"; 
     return;
@@ -95,6 +96,10 @@ void radPlotter() {
   
   
   int numberOfCategories = sizeof(categories) / sizeof(*categories);
+  if(numberOfCategories != sizeof(categoryNames) / sizeof(*categoryNames)) {
+    cout << "Mismatch in size of categories and categoryNames arrays" << "\n";
+    return;
+  }
 
   // Create branches for each category
   for(int i=0; i<numberOfCategories; i++) {
@@ -104,7 +109,7 @@ void radPlotter() {
   
   // fill TTree with values from fit of each seed
   for(int seedNum=1; seedNum <= numSeeds; seedNum++) {
-    fillValues(seedNum, categories, numberOfCategories, expectedValues);    
+    fillValues(seedNum, subDir, categories, numberOfCategories, expectedValues);
     fitParameters->Fill();
   } 
 
@@ -122,6 +127,7 @@ void radPlotter() {
   if(numSeeds > 10) {    
     plotManySeeds(fitParameters);
     plotParallelCoords(fitParameters);
+    fitGaussToPullDist(fitParameters, categoryNames, numberOfCategories);
   }
 
 
@@ -143,11 +149,11 @@ void radPlotter() {
 /* Loop through files in current directory to count # of directories
  * starting with "seed_". Assumes same dir as "run_rad.csh" script
  */
-int getNumberOfSeeds() {
-  int seedCount{0};
+int getNumberOfSeeds(TString subDir) {
+  int seedCount = 0;
   
   // Find directories named "seed_*"
-  TSystemDirectory dir("myDir", "./");
+  TSystemDirectory dir("myDir", "./" + subDir);
   TList *files = dir.GetListOfFiles();
 
   if(!files) {
@@ -178,9 +184,9 @@ int getNumberOfSeeds() {
  * In future, try using some sort of dictionary to match the line
  * entries to the associated amplitude column in the TTree
  */
-void fillValues(int seedNum, double *categories[], int numberOfCategories,
-		double expectedValues[]) {
-  TString fileName = Form("seed_%i/vecps_fitPars_reflRatio_rad.root",
+void fillValues(int seedNum, TString subDir, double *categories[], 
+		int numberOfCategories, double expectedValues[]) {
+  TString fileName = Form(subDir + "seed_%i/vecps_fitPars_reflRatio_rad.root",
 			  seedNum); // generalize this later  
   fstream dataFile;
   dataFile.open(fileName, std::fstream::in);
@@ -221,7 +227,7 @@ void fillValues(int seedNum, double *categories[], int numberOfCategories,
     if(arrayPosition > arrayLimit) {
       cout << "Number of coherent sums has exceeded number of "
 	      "given parameters" << "\n";
-      continue;
+      return;
     }
 
     cout << line << "\n";
@@ -247,14 +253,6 @@ void plotManySeeds(TTree *fitParameters) {
   
   // 1D hists of each s-wave (and dsRatio + total reflectivities)
   fitParameters->Draw("dsRatio>>h_dsRatio(60, 0.24, 0.30)");  
-  fitParameters->Draw("p1pps>>h_p1pps(15, 0.0, 0.15)");
-  fitParameters->Draw("m1pps>>h_m1pps(15, 0.0, 0.15)");
-  fitParameters->Draw("p1p0s>>h_p1p0s(15, 0.0, 0.15)");
-  fitParameters->Draw("m1p0s>>h_m1p0s(15, 0.0, 0.15)");
-  fitParameters->Draw("p1pms>>h_p1pms(15, 0.0, 0.15)");
-  fitParameters->Draw("m1pms>>h_m1pms(40, 0.6, 1.0)");
-  fitParameters->Draw("m1p>>h_m1p(20, 0.8, 1.0)");
-  fitParameters->Draw("p1p>>h_p1p(20, 0.0, 0.20)");
 
   // 2D hists for correlations of interest
   fitParameters->Draw("p1pps:p1pms>>p1ppsVSp1pms(15, 0.0, 0.15, 15, 0.0, 0.15)",
@@ -274,6 +272,56 @@ void plotManySeeds(TTree *fitParameters) {
   return;
 }
 
+
+
+
+/* Fits a gaussian distribution to every pull distribution. Ideal case is
+   centered at 0, width of 1. Pull is value - expected, so mean to left(right)
+   corresponds to fit parameter begin over(under)-estimated. Width greather
+   than 1 corresponds to being outside 1 sigma of fit uncertainty
+ */
+void fitGaussToPullDist(TTree *fitParameters, TString categoryNames[],
+			int numberOfCategories) {
+  gStyle->SetOptFit();
+  TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
+  TF1 *constrainedGaus = new TF1("constrainedGaus", "gaus");
+  constrainedGaus->SetParameter(0,100);
+  constrainedGaus->SetParameter(1, 0);
+  constrainedGaus->SetParameter(2, 0.5);
+  constrainedGaus->SetParLimits(1, 0.0, 10.0);
+
+  // fit a gaussian to each categories pull distribution
+  for(int i=0; i<numberOfCategories; i++) {
+    if(!categoryNames[i].EndsWith("pull")) {continue;}
+    TString category = categoryNames[i];
+    
+    // draw category with custom binning. Need to know min/max of variable
+    TString min = std::to_string(fitParameters->GetMinimum(category));
+    TString max = std::to_string(fitParameters->GetMaximum(category));
+        
+    fitParameters->Draw(Form("%s>>htemp(10, %s, %s)", category.Data(),
+			     min.Data(), max.Data()));
+    //fitParameters->Draw(category);
+    TH1D *htemp = (TH1D*)gPad->GetPrimitive("htemp");
+    cout << Form("\nPerforming gaus fit to %s",category.Data()) << "\n";
+    
+    // use constrained gaussian for pullDists bound to be > 0
+    if(htemp->GetBinLowEdge(1) >= 0.0) {
+      htemp->Fit("constrainedGaus", "", "", 0.0, 
+		 htemp->GetBinLowEdge(htemp->GetNbinsX()+1));
+    }
+    else {
+      htemp->Fit("gaus");
+    }
+    c1->Update();
+    c1->Print(category + "_gaus.pdf");
+  }
+  delete c1;
+  return; 
+}
+
+
+
 /* Visualize multi-dimensional data by plotting dimensions as a set of parallel
  * strings. A single event will appear as a line connecting the coordinates in 
  * each dimension. https://root.cern/doc/master/classTParallelCoord.html
@@ -281,12 +329,14 @@ void plotManySeeds(TTree *fitParameters) {
  *   links to, the more cluttered these plots become. Ex: a 2D plot of x vs y 
  *   that is a vertical bar, will mean that in parallel coordinates a single 
  *   x point will "spray" onto the y-axis
+ *   Also first selection is always color blue. Is known "unfixable issue
  */
 
 void plotParallelCoords(TTree *fitParameters) {
   TCanvas *c2 = new TCanvas("c2", "c2", 800, 600);  
 
-  // Normal Parallel Coords
+  // Normal Parallel Coords 
+  /*
   fitParameters->Draw("p1pps:m1pps:p1p0s:m1p0s:p1pms:m1pms", "" , "para");
   c2->Print("para_m+0-.pdf");
   fitParameters->Draw("p1pps:p1p0s:p1pms:m1pps:m1p0s:m1pms", "" , "para");
@@ -295,25 +345,26 @@ void plotParallelCoords(TTree *fitParameters) {
   c2->Print("para_m+-0.pdf");
   fitParameters->Draw("p1pps:m1p0s:p1p0s:m1pms:m1pps:p1pms", "" , "para");
   c2->Print("para_mix.pdf");
-  
+  */
 
-  fitParameters->Draw("m1pps:m1pms:p1pps:p1pms:p1p0s:m1p0s", "" , "para");
+  fitParameters->Draw("m1pps:m1pms:p1pps:p1pms:dsRatio:p1p0s:m1p0s", "" , "para");
   TParallelCoord *paraTemp = 
     (TParallelCoord*)gPad->GetListOfPrimitives()->FindObject("ParaCoord");
   TParallelCoordVar* firstaxis = 
     (TParallelCoordVar*)paraTemp->GetVarList()->FindObject("m1pps");
   firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.08,0.12));
-  paraTemp->AddSelection("violet");
-  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
-  
-  firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.0,0.013));
   paraTemp->AddSelection("blue");
   paraTemp->GetCurrentSelection()->SetLineColor(kBlue);
+  
+  firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.0,0.013));
+  paraTemp->AddSelection("voilet");
+  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
 
 
-  // Pull Distributions
+  // PULL DISTRIBUTIONS
   fitParameters->Draw("m1pps_pull:m1pms_pull:"
 		      "p1pps_pull:p1pms_pull:"
+		      "dsRatio_pull:"
 		      "p1p0s_pull:m1p0s_pull", "" , "para");
   TParallelCoord *paraPull = 
     (TParallelCoord*)gPad->GetListOfPrimitives()->FindObject("ParaCoord");
@@ -323,9 +374,11 @@ void plotParallelCoords(TTree *fitParameters) {
   // remove pulls outside some value
   TCut cutPulls = "abs(m1pps_pull) < 8 && abs(p1pps_pull) < 8 &&"
                   "abs(m1p0s_pull) < 8 && abs(p1p0s_pull) < 8 &&"
+                  "abs(dsRatio_pull) < 8 &&"
                   "abs(m1pms_pull) < 8 && abs(p1pms_pull) < 8";
   fitParameters->Draw("m1pps_pull:m1pms_pull:"
 		      "p1pps_pull:p1pms_pull:"
+		      "dsRatio_pull:"
 		      "p1p0s_pull:m1p0s_pull", cutPulls , "para");
   TParallelCoord *paraPull_cut = 
     (TParallelCoord*)gPad->GetListOfPrimitives()->FindObject("ParaCoord");
@@ -335,10 +388,8 @@ void plotParallelCoords(TTree *fitParameters) {
   TParallelCoordVar* parVar = 
     (TParallelCoordVar*)paraPull_cut->GetVarList()->FindObject("m1pps_pull");
   parVar->AddRange(new TParallelCoordRange(parVar,2.0,4.81138));
-  paraPull_cut->AddSelection("violet");
-  paraPull_cut->GetCurrentSelection()->SetLineColorAlpha(kViolet, 0.5);
-  // MAKE ROOT FORUM POST ABOUT LINE COLOR NOT WORKING. 
-  // ALSO WHY SETDOTSSPACING REMOVE DOTS IN FIRST AXIS
+  paraPull_cut->AddSelection("blue");
+  paraPull_cut->GetCurrentSelection()->SetLineColor(kBlue);
   gPad->Modified();
   c2->Print("paraPull_cut.pdf");
   

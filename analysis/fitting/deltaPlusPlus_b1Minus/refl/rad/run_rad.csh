@@ -3,7 +3,7 @@
 #####
 set N_SEEDS = 100 # num seeds to iterate over
 set N_RANDFITS = 20 # num fits to attempt on one seed
-set N_EVENTS = 100000 # num events in each seed
+set N_EVENTS = 20000 # num events in each seed
 set i = 1 # iterator sourcing/tracking seed number
 
 ######
@@ -11,12 +11,12 @@ set i = 1 # iterator sourcing/tracking seed number
 ######
 
 ### Generate phasespace once
-# gen_vec_ps -c gen_omegapi_phasespace_b1_rad.cfg\
-#  -o anglesOmegaPiPhaseSpace_rad.root\
-#  -l 1.165 -u 1.3 -n 100000 -tmin 0.1 -tmax 0.3
-# mv gen_vec_ps_diagnostic.root gen_omegapiPhaseSpace_rad_diagnostic.root
-# cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpace.root
-# cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpaceAcc.root
+gen_vec_ps -c gen_omegapi_phasespace_b1_rad.cfg\
+    -o anglesOmegaPiPhaseSpace_rad.root\
+    -l 1.165 -u 1.3 -n 100000 -tmin 0.1 -tmax 0.3
+mv gen_vec_ps_diagnostic.root gen_omegapiPhaseSpace_rad_diagnostic.root
+cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpace.root
+cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpaceAcc.root
 
 ######
 # Loop over MC seeds
@@ -42,11 +42,11 @@ mkdir -p "seed_$i"
 
 ### Generate ratio of refl's
 gen_vec_ps -c gen_omegapi_amplitude_reflRatio_DeltaLowerVertex_b1_rad.cfg\
-  -o anglesOmegaPiAmplitude_reflRatio_rad.root\
-  -l 1.165 -u 1.3 -n $N_EVENTS -tmin 0.1 -tmax 0.3\
-  -s $i
+    -o anglesOmegaPiAmplitude_reflRatio_rad.root\
+    -l 1.165 -u 1.3 -n $N_EVENTS -tmin 0.1 -tmax 0.3\
+    -s $i
 mv gen_vec_ps_diagnostic.root\
- seed_$i/gen_omegapiAmplitude_b1_reflRatio_rad_diagnostic.root
+    seed_$i/gen_omegapiAmplitude_b1_reflRatio_rad_diagnostic.root
 
 
 ######
@@ -91,9 +91,9 @@ mv gen_vec_ps_diagnostic.root\
 
 ### fit reflRatio signal with unconstrained reflectivity
 cp anglesOmegaPiAmplitude_reflRatio_rad.root\
- anglesOmegaPiAmplitude.root
+    anglesOmegaPiAmplitude.root
 fit -c fit_omegapi_amplitude_DeltaLowerVertex_b1_loop_rad.cfg\
- -r $N_RANDFITS
+    -r $N_RANDFITS
 vecps_plotter omegapi.fit
 
 # move output files to seed dir, and give unique names
@@ -103,6 +103,9 @@ mv omegapi_*.fit seed_$i/
 rename .fit _reflRatio.fit seed_$i/omegapi_*.fit
 mv vecps_fitPars.txt seed_$i/vecps_fitPars_reflRatio_rad.root
 mv anglesOmegaPiAmplitude_reflRatio_rad.root seed_$i/
+
+# remove old files
+rm anglesOmegaPiAmplitude.root
 
 @ i++
 end #end while loop

@@ -9,7 +9,7 @@ void gluex_style() {
   gluex_style->SetPadBorderMode(0);
   gluex_style->SetPadColor(0);
   gluex_style->SetCanvasColor(0);
-  gluex_style->SetTitleColor(0);
+  //gluex_style->SetTitleColor(0); // see docs, this would remove x-axis
   gluex_style->SetStatColor(0);
 
   // some default window sizes

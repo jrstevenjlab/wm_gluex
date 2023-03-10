@@ -154,16 +154,15 @@ void FitGaussToPullDist(TTree *fitParameters, TString subDir) {
   return; 
 }
 
-/* Multi-dimensional data can be plotted where every dimension is a 
+/* FUNCTION NOT COMPLETE
+ * Multi-dimensional data can be plotted where every dimension is a 
  * parallel line. Single event will be a line connecting the 
  * coordinates in each dimension. 
  * https://root.cern/doc/master/classTParallelCoord.html
  * Ordering of dimensions can reduce clutter greatly, and so a first 
  * step is to try ALL unique orderings, as is done in this function
  * NOTE: The more values in 1 dimension that a single point links to 
- *       in another, a "spray" effect occurs between axes.
- *       Also if using selections, first color will always be blue,
- *       and devs said the code is too old to fix
+ *       in another, a "spray" effect occurs between axes.       
  */
 void PlotParallelCoordPermutations(TTree *fitParameters,
 				   TString subDir) {
@@ -190,6 +189,55 @@ void PlotParallelCoordPermutations(TTree *fitParameters,
   return;
 }
 
+/* Rewrites the variable names with some custom filters depending
+   on the name. Avoids overlapping, and makes the phase differnces
+   understandable.
+ */
+void CleanupParaAxes(TParallelCoord* para, 
+		     map<TString,int> phaseMap = {}) {
+  TList *varList = para->GetVarList();
+  std::string newName;
+  int start, end;
+  for(TObject *var : *varList) {
+    TParallelCoordVar *paraVar = (TParallelCoordVar*)var;    
+    newName = paraVar->GetName();
+    // remove labels (phase difference case handled below)
+    if(newName.find("->") != std::string::npos &&
+       newName.find("[") == std::string::npos) {
+      end = newName.find("->");
+      newName = newName.substr(0,end);
+      paraVar->SetName(newName.c_str());
+    }
+    // rename phase difference to be clearer
+    if(newName.find("[") != std::string::npos &&
+       phaseMap.size() != 0) {      
+    start = newName.find("[") + 1;
+      end = newName.find("]") - 1;
+      int i = std::stoi(newName.substr(start,end));
+      for(auto &it : phaseMap) {
+	if(it.second == i) newName = "#phi_" + it.first;
+      }
+      paraVar->SetName(newName.c_str());
+    }
+  }    
+  return;
+}
+
+/* Adds a selection range to variable "varName", from rangeStart to
+ * rangeEnd. A bug exists in ROOT src that first selection is always
+ * blue, and any subsequent selection receives color of previous one.
+ */
+void AddParaSelection(TParallelCoord* para, TString varName,
+		      double rangeStart, double rangeEnd,
+		      Color_t myColor) {
+  TParallelCoordVar* axis = (TParallelCoordVar*)para->
+    GetVarList()->FindObject(varName);
+  axis->AddRange(new TParallelCoordRange(axis, rangeStart, rangeEnd));
+  para->AddSelection("");
+  para->GetCurrentSelection()->SetLineColor(myColor);
+  return;
+}
+
 
 /* Plot parallel coordinates in ordering best determined (manually)
  * by using the PlotParallelCoordPermutations function
@@ -197,24 +245,30 @@ void PlotParallelCoordPermutations(TTree *fitParameters,
 void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   TCanvas *c2 = new TCanvas("c2", "c2", 800, 600);  
 
-  // Normal Parallel Coords   
-  // test plot of all phase differences to m1pps wave
+  // 
   map<TString, int> map_m1pms = GetPhaseMap(fitParameters, "m1pms");
-  fitParameters->Draw(Form("m1pms->phaseDiff[%i] : m1pms->phaseDiff[%i] : "
-			   "m1pms->phaseDiff[%i] : m1pms->phaseDiff[%i] : "
-			   "m1pms->phaseDiff[%i]",
-			   map_m1pms["m1pps"], map_m1pms["m1ppd"],
-			   map_m1pms["m1pmd"], map_m1pms["m1p0s"],
-			   map_m1pms["m1p0d"]),
+
+  fitParameters->Draw(Form("m1pms->cs:m1pps->cs:m1pms->phaseDiff[%i]:"
+			   "p1pps->cs:m1pms->phaseDiff[%i]:"
+			   "p1pms->cs:m1pms->phaseDiff[%i]",
+			   map_m1pms["m1pps"], map_m1pms["p1pps"],
+			   map_m1pms["p1pms"] 
+			   ),
 		      "", "para");
-  c2->Print("TEST.pdf");
-  // coherent sum paraCoord plot
+  TParallelCoord *pcMixed = (TParallelCoord*)gPad->
+    GetListOfPrimitives()->FindObject("ParaCoord");  
+  AddParaSelection(pcMixed, "m1pms->cs", 0.61578, 0.7, kViolet);
+  AddParaSelection(pcMixed, "m1pms->cs", 0.8, 0.8345, kViolet);
+  CleanupParaAxes(pcMixed, map_m1pms);
+  c2->Print("Mixed.pdf");
+    
+  // COHERENT SUM PARACOORD
   fitParameters->Draw("m1pps->cs:m1pms->cs:p1pps->cs:p1pms->cs:"
 		      "dsRatio->val:p1p0s->cs:m1p0s->cs", 
 		      "" , "para");
 
   TParallelCoord *paraTemp = (TParallelCoord*)gPad->
-    GetListOfPrimitives()->FindObject("ParaCoord");
+    GetListOfPrimitives()->FindObject("ParaCoord");  
 
   // add some selections
   TParallelCoordVar* firstaxis = (TParallelCoordVar*)paraTemp->
@@ -222,10 +276,13 @@ void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.08,0.12));
   paraTemp->AddSelection("violet");
   paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
-  
+
+  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
   firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.0,0.013));
   paraTemp->AddSelection("voilet");
   paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
+
+  CleanupParaAxes(paraTemp);
   gPad->Modified();
   
   c2->Print(subDir + "paraCoord.pdf");
@@ -259,6 +316,9 @@ void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   paraPull_cut->AddSelection("blue");
   paraPull_cut->GetCurrentSelection()->SetLineColor(kBlue);
   gPad->Modified();
+
+  CleanupParaAxes(paraPull_cut);
+
   c2->Print(subDir+"paraPull_cut.pdf");
   
   return;

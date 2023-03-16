@@ -4,19 +4,19 @@
 set N_SEEDS = 100 # num seeds to iterate over
 set N_RANDFITS = 20 # num fits to attempt on one seed
 set N_EVENTS = 20000 # num events in each seed
-set i = 1 # iterator sourcing/tracking seed number
+set i = 88 # iterator sourcing/tracking seed number
 
 ######
 # Generate MC samples
 ######
 
 ### Generate phasespace once
-gen_vec_ps -c gen_omegapi_phasespace_b1_rad.cfg\
-    -o anglesOmegaPiPhaseSpace_rad.root\
-    -l 1.165 -u 1.3 -n 100000 -tmin 0.1 -tmax 0.3
-mv gen_vec_ps_diagnostic.root gen_omegapiPhaseSpace_rad_diagnostic.root
-cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpace.root
-cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpaceAcc.root
+#gen_vec_ps -c gen_omegapi_phasespace_b1_rad.cfg\
+#    -o anglesOmegaPiPhaseSpace_rad.root\
+#    -l 1.165 -u 1.3 -n 100000 -tmin 0.1 -tmax 0.3
+#mv gen_vec_ps_diagnostic.root gen_omegapiPhaseSpace_rad_diagnostic.root
+#cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpace.root
+#cp anglesOmegaPiPhaseSpace_rad.root anglesOmegaPiPhaseSpaceAcc.root
 
 ######
 # Loop over MC seeds

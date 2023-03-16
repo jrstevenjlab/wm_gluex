@@ -1,6 +1,8 @@
 /* Idea with this is to have each parameter and amplitude be a struct,
  * that contains associated values (coherent sum, pull values, etc)
  * Some useful links below
+ * 
+ * TO DO: add total reflectivity pull distributions
  */
 
 #include <fstream>
@@ -71,6 +73,7 @@ private:
 int GetNumberOfSeeds(TString subDir);
 bool FillValues(int seedNum, TString subDir,
 		std::vector<Parameter*>, std::vector<Amplitude*>);
+double constrainAngle(double x);
 
 void MakeTree(TString subDir="./") {
   
@@ -178,6 +181,12 @@ int GetNumberOfSeeds(TString subDir) {
   return seedCount;
 }
 
+double constrainAngle(double x) {
+  x = std::fmod(x + TMath::Pi(), 2*TMath::Pi());
+  if(x<0) x += 2*TMath::Pi();
+  return x - TMath::Pi();
+}
+
 
 bool FillValues(int seedNum, TString subDir,
 		std::vector<Parameter*> myParameters, 
@@ -249,13 +258,15 @@ bool FillValues(int seedNum, TString subDir,
 	  it = std::find(amp->phaseNames.begin(), 
 			      amp->phaseNames.end(), amp2);
 	  index = it - amp->phaseNames.begin();
-	  amp->phaseDiff[index] = std::stod(lineVec[4]);
+	  amp->phaseDiff[index] = 
+	    constrainAngle(std::stod(lineVec[4]));
 	}
 	if(amp->name == amp2) {
 	  it = std::find(amp->phaseNames.begin(), 
 			      amp->phaseNames.end(), amp1);
 	  index = it - amp->phaseNames.begin();
-	  amp->phaseDiff[index] = std::stod(lineVec[4]);
+	  amp->phaseDiff[index] = 
+	    constrainAngle(std::stod(lineVec[4]));
 	}      
       }
     }

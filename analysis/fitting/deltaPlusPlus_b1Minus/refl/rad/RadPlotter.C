@@ -1,8 +1,6 @@
 /* This file will read in a Tree of fit parameters and create a set of
  * plots showing how the parameters of interest are affected by seed
  * and event number.
- * Original goal of this was to determine severity of m-projection
- * leakage in vector-pseudoscalar input/output test.
  */
 
 /* FUTURE WORK
@@ -16,6 +14,7 @@
 #include <iostream>
 #include "glueXstyle.C"
 #include "MakeTree.C"
+#include "MyParaCoord.C"
 
 
 void PlotSimple(TTree *fitParameters, TString subDir);
@@ -44,7 +43,7 @@ void RadPlotter(TString subDir="./") {
     return;
   }
   
-  //PlotSimple(fitParameters, subDir);
+  PlotSimple(fitParameters, subDir);
   //FitGaussToPullDist(fitParameters, subDir);
   //PlotParallelCoordPermutations(fitParameters, subDir);
   PlotParallelCoords(fitParameters, subDir);
@@ -59,49 +58,82 @@ void RadPlotter(TString subDir="./") {
 
 
 /* Phase differences are stored in a vector, whose index corresponds
- * to the amplitude name in vector "phaseNames". This creates the
- * mapping between the name and index, for easier drawing later.
+ * to the amplitude name in vector "phaseNames". This creates a 
+ * mapping between the name and index, and a map on top of this to 
+ * store that map for every amplitude 
+ * Ex: To get index of phase difference between p1pps and p1pms wave,
+ * use i = phaseMap["p1pps"]["p1pms"], then p1pps->phaseDiff[i]
  *   (All because trees can't handle maps...)
  */
-map<TString, int> GetPhaseMap(TTree *fitParameters, 
-			      TString branchAmp) {
-  map<TString, int> phaseMap;
-  Amplitude* pAmp = 0;
-  fitParameters->SetBranchAddress(branchAmp, &pAmp);
-  fitParameters->GetEntry(1); // needs to be called to access vector
-  vector<string> *phaseNames = &(pAmp->phaseNames);
-  // loop through phase difference amplitudes, and create map between
-  // them and associated phase difference index 
-  for(TString ampName : *phaseNames) {
-    std::vector<string>::iterator it = std::find(phaseNames->begin(),
-					       phaseNames->end(),
-					       ampName);
-    int index = it - phaseNames->begin();    
-    phaseMap[ampName] = index;
-  }
-  
+std::map<TString, std::map<TString, int>> 
+	    GetPhaseMap(TTree *fitParameters) {
+  std::map<TString, std::map<TString, int>> phaseMap;
+  TObjArray *branchList = fitParameters->GetListOfBranches();
+  std::vector<string>::iterator it;
+  std::string className;
+  TString branchName;
+
+  for(int i=0; i<branchList->GetEntries(); i++) {
+    branchName = branchList->At(i)->GetName();     
+
+    TBranch* b = fitParameters->GetBranch(branchName);
+    className = b->GetClassName();
+    if(className != "Amplitude") continue;
+
+    Amplitude* pAmp = 0;
+    std::vector<string> *phaseNames = {};
+    fitParameters->SetBranchAddress(branchName, &pAmp);
+    fitParameters->GetEntry(1); // needs to be called to access vector
+    phaseNames = &(pAmp->phaseNames);
+    for(TString ampName : *phaseNames) {      
+      it = std::find(phaseNames->begin(),
+		     phaseNames->end(),
+		     ampName);
+      int index = it - phaseNames->begin();
+      phaseMap[branchName][ampName] = index;
+    }
+  } 
   return phaseMap;
 }
 
 void PlotSimple(TTree *fitParameters, TString subDir) {
   TCanvas *c1 = new TCanvas("c1", "c1", 800, 600);
   
-  // 1D hists of each s-wave (and dsRatio + total reflectivities)
-  fitParameters->Draw("dsRatio->val>>h_dsRatio(60, 0.24, 0.30)");  
-  c1->Print("TEST_dsRatio.pdf");
+  // 1D hists 
+  TH1D *htemp;
+  fitParameters->Draw("m1pps->cs>>h_m1pps(100, 0.0, 0.17)");  
+  htemp = (TH1D*)gDirectory->Get("h_m1pps");
+  htemp->GetXaxis()->SetTitle("m1pps");
+  c1->Update();
+  c1->Print(subDir + "m1pps.pdf");
 
-  // 2D hists for correlations of interest
-  fitParameters->Draw("p1pps->cs:p1pms->cs>>"
-		      "p1ppsVSp1pms(15, 0.0, 0.15, 15, 0.0, 0.15)",
-		      "", "colz");
-  c1->Print("TEST_p1ppsVsp1pms.pdf");
+  fitParameters->Draw("m1pms->cs>>h_m1pms(100, 0.61, 0.84)");  
+  htemp = (TH1D*)gDirectory->Get("h_m1pms");
+  htemp->GetXaxis()->SetTitle("m1pms");
+  c1->Update();
+  c1->Print(subDir + "m1pms.pdf");
 
-  // Note, to change markerStyle/Size of 2D TGraph, change it for the 
-  //   tree not the graph i.e. "fitParameters->SetMarkerStyle(7)"
+  // 2D hists 
+  TH2D *h2temp;
 
-  // Grab made hists if fixing style (axis titles, etc)
-  TH1D *h_dsRatio = (TH1D*)gDirectory->Get("h_dsRatio");
-  
+  fitParameters->SetMarkerStyle(8);  
+  fitParameters->Draw("m1pps->cs:m1pms->cs>>"
+		      "m1ppsVSm1pms",
+		      "", "SCAT");
+  h2temp = (TH2D*)gDirectory->Get("m1ppsVSm1pms");
+  h2temp->SetTitle(";m1pms;m1pps");
+  c1->Update();
+  c1->Print(subDir + "m1ppsVSm1pms.pdf");
+
+  fitParameters->Draw("m1pms->phaseDiff[4]:"
+		      "p1pms->phaseDiff[10]>>"
+		      "h_pd(100, -3.14, 3.14, 100, -3.14, 3.14)",
+		      "", "SCAT");
+  h2temp = (TH2D*)gDirectory->Get("h_pd");
+  h2temp->SetTitle(";#phi_p1pms_p1pps;#phi_m1pms_m1pps");
+  c1->Update();
+  c1->Print(subDir + "phase_2d.pdf");
+    
   delete c1;
 
   return;
@@ -189,111 +221,49 @@ void PlotParallelCoordPermutations(TTree *fitParameters,
   return;
 }
 
-/* Rewrites the variable names with some custom filters depending
-   on the name. Avoids overlapping, and makes the phase differnces
-   understandable.
- */
-void CleanupParaAxes(TParallelCoord* para, 
-		     map<TString,int> phaseMap = {}) {
-  TList *varList = para->GetVarList();
-  std::string newName;
-  int start, end;
-  for(TObject *var : *varList) {
-    TParallelCoordVar *paraVar = (TParallelCoordVar*)var;    
-    newName = paraVar->GetName();
-    // remove labels (phase difference case handled below)
-    if(newName.find("->") != std::string::npos &&
-       newName.find("[") == std::string::npos) {
-      end = newName.find("->");
-      newName = newName.substr(0,end);
-      paraVar->SetName(newName.c_str());
-    }
-    // rename phase difference to be clearer
-    if(newName.find("[") != std::string::npos &&
-       phaseMap.size() != 0) {      
-    start = newName.find("[") + 1;
-      end = newName.find("]") - 1;
-      int i = std::stoi(newName.substr(start,end));
-      for(auto &it : phaseMap) {
-	if(it.second == i) newName = "#phi_" + it.first;
-      }
-      paraVar->SetName(newName.c_str());
-    }
-  }    
-  return;
-}
-
-/* Adds a selection range to variable "varName", from rangeStart to
- * rangeEnd. A bug exists in ROOT src that first selection is always
- * blue, and any subsequent selection receives color of previous one.
- */
-void AddParaSelection(TParallelCoord* para, TString varName,
-		      double rangeStart, double rangeEnd,
-		      Color_t myColor) {
-  TParallelCoordVar* axis = (TParallelCoordVar*)para->
-    GetVarList()->FindObject(varName);
-  axis->AddRange(new TParallelCoordRange(axis, rangeStart, rangeEnd));
-  para->AddSelection("");
-  para->GetCurrentSelection()->SetLineColor(myColor);
-  return;
-}
-
-
 /* Plot parallel coordinates in ordering best determined (manually)
  * by using the PlotParallelCoordPermutations function
  */
 void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   TCanvas *c2 = new TCanvas("c2", "c2", 800, 600);  
 
-  // 
-  map<TString, int> map_m1pms = GetPhaseMap(fitParameters, "m1pms");
+  // Example Plots
+  fitParameters->Draw("m1pps->cs:m1pms->cs",
+  		      "" , "para");
+  MyParaCoord pcEx;
+  pcEx.RoundRange(2);
+  pcEx.CleanupAxesNames();
+  c2->Print(subDir + "paraExample.pdf");
 
-  fitParameters->Draw(Form("m1pms->cs:m1pps->cs:m1pms->phaseDiff[%i]:"
-			   "p1pps->cs:m1pms->phaseDiff[%i]:"
-			   "p1pms->cs:m1pms->phaseDiff[%i]",
-			   map_m1pms["m1pps"], map_m1pms["p1pps"],
-			   map_m1pms["p1pms"] 
-			   ),
-		      "", "para");
-  TParallelCoord *pcMixed = (TParallelCoord*)gPad->
-    GetListOfPrimitives()->FindObject("ParaCoord");  
-  AddParaSelection(pcMixed, "m1pms->cs", 0.61578, 0.7, kViolet);
-  AddParaSelection(pcMixed, "m1pms->cs", 0.8, 0.8345, kViolet);
-  CleanupParaAxes(pcMixed, map_m1pms);
-  c2->Print("Mixed.pdf");
-    
-  // COHERENT SUM PARACOORD
-  fitParameters->Draw("m1pps->cs:m1pms->cs:p1pps->cs:p1pms->cs:"
-		      "dsRatio->val:p1p0s->cs:m1p0s->cs", 
-		      "" , "para");
-
-  TParallelCoord *paraTemp = (TParallelCoord*)gPad->
-    GetListOfPrimitives()->FindObject("ParaCoord");  
-
-  // add some selections
-  TParallelCoordVar* firstaxis = (TParallelCoordVar*)paraTemp->
-    GetVarList()->FindObject("m1pps->cs");
-  firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.08,0.12));
-  paraTemp->AddSelection("violet");
-  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
-
-  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
-  firstaxis->AddRange(new TParallelCoordRange(firstaxis,0.0,0.013));
-  paraTemp->AddSelection("voilet");
-  paraTemp->GetCurrentSelection()->SetLineColor(kViolet);
-
-  CleanupParaAxes(paraTemp);
-  gPad->Modified();
-  
+  // COHERENT SUM PARACOORD  
+  fitParameters->Draw("m1pms->cs:m1pps->cs:p1pps->cs:p1pms->cs:"
+  		      "dsRatio->val",
+  		      "" , "para");
+  MyParaCoord pcSum;
+  pcSum.RoundRange(2);
+  pcSum.AddSelection("m1pms->cs", 0.8, 0.84, kViolet);
+  pcSum.AddSelection("m1pms->cs", 0.61, 0.7, kViolet);
+  pcSum.CleanupAxesNames();
   c2->Print(subDir + "paraCoord.pdf");
-  
+  // for presentation below
+  fitParameters->Draw("m1pms->cs:m1pps->cs:p1pps->cs:p1pms->cs:"
+		      "m1p0s->cs:p1p0s->cs:"
+  		      "dsRatio->val",
+  		      "" , "para");
+  MyParaCoord pcAllM;
+  pcAllM.RoundRange(2);
+  pcAllM.CleanupAxesNames();
+  c2->Print(subDir + "paraCoord_allm.pdf");
+
   // PULL DISTRIBUTIONS
-  fitParameters->Draw("m1pps->pull:m1pms->pull:"
+  fitParameters->Draw("m1pms->pull:m1pps->pull:"
 		      "p1pps->pull:p1pms->pull:"
-		      "dsRatio->pull:"
-		      "p1p0s->pull:m1p0s->pull", "" , "para");
-  TParallelCoord *paraPull = (TParallelCoord*)gPad->
-    GetListOfPrimitives()->FindObject("ParaCoord");
+		      "dsRatio->pull",
+		      "", "para");
+  MyParaCoord pcPull;
+  pcPull.para_->SetGlobalScale(true);
+  pcPull.RoundRange(2);
+  pcPull.CleanupAxesNames();
   c2->Print(subDir+"paraPull.pdf");
 
   // remove pulls outside some value
@@ -301,26 +271,52 @@ void PlotParallelCoords(TTree *fitParameters, TString subDir) {
                   "abs(m1p0s->pull) < 8 && abs(p1p0s->pull) < 8 &&"
                   "abs(dsRatio->pull) < 8 &&"
                   "abs(m1pms->pull) < 8 && abs(p1pms->pull) < 8";
-  fitParameters->Draw("m1pps->pull:m1pms->pull:"
+
+  fitParameters->Draw("m1pms->pull:m1pps->pull:"
 		      "p1pps->pull:p1pms->pull:"
-		      "dsRatio->pull:"
-		      "p1p0s->pull:m1p0s->pull", cutPulls , "para");
-  TParallelCoord *paraPull_cut = (TParallelCoord*)gPad->
-    GetListOfPrimitives()->FindObject("ParaCoord");
-  paraPull_cut->SetGlobalScale(true);
-  
-  // add some selections and save
-  TParallelCoordVar* parVar = (TParallelCoordVar*)paraPull_cut->
-    GetVarList()->FindObject("m1pps->pull");
-  parVar->AddRange(new TParallelCoordRange(parVar,2.0,4.81138));
-  paraPull_cut->AddSelection("blue");
-  paraPull_cut->GetCurrentSelection()->SetLineColor(kBlue);
-  gPad->Modified();
-
-  CleanupParaAxes(paraPull_cut);
-
+		      "dsRatio->pull",
+		      cutPulls , "para");
+  MyParaCoord pcPullCut;
+  pcPullCut.para_->SetGlobalScale(true);
+  pcPullCut.AddSelection("m1pms->pull", -1.0, -0.04, kBlue);
+  pcPullCut.RoundRange(2);
+  pcPullCut.CleanupAxesNames();
   c2->Print(subDir+"paraPull_cut.pdf");
+
+  // PHASE DIFFERENCES
+  std::map<TString, std::map<TString, int>> phaseMap = 
+    GetPhaseMap(fitParameters);
   
+  // refl- phase diffs with main amplitude
+  fitParameters->Draw(Form("m1pms->cs:"
+			   "m1pms->phaseDiff[%i]:"
+			   "m1pms->phaseDiff[%i]",
+			   phaseMap["m1pms"]["m1pps"],
+			   phaseMap["m1pms"]["m1p0s"]),
+		      "", "para");
+  MyParaCoord pcPhase_reflm;
+  pcPhase_reflm.RoundRange(2);
+  pcPhase_reflm.AddSelection("m1pms->cs", 0.8, 0.84, kViolet);
+  pcPhase_reflm.AddSelection("m1pms->cs", 0.61, 0.7, kViolet);
+  pcPhase_reflm.CleanupAxesNames(phaseMap);
+
+  c2->Print(subDir + "phase_reflm.pdf");
+
+  // refl+ phase diffs with main amplitude
+  fitParameters->Draw(Form("p1pms->cs:"
+			   "p1pms->phaseDiff[%i]:"
+			   "p1pms->phaseDiff[%i]",
+			   phaseMap["p1pms"]["p1pps"],
+			   phaseMap["p1pms"]["p1p0s"]),
+		      "", "para");
+  MyParaCoord pcPhase_reflp;
+  pcPhase_reflp.RoundRange(2);
+  pcPhase_reflp.AddSelection("p1pms->cs", 0.07, 0.11, kViolet);
+  pcPhase_reflp.AddSelection("p1pms->cs", 0.0, 0.04, kViolet);
+  pcPhase_reflp.CleanupAxesNames(phaseMap);
+
+  c2->Print(subDir + "phase_reflp.pdf");
+
   return;
 }
 

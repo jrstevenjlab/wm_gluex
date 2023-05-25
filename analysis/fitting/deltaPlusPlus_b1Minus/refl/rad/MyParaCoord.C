@@ -1,35 +1,42 @@
 /* Plotting several different parallel coordinates requires re-using
  * several commands, so this file contains my unique class for these
- * funcitons.
+ * functions.
  *
- * In future, may split this into header/implementation file if
- * paraCoords see more use beyond RadPlotter
+ * In future, try inheriting this from TParallelCoord class so the 
+ * "para_" member variable does not need to be called seperately
  * 
  * ROOT BUGS
  * 1. AddRange to an axis (in AddSelection function) will always force
  *    the first selection to be blue, and any subsequent selection to 
  *    have the color of the previous selection
- *    i.e. AddSelection(*,*,*,kViolet) AddSelection(*,*,*,kGreen) will
- *    make the first one be kBlue, and the second one be kViolet
+ *      i.e. AddSelection(*,*,*,kViolet) AddSelection(*,*,*,kGreen) 
+ *      will make the first be kBlue, and the second one be kViolet
+ *      and kGreen is ignored, unless another selection is added
+ *      This is known issue. See my forum post for example:
+ *      https://root-forum.cern.ch/t/
+ *      tparallelcoord-first-selection-forced-to-blue/53754
  * 2. Do NOT use SetCurrentMin/Max for changing range of axis, use
- *    SetCurrentLimits(min,max). This avoids issue where lines do not
- *    match the histogram locations on each axis.
- * 3. SetDotsSpacing(i) for i>0 causes lines on the first axis near
- *    its limits to not connnect with the axis
+ *    SetCurrentLimits(min,max). Otherwise the lines will not adjust
+ *    to match the histogram locations on each axis. This is used in
+ *    the RoundRange function
+ * 3. SetDotsSpacing(i) for i>0 causes the lines to the first axis
+ *    near its limits to not connnect with the axis
  */
 
 class MyParaCoord {
 public:
   TParallelCoord* para_;
+
   MyParaCoord() {
     // "ParaCoord" is recognized by ROOT to grab a parallel coordinate
     // object on the gPad
     para_ = (TParallelCoord*)gPad->
       GetListOfPrimitives()->FindObject("ParaCoord");
   }
+
   MyParaCoord(TParallelCoord* p) : para_(p) {}
   
-  /* Rewrites the variable names with some custom filters depending
+  /* Rewrites the variable names with my custom filters depending
    on the name. Avoids overlapping, and makes the phase differnces
    understandable.
   */
@@ -44,7 +51,7 @@ public:
     for(TObject *var : *varList) {
       TParallelCoordVar *paraVar = (TParallelCoordVar*)var;    
       name = paraVar->GetName();      
-      // remove labels (phase difference case handled below)
+      // remove end labels
       if(name.find("->") != std::string::npos &&
 	 name.find("[") == std::string::npos) {
 	end = name.find("->");
@@ -76,8 +83,8 @@ public:
     return;
   }
 
-  /* Adds a selection range to variable "varName", from rangeStart to
-   * rangeEnd
+  /* Adds a colored selection range to variable "varName", from 
+   * rangeStart to rangeEnd
    */
   void AddSelection(TString varName, double rangeStart, 
 		    double rangeEnd, Color_t myColor) {
@@ -89,6 +96,10 @@ public:
     return;
   }
 
+  /* The limits of a variable  on a default ParaCoord are the exact 
+   * decimal values for that variable, which is ugly. This function 
+   * rounds those limits to a decimal place
+   */
   void RoundRange(int decimal) {
     TList *varList = para_->GetVarList();
     double multiplier = std::pow(10.0, decimal);

@@ -101,11 +101,11 @@ void PlotSimple(TTree *fitParameters, TString subDir) {
   
   // 1D hists 
   TH1D *htemp;
-  fitParameters->Draw("m1pps->cs>>h_m1pps(100, 0.0, 0.17)");  
-  htemp = (TH1D*)gDirectory->Get("h_m1pps");
-  htemp->GetXaxis()->SetTitle("m1pps");
+  fitParameters->Draw("p1pps->cs>>h_p1pps(10, 0.0, 0.2)");  
+  htemp = (TH1D*)gDirectory->Get("h_p1pps");
+  htemp->SetTitle(";% contribution m = +1, #varepsilon = +1;Datasets/0.02 %");
   c1->Update();
-  c1->Print(subDir + "m1pps.pdf");
+  c1->Print(subDir + "p1pps.pdf");
 
   fitParameters->Draw("m1pms->cs>>h_m1pms(100, 0.61, 0.84)");  
   htemp = (TH1D*)gDirectory->Get("h_m1pms");
@@ -227,8 +227,17 @@ void PlotParallelCoordPermutations(TTree *fitParameters,
 void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   TCanvas *c2 = new TCanvas("c2", "c2", 800, 600);  
 
+  // plot K, and Beta values
+  fitParameters->Draw("((m1pms->cs)+(m1pps->cs)+(p1pps->cs)+(p1pms->cs)+(m1p0s->cs)+(p1p0s->cs)):"
+		      "((m1pms->cs)-(p1pms->cs)):"
+		      "((m1pps->cs)-(p1pps->cs))",
+		      "", "para");
+  MyParaCoord moments;
+  
+  c2->Print(subDir + "moments.pdf");
+
   // Example Plots
-  fitParameters->Draw("m1pps->cs:m1pms->cs",
+  fitParameters->Draw("m1pps->cs:p1pps->cs",
   		      "" , "para");
   MyParaCoord pcEx;
   pcEx.RoundRange(2);
@@ -236,23 +245,23 @@ void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   c2->Print(subDir + "paraExample.pdf");
 
   // COHERENT SUM PARACOORD  
-  fitParameters->Draw("m1pms->cs:m1pps->cs:p1pps->cs:p1pms->cs:"
-  		      "dsRatio->val",
+  fitParameters->Draw("p1pms->cs:m1pms->cs:p1pps->cs:m1pps->cs",
   		      "" , "para");
   MyParaCoord pcSum;
   pcSum.RoundRange(2);
-  pcSum.AddSelection("m1pms->cs", 0.8, 0.84, kViolet);
-  pcSum.AddSelection("m1pms->cs", 0.61, 0.7, kViolet);
+  //pcSum.AddSelection("m1pms->cs", 0.8, 0.84, kViolet);
+  //pcSum.AddSelection("m1pms->cs", 0.61, 0.7, kViolet);
   pcSum.CleanupAxesNames();
   c2->Print(subDir + "paraCoord.pdf");
-  // for presentation below
+
+  // ALL M PROJECTIONS
   fitParameters->Draw("m1pms->cs:m1pps->cs:p1pps->cs:p1pms->cs:"
-		      "m1p0s->cs:p1p0s->cs:"
-  		      "dsRatio->val",
+		      "m1p0s->cs:p1p0s->cs",		      
   		      "" , "para");
+
   MyParaCoord pcAllM;
-  pcAllM.RoundRange(2);
-  pcAllM.CleanupAxesNames();
+  //pcAllM.RoundRange(2);
+  //pcAllM.CleanupAxesNames();
   c2->Print(subDir + "paraCoord_allm.pdf");
 
   // PULL DISTRIBUTIONS
@@ -316,6 +325,7 @@ void PlotParallelCoords(TTree *fitParameters, TString subDir) {
   pcPhase_reflp.CleanupAxesNames(phaseMap);
 
   c2->Print(subDir + "phase_reflp.pdf");
+
 
   return;
 }

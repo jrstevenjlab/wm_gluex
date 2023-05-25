@@ -33,7 +33,7 @@ void gluex_style() {
   	
   // histogram settings
   gluex_style->SetOptStat(0);     // no stats box by default
-  gluex_style->SetOptTitle(0);    // no title by default
+  //gluex_style->SetOptTitle(0);    // no title by default
   gluex_style->SetHistLineWidth(2); 
 
   // various histogram fill colors

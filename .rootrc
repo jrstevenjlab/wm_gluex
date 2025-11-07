@@ -1,1 +1,6 @@
-Rint.Logon: $WM_GLUEX/rootlogon.C
+#Rint.Logon: $WM_GLUEX/rootlogon.C
+
+Unix.*.Root.DynamicPath: .:$(FSROOT):$(ROOTSYS)/lib:
+Unix.*.Root.MacroPath: .:$(FSROOT):
+Rint.Logon: $(FSROOT)/rootlogon.FSROOT.C
+Rint.Logoff: $(FSROOT)/rootlogoff.FSROOT.C

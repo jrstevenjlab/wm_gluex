@@ -23,6 +23,7 @@ class Analyze : public TSelector {
 public :
    TTreeReader     fReader;  //!the tree reader
    TTree          *fChain = 0;   //!pointer to the analyzed TTree or TChain
+   TH1 *chi2Hist = NULL;
 
    // Readers to access the data (delete the ones you do not need).
    TTreeReaderValue<Int_t> event = {fReader, "event"};

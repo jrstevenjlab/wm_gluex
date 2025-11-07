@@ -6,11 +6,12 @@
 #   hurricane (c10/c10a)  
 #   whirlwind (c11/c11a) 
 #   vortex    (c18a/c18b) 
-#   vortex-α  (c18c)      
+#   vortex-α  (c18c)   
+#   x5672 (both vortex and hurricane)
 
 PPN=8
 MyProcess=p2ketapr
-MyCluster=vortex
+MyCluster=x5672
 echo $MyProcess
 
 MyEnv=/sciclone/home10/$USER/wm_gluex/

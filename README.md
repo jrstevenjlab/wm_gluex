@@ -21,6 +21,15 @@ Finally, you should copy the file .rootrc into your home directory with the comm
 which will load a custom ROOT (and FSRoot) environment everytime you open a session.  This is needed to properly access some of the libraries in the tutorials below.
 
 -----------------------
+# GlueX software through CVMFS
+
+The full GlueX software stack can be accessed using the container in CVMFS (see documentation at https://halldweb.jlab.org/wiki/index.php/HOWTO_Install_and_Use_the_CVMFS_Client#Running_GlueX_Software).  Just execute the command
+
+`source $WM_GLUEX/singularity.csh`
+
+and the latest version of `halld_recon`, `halld_sim`, etc. will be available on the command line.  Currently installed on the bora cluster.   
+
+-----------------------
 # Permissions
 
 To make the content of a directory accessible to everyone who is a member of the `gluex` unix group, you should got to that directory and run the `permissions.csh` script with the following commands

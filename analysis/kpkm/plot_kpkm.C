@@ -140,16 +140,16 @@ void plot_kpkm(bool bggen=false){
     
     // Some mass spectra...
     CUTS = DEFAULT_CUTS;
-    TH1F* hMkpkm = FSModeHistogram::getTH1F(FND_DATA,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.2)",Form("CUT(%s)",CUTS.Data()));
-    TH1F* hMkpkmMC = FSModeHistogram::getTH1F(FND_MC,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.2)",Form("CUT(%s)",CUTS.Data()));
+    TH1F* hMkpkm = FSModeHistogram::getTH1F(FND_DATA,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
+    TH1F* hMkpkmMC = FSModeHistogram::getTH1F(FND_MC,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
     hMkpkmMC->Scale(hMkpkm->GetMaximum()/hMkpkmMC->GetMaximum());
     hMkpkmMC->SetMarkerColor(kMagenta);
 
     if(bggen) {
 	    cb->cd(2);    
-	    TH1F* hMkpkm_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.2)",Form("CUT(%s)",CUTS.Data()));
+	    TH1F* hMkpkm_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
 	    hMkpkm_BGGEN->Draw();
-	    FSModeHistogram::drawMCComponentsSame(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.2)",Form("CUT(%s)",CUTS.Data()));
+	    FSModeHistogram::drawMCComponentsSame(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
     }
 
     CUTS = DEFAULT_CUTS;

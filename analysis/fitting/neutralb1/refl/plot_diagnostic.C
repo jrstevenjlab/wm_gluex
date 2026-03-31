@@ -5,7 +5,7 @@ void plot_diagnostic(TString dir = "./", TString reac = "") {
 
 	const int maxFiles = 3;
 	const int maxPlots = 4;
-	TString fileNames[maxFiles] = {"gen_omegapiAmplitude_b1_mix_1pm_diagnostic.root","gen_omegapiFitResult_b1_real_diagnostic.root","gen_omegapiFitResult_b1_diagnostic.root"};
+	TString fileNames[maxFiles] = {"gen_omegapiAmplitude_b1_mix_1pm_diagnostic.root","gen_omegapiFitResult_b1_diagnostic_real.root","gen_omegapiFitResult_b1_diagnostic.root"};
 	TString plotNames[maxPlots] = {"CosTheta_phi","CosThetaH_phiH","CosTheta_Phi_Prod","phi_Phi_Prod"};
     
 	// open files 

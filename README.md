@@ -6,11 +6,19 @@ To get started clone this repository in your home directory on one of the HPC ma
 
 `git clone https://github.com/jrstevenjlab/wm_gluex.git`
 
-Then source the setup_root.csh script to set your environment variables:
+Then source the `setup_root` script for your shell to set your environment variables:
 
 `cd wm_gluex`
 
+For bash:
+
+`source setup_root.sh`
+
+For csh/tcsh:
+
 `source setup_root.csh`
+
+These scripts set `WM_GLUEX`, load ROOT, and set `FSROOT`.  They should be sourced rather than run as standalone commands so the environment variables are available in your current shell session.
 
 Now you should have access to root, python, etc. for running some basic analysis tutorials.
 

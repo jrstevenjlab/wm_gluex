@@ -28,24 +28,6 @@ void setup(){
   FSCut::defineCut("KshortVeto","abs(MASS([pi+],[pi-]) - 0.4976) > 0.04");
   FSCut::defineCut("DeltaVeto","MASS([pi+],[proton]) > 1.35");
 
-  // Define phipipi mass windows
-  FSCut::defineCut("PhiPiPiMass1","MASS([K+],[K-],[pi+],[pi-]) > 1.6 && MASS([K+],[K-],[pi+],[pi-]) < 1.8");
-  FSCut::defineCut("PhiPiPiMass2","MASS([K+],[K-],[pi+],[pi-]) > 1.8 && MASS([K+],[K-],[pi+],[pi-]) < 2.0");
-  FSCut::defineCut("PhiPiPiMass3","MASS([K+],[K-],[pi+],[pi-]) > 2.0 && MASS([K+],[K-],[pi+],[pi-]) < 2.2");
-  FSCut::defineCut("PhiPiPiMass4","MASS([K+],[K-],[pi+],[pi-]) > 2.2 && MASS([K+],[K-],[pi+],[pi-]) < 2.4");
-  FSCut::defineCut("PhiPiPiMass5","MASS([K+],[K-],[pi+],[pi-]) > 2.4 && MASS([K+],[K-],[pi+],[pi-]) < 2.6");
-  FSCut::defineCut("PhiPiPiMass6","MASS([K+],[K-],[pi+],[pi-]) > 2.6 && MASS([K+],[K-],[pi+],[pi-]) < 2.8");
-
-  // Define pipi mass window
-  FSCut::defineCut("PiPiMass1","MASS([pi+],[pi-]) > 0.45 && MASS([pi+],[pi-]) < 0.55");
-  FSCut::defineCut("PiPiMass2","MASS([pi+],[pi-]) > 0.55 && MASS([pi+],[pi-]) < 0.65");
-  FSCut::defineCut("PiPiMass3","MASS([pi+],[pi-]) > 0.65 && MASS([pi+],[pi-]) < 0.90");
-  FSCut::defineCut("PiPiMass4","MASS([pi+],[pi-]) > 0.90 && MASS([pi+],[pi-]) < 1.0");
-  FSCut::defineCut("PiPiMass5","MASS([pi+],[pi-]) > 1.0 && MASS([pi+],[pi-]) < 1.1");
-  FSCut::defineCut("PiPiMass6","MASS([pi+],[pi-]) > 1.1 && MASS([pi+],[pi-]) < 1.2");
-  FSCut::defineCut("PiPiMass7","MASS([pi+],[pi-]) > 1.2 && MASS([pi+],[pi-]) < 1.3");
-  FSCut::defineCut("PiPiMass8","MASS([pi+],[pi-]) > 1.3 && MASS([pi+],[pi-]) < 1.4");
-
   FSCut::defineCut("GlueXI","Run<70000");
   
   // Select RF signal region
@@ -64,7 +46,7 @@ void plot_pi0pippimkpkm(bool bggen=false){
   // with mass constraints
   TString FND_DATA = "tree_pi0pippimkpkm__B4_BestChi2_SKIM.root";
   TString FND_BGGEN = "tree_pi0pippimkpkm__B4_BGGEN_BestChi2_SKIM.root";
-  TString FND_MC = "tree_pi0pippimkpkm__B4_SIGMC_BestChi2_SKIM.root";
+  TString FND_MC = "tree_pi0pippimkpkm__B4_ETAMC_BestChi2_SKIM.root";
   TString FND_ETAMC = "tree_pi0pippimkpkm__B4_ETAMC_BestChi2_SKIM.root";
   TString FND_OMEGAMC = "tree_pi0pippimkpkm__B4_OMEGAMC_BestChi2_SKIM.root";
   TString CATEGORY = "pi0pippimkpkm";
@@ -263,54 +245,6 @@ void plot_pi0pippimkpkm(bool bggen=false){
     TH2F* hMetakpkm_kpkm = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,80,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
     CUTS.ReplaceAll(",Eta",",EtaSB");
     TH2F* hMetaSBkpkm_kpkm = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,80,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-
-    /*
-    CUTS+=",PhiPiPiMass1";
-    TH2F* hMpippim_kpkm_PhiPiPiMass1 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass1",",PhiPiPiMass2");
-    TH2F* hMpippim_kpkm_PhiPiPiMass2 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass2",",PhiPiPiMass3");
-    TH2F* hMpippim_kpkm_PhiPiPiMass3 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass3",",PhiPiPiMass4");
-    TH2F* hMpippim_kpkm_PhiPiPiMass4 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass4",",PhiPiPiMass5");
-    TH2F* hMpippim_kpkm_PhiPiPiMass5 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass5",",PhiPiPiMass6");
-    TH2F* hMpippim_kpkm_PhiPiPiMass6 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-
-    CUTS = DEFAULT_CUTS;
-    CUTS.ReplaceAll(",Phi","");
-    CUTS.ReplaceAll(",KshortVeto","");
-    CUTS+=",PiPiMass1";
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass1 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass1",",PiPiMass2");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass2 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass2",",PiPiMass3");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass3 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass3",",PiPiMass4");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass4 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass4",",PiPiMass5");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass5 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass5",",PiPiMass6");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass6 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass6",",PiPiMass7");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass7 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass7",",PiPiMass8");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass8 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-
-    // chi2 variation
-    CUTS = DEFAULT_CUTS;
-    CUTS.ReplaceAll(",Phi","");
-    CUTS.ReplaceAll(",KshortVeto","");
-    CUTS.ReplaceAll(",chi2,",",");
-    TH2F* hMpi0pippimkpkm_kpkm_chi2[5];
-    TH2F* hMpippim_kpkm_chi2[5];
-    for(int i=6; i<=10; i++) {
-	    CUTS += Form(",chi2_%d",i);
-	    hMpi0pippimkpkm_kpkm_chi2[i-6] = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-	    hMpippim_kpkm_chi2[i-6] = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    }
-*/
     
     FSHistogram::dumpHistogramCache();
     

@@ -61,8 +61,6 @@ The default active skim reads the data sample and produces:
 
 Optional sample outputs, once their input globs exist and their lines are uncommented, are:
 
-- `tree_pi0pippimkpkm__B4_BGGEN_BestChi2_SKIM.root`
-- `tree_pi0pippimkpkm__B4_SIGMC_BestChi2_SKIM.root`
 - `tree_pi0pippimkpkm__B4_ETAMC_BestChi2_SKIM.root`
 - `tree_pi0pippimkpkm__B4_OMEGAMC_BestChi2_SKIM.root`
 
@@ -82,4 +80,4 @@ root -l -b -q 'plot_pi0pippimkpkm.C(true)'
 
 This writes `hist_pi0pippimkpkm.root` with saved histograms for downstream plotting/fitting.
 
-Note that the plotting macro reads the data, SIGMC, ETAMC, and OMEGAMC skim filenames defined near the top of `plot_pi0pippimkpkm.C`. Create those skims first, or adjust the `FND_*` inputs before plotting a reduced set.
+Note that the plotting macro reads the data, ETAMC, and OMEGAMC skim filenames defined near the top of `plot_pi0pippimkpkm.C`. Create those skims first, or adjust the `FND_*` inputs before plotting a reduced set.

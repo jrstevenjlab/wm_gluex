@@ -228,69 +228,19 @@ void plot_kplamb(bool bggen=false){
     leg->AddEntry(hMpimp,"Data","pe");
     leg->AddEntry(hMpimpSB,"Sideband","f");
     leg->AddEntry(hMpimpMC,"PS MC","pe");
-
-    TCanvas* c11 = new TCanvas("c11","c11",1000,600);
-    c11->Divide(3,2);
-    c11->cd(1);
-    hMpimp->SetMaximum(hMpimp->GetMaximum()*1.1);
-    hMpimp->Draw();
-    //hMpimpMC->Draw("same");
-    //hMpimpSignal->Draw("same");
-    hMpimpSB->Draw("h same");
-    leg->Draw("same");
     
     TCanvas *c22 = new TCanvas("c22","c22",1000,600);
     c22->Divide(3,2);
     c22->cd(1);
     hMpimp->Draw();
-    //hMpimpMC->Draw("same");
+    hMpimpMC->Draw("same");
     hMpimpSignal->Draw("same");
     hMpimpSB->SetFillColorAlpha(kBlue, 0.2);
-    //hMpimpSB->Scale(1e6);
     hMpimpSB->Draw("h same");
     hMpimp->Draw("same");
     leg->Draw("same");
 
-#if 0
-    TCanvas* c12 = new TCanvas("c12","c12",1000,600);
-    c12->Divide(3,2);
-    c12->cd(1);
-    hProtonMomentumVsThetaMC->Draw("colz");
-    c12->cd(2);
-    hPiMinusMomentumVsThetaMC->Draw("colz");
-    c12->cd(3);
-    //hLambdaMomentumVsPathLengthMC->Draw("colz");
-    //hProtonMomentumVsPiMinusMomentumMC->Draw("colz");
-    hProtonThetaVsPiMinusThetaMC->Draw("colz");
-
-    c12->cd(4);
-    hProtonMomentumVsThetaSignal->Draw("colz");    
-    c12->cd(5);
-    hPiMinusMomentumVsThetaSignal->Draw("colz");
-    c12->cd(6);
-    //hLambdaMomentumVsPathLengthSignal->Draw("colz");
-    //hProtonMomentumVsPiMinusMomentumSignal->Draw("colz");
-    hProtonThetaVsPiMinusThetaSignal->Draw("colz");
-
-    // Save histograms for making plots in separate macro
-    TFile *f = new TFile("out.root","recreate");
-    
-    hMpimp->SetName("hMpimp"); hMpimp->Write();
-    hMpimpMC->SetName("hMpimpMC"); hMpimpMC->Write();
-    hMpimpSB->SetName("hMpimpSB"); hMpimpSB->Write();
-    
-    hMpi0->SetName("hMpi0"); hMpi0->Write();
-    hMpi0MC->SetName("hMpi0MC"); hMpi0MC->Write();
-    hMpi0SB->SetName("hMpi0SB"); hMpi0SB->Write();
-    
-    hMkppi0->SetName("hMkppi0"); hMkppi0->Write();
-    hMkppi0MC->SetName("hMkppi0MC"); hMkppi0MC->Write();
-    hMkppi0SB->SetName("hMkppi0SB"); hMkppi0SB->Write();
-    
-    hMkppi0->SetName("hMkppi0"); hMkppi0->Write();
-    hMkppi0MC->SetName("hMkppi0MC"); hMkppi0MC->Write();
-    hMkppi0SB->SetName("hMkppi0SB"); hMkppi0SB->Write();
-#endif
+    c22->Print("plots/kplamb_lambda.pdf");
     
     return;
 }

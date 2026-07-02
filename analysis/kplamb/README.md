@@ -18,11 +18,6 @@ FSRoot particle indices used by these macros:
 | 1b | `pi-` from `Lambda` |
 | 2 | `K+` |
 
-The macros register the FSRoot mode code `100000000_100000` under the `kplamb`
-category. Expressions such as `MASS(1)` refer to the reconstructed Lambda, while
-`RMASS2(GLUEXTARGET,B,-1,-2)` uses the Lambda and `K+` as the reconstructed
-final state.
-
 ## Inputs
 
 The flattened trees are read from:

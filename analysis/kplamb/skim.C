@@ -50,5 +50,5 @@ void skim(){
 	skim_period(3);
 	skim_period(4);
 	skim_period(5);
-	skim_period(7);	
+	//skim_period(7);	
 }

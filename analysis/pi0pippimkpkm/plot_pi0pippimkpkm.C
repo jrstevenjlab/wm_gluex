@@ -21,30 +21,11 @@ void setup(){
   
   FSCut::defineCut("Phi","abs(MASS([K+],[K-]) - 1.019) < 0.015");
   FSCut::defineCut("PhiSB","abs(MASS([K+],[K-]) - 1.019) > 0.025 && abs(MASS([K+],[K-]) - 1.019) < 0.055");
-  FSCut::defineCut("Phi2DSB","abs(MASS([K+],[K-]) - 1.019) < 0.015","abs(MASS([K+],[K-]) - 1.019) > 0.025 && abs(MASS([K+],[K-]) - 1.019) < 0.055",0.5);
-
-  FSCut::defineCut("Eta","abs(MASS([pi0],[pi+],[pi-]) - 0.548) < 0.020");
+  FSCut::defineCut("Eta","abs(MASS([pi0],[pi+],[pi-]) - 0.546) < 0.030");
+  FSCut::defineCut("EtaSB","abs(MASS([pi0],[pi+],[pi-]) - 0.546) > 0.060 && abs(MASS([pi0],[pi+],[pi-]) - 0.546) < 0.120");
 
   FSCut::defineCut("KshortVeto","abs(MASS([pi+],[pi-]) - 0.4976) > 0.04");
   FSCut::defineCut("DeltaVeto","MASS([pi+],[proton]) > 1.35");
-
-  // Define phipipi mass windows
-  FSCut::defineCut("PhiPiPiMass1","MASS([K+],[K-],[pi+],[pi-]) > 1.6 && MASS([K+],[K-],[pi+],[pi-]) < 1.8");
-  FSCut::defineCut("PhiPiPiMass2","MASS([K+],[K-],[pi+],[pi-]) > 1.8 && MASS([K+],[K-],[pi+],[pi-]) < 2.0");
-  FSCut::defineCut("PhiPiPiMass3","MASS([K+],[K-],[pi+],[pi-]) > 2.0 && MASS([K+],[K-],[pi+],[pi-]) < 2.2");
-  FSCut::defineCut("PhiPiPiMass4","MASS([K+],[K-],[pi+],[pi-]) > 2.2 && MASS([K+],[K-],[pi+],[pi-]) < 2.4");
-  FSCut::defineCut("PhiPiPiMass5","MASS([K+],[K-],[pi+],[pi-]) > 2.4 && MASS([K+],[K-],[pi+],[pi-]) < 2.6");
-  FSCut::defineCut("PhiPiPiMass6","MASS([K+],[K-],[pi+],[pi-]) > 2.6 && MASS([K+],[K-],[pi+],[pi-]) < 2.8");
-
-  // Define pipi mass window
-  FSCut::defineCut("PiPiMass1","MASS([pi+],[pi-]) > 0.45 && MASS([pi+],[pi-]) < 0.55");
-  FSCut::defineCut("PiPiMass2","MASS([pi+],[pi-]) > 0.55 && MASS([pi+],[pi-]) < 0.65");
-  FSCut::defineCut("PiPiMass3","MASS([pi+],[pi-]) > 0.65 && MASS([pi+],[pi-]) < 0.90");
-  FSCut::defineCut("PiPiMass4","MASS([pi+],[pi-]) > 0.90 && MASS([pi+],[pi-]) < 1.0");
-  FSCut::defineCut("PiPiMass5","MASS([pi+],[pi-]) > 1.0 && MASS([pi+],[pi-]) < 1.1");
-  FSCut::defineCut("PiPiMass6","MASS([pi+],[pi-]) > 1.1 && MASS([pi+],[pi-]) < 1.2");
-  FSCut::defineCut("PiPiMass7","MASS([pi+],[pi-]) > 1.2 && MASS([pi+],[pi-]) < 1.3");
-  FSCut::defineCut("PiPiMass8","MASS([pi+],[pi-]) > 1.3 && MASS([pi+],[pi-]) < 1.4");
 
   FSCut::defineCut("GlueXI","Run<70000");
   
@@ -64,7 +45,7 @@ void plot_pi0pippimkpkm(bool bggen=false){
   // with mass constraints
   TString FND_DATA = "tree_pi0pippimkpkm__B4_BestChi2_SKIM.root";
   TString FND_BGGEN = "tree_pi0pippimkpkm__B4_BGGEN_BestChi2_SKIM.root";
-  TString FND_MC = "tree_pi0pippimkpkm__B4_SIGMC_BestChi2_SKIM.root";
+  TString FND_MC = "tree_pi0pippimkpkm__B4_ETAMC_BestChi2_SKIM.root";
   TString FND_ETAMC = "tree_pi0pippimkpkm__B4_ETAMC_BestChi2_SKIM.root";
   TString FND_OMEGAMC = "tree_pi0pippimkpkm__B4_OMEGAMC_BestChi2_SKIM.root";
   TString CATEGORY = "pi0pippimkpkm";
@@ -163,6 +144,8 @@ void plot_pi0pippimkpkm(bool bggen=false){
     hChi2DOFMC->SetMarkerColor(kMagenta);
     hChi2DOFMC->Draw("same");
 
+    c1->Print("plots/cut_diagnostics.pdf");
+
     if(bggen) {
 	    cb->cd(1);    
 	    TH1F* hChi2DOF_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"pi0pippimkpkm","Chi2DOF","(40,0,20)",Form("CUT(%s)",CUTS.Data()));
@@ -192,7 +175,6 @@ void plot_pi0pippimkpkm(bool bggen=false){
     }
     
     CUTS = DEFAULT_CUTS;
-    CUTS.ReplaceAll(",KshortVeto","");
     TH1F* hMpi0pippimSignal = FSModeHistogram::getTH1F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-])","(50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
     TH1F* hMpi0pippimMC = FSModeHistogram::getTH1F(FND_MC,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-])","(50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
     hMpi0pippimMC->Scale(hMpi0pippimSignal->GetMaximum()/hMpi0pippimMC->GetMaximum());
@@ -205,11 +187,11 @@ void plot_pi0pippimkpkm(bool bggen=false){
     TH1F* hMpi0pippimOmegaMC = FSModeHistogram::getTH1F(FND_OMEGAMC,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-])","(50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
     hMpi0pippimOmegaMC->SetMarkerColor(kCyan);
     
-    CUTS.ReplaceAll(",Phi",",PhiSB");
+    CUTS.ReplaceAll(",Eta",",EtaSB");
     TH1F* hMpi0pippimSB = FSModeHistogram::getTH1F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-])","(50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
     hMpi0pippimSB->SetMarkerColor(kBlue);
 
-    CUTS.ReplaceAll(",PhiSB","");
+    CUTS.ReplaceAll(",EtaSB","");
     TH1F* hMpi0pippim = FSModeHistogram::getTH1F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-])","(50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
 
     if(bggen) {
@@ -263,54 +245,6 @@ void plot_pi0pippimkpkm(bool bggen=false){
     TH2F* hMetakpkm_kpkm = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,80,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
     CUTS.ReplaceAll(",Eta",",EtaSB");
     TH2F* hMetaSBkpkm_kpkm = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi0],[pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,80,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-
-    /*
-    CUTS+=",PhiPiPiMass1";
-    TH2F* hMpippim_kpkm_PhiPiPiMass1 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass1",",PhiPiPiMass2");
-    TH2F* hMpippim_kpkm_PhiPiPiMass2 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass2",",PhiPiPiMass3");
-    TH2F* hMpippim_kpkm_PhiPiPiMass3 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass3",",PhiPiPiMass4");
-    TH2F* hMpippim_kpkm_PhiPiPiMass4 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass4",",PhiPiPiMass5");
-    TH2F* hMpippim_kpkm_PhiPiPiMass5 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PhiPiPiMass5",",PhiPiPiMass6");
-    TH2F* hMpippim_kpkm_PhiPiPiMass6 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-
-    CUTS = DEFAULT_CUTS;
-    CUTS.ReplaceAll(",Phi","");
-    CUTS.ReplaceAll(",KshortVeto","");
-    CUTS+=",PiPiMass1";
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass1 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass1",",PiPiMass2");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass2 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass2",",PiPiMass3");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass3 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass3",",PiPiMass4");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass4 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass4",",PiPiMass5");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass5 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass5",",PiPiMass6");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass6 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass6",",PiPiMass7");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass7 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-    CUTS.ReplaceAll(",PiPiMass7",",PiPiMass8");
-    TH2F* hMpi0pippimkpkm_kpkm_PiPiMass8 = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([K+],[K-],[pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-
-    // chi2 variation
-    CUTS = DEFAULT_CUTS;
-    CUTS.ReplaceAll(",Phi","");
-    CUTS.ReplaceAll(",KshortVeto","");
-    CUTS.ReplaceAll(",chi2,",",");
-    TH2F* hMpi0pippimkpkm_kpkm_chi2[5];
-    TH2F* hMpippim_kpkm_chi2[5];
-    for(int i=6; i<=10; i++) {
-	    CUTS += Form(",chi2_%d",i);
-	    hMpi0pippimkpkm_kpkm_chi2[i-6] = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-],[K+],[K-]):MASS([K+],[K-])","(100,0.98,1.1,40,1.4,3.2)",Form("CUT(%s)",CUTS.Data()));
-	    hMpippim_kpkm_chi2[i-6] = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimkpkm","MASS([pi+],[pi-]):MASS([K+],[K-])","(100,0.98,1.1,50,0.4,0.9)",Form("CUT(%s)",CUTS.Data()));
-    }
-*/
     
     FSHistogram::dumpHistogramCache();
     
@@ -348,6 +282,9 @@ void plot_pi0pippimkpkm(bool bggen=false){
     hMkmp->Draw();
     hMkmpMC->Draw("same");
 
+    c11->Print("plots/mass_spectra.pdf");
+    if(bggen) cb->Print("plots/bggen_components.pdf");
+
     // Save histograms for making plots in separate macro
     // Set axis labels before writing to file
     hMpi0pippimkpkm_kpkm->SetXTitle("Mass(K^{+}K^{-}) [GeV]");
@@ -370,50 +307,7 @@ void plot_pi0pippimkpkm(bool bggen=false){
 
     hMpi0pippimEtaMC->SetName("hM3pi_EtaMC"); hMpi0pippimEtaMC->Write();
     hMpi0pippimOmegaMC->SetName("hM3pi_OmegaMC"); hMpi0pippimOmegaMC->Write();
-/*
-    hMpippim_kpkm_PhiPiPiMass1->SetName("hMpipi_kpkm_PhiPiPi1.60_1.80"); hMpippim_kpkm_PhiPiPiMass1->Write();
-    hMpippim_kpkm_PhiPiPiMass2->SetName("hMpipi_kpkm_PhiPiPi1.80_2.00"); hMpippim_kpkm_PhiPiPiMass2->Write();
-    hMpippim_kpkm_PhiPiPiMass3->SetName("hMpipi_kpkm_PhiPiPi2.00_2.20"); hMpippim_kpkm_PhiPiPiMass3->Write();
-    hMpippim_kpkm_PhiPiPiMass4->SetName("hMpipi_kpkm_PhiPiPi2.20_2.40"); hMpippim_kpkm_PhiPiPiMass4->Write();
-    hMpippim_kpkm_PhiPiPiMass5->SetName("hMpipi_kpkm_PhiPiPi2.40_2.60"); hMpippim_kpkm_PhiPiPiMass5->Write();
-    hMpippim_kpkm_PhiPiPiMass6->SetName("hMpipi_kpkm_PhiPiPi2.60_2.80"); hMpippim_kpkm_PhiPiPiMass6->Write();
 
-    hMpi0pippimkpkm_kpkm_PiPiMass1->SetName("hMpipikpkm_kpkm_PiPi0.45_0.55"); hMpi0pippimkpkm_kpkm_PiPiMass1->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass2->SetName("hMpipikpkm_kpkm_PiPi0.55_0.65"); hMpi0pippimkpkm_kpkm_PiPiMass2->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass3->SetName("hMpipikpkm_kpkm_PiPi0.65_0.90"); hMpi0pippimkpkm_kpkm_PiPiMass3->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass4->SetName("hMpipikpkm_kpkm_PiPi0.90_1.00"); hMpi0pippimkpkm_kpkm_PiPiMass4->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass5->SetName("hMpipikpkm_kpkm_PiPi1.00_1.10"); hMpi0pippimkpkm_kpkm_PiPiMass5->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass6->SetName("hMpipikpkm_kpkm_PiPi1.10_1.20"); hMpi0pippimkpkm_kpkm_PiPiMass6->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass7->SetName("hMpipikpkm_kpkm_PiPi1.20_1.30"); hMpi0pippimkpkm_kpkm_PiPiMass7->Write();
-    hMpi0pippimkpkm_kpkm_PiPiMass8->SetName("hMpipikpkm_kpkm_PiPi1.30_1.40"); hMpi0pippimkpkm_kpkm_PiPiMass8->Write();
-
-    hMpippimEtaMC->SetName("hMpipi_EtaMC"); hMpippimEtaMC->Write();
-
-    for(int i=6; i<=10; i++) {
-	    hMpi0pippimkpkm_kpkm_chi2[i-6]->SetName(Form("hMpipikpkm_kpkm_chi2_%d",i));
-	    hMpi0pippimkpkm_kpkm_chi2[i-6]->Write();
-	    hMpippim_kpkm_chi2[i-6]->SetName(Form("hMpipi_kpkm_chi2_%d",i));
-	    hMpippim_kpkm_chi2[i-6]->Write();
-    }
-*/
-    
-#if 0
-    hMkmp->SetName("hMkmp"); hMkmp->Write();
-    hMkmpMC->SetName("hMkmpMC"); hMkmpMC->Write();
-    hMkmpSB->SetName("hMkmpSB"); hMkmpSB->Write();
-    
-    hMpippim->SetName("hMpippim"); hMpippim->Write();
-    hMpippimMC->SetName("hMpippimMC"); hMpippimMC->Write();
-    hMpippimSB->SetName("hMpippimSB"); hMpippimSB->Write();
-    
-    hMkppim->SetName("hMkppim"); hMkppim->Write();
-    hMkppimMC->SetName("hMkppimMC"); hMkppimMC->Write();
-    hMkppimSB->SetName("hMkppimSB"); hMkppimSB->Write();
-    
-    hMkppippim->SetName("hMkppippim"); hMkppippim->Write();
-    hMkppippimMC->SetName("hMkppippimMC"); hMkppippimMC->Write();
-    hMkppippimSB->SetName("hMkppippimSB"); hMkppippimSB->Write();
-#endif    
 
     return;
 }

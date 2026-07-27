@@ -43,6 +43,6 @@ mv gen_omegapi_diagnostic.root gen_omegapiFitResult_b1_diagnostic.root
 
 # high stats diagnostics from generated model for comparison
 gen_omegapi -c gen_omegapi_amplitude_mix_1pm_neutral_b1.cfg -o temp.root -l $MASSMIN -u $MASSMAX -n $NEVENT_FROMSEED -tmin $TMIN -tmax $TMAX
-mv gen_omegapi_diagnostic.root gen_omegapiAmplitude_b1_mix_diagnostic.root 
+mv gen_omegapi_diagnostic.root gen_omegapiAmplitude_b1_mix_1pm_diagnostic.root 
 
 rm temp.root

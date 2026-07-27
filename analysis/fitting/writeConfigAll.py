@@ -237,9 +237,11 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
         # loop over amplitudes and constrain between S and D waves from same sum
         fout.write("\n# constrain S and D waves to the same amplitude and set scale factor for D/S ratio\n")
         
-        fout.write("parameter dsratio 0.27 bounded 0 1\n\n")
+        fout.write("parameter dsratio 0.27 bounded 0 1\n")
+        fout.write("parameter dphase 0.0 bounded -3.14159 3.14159\n\n")
         fout.write("keyword parRange 3 3\n")
-        fout.write("parRange dsratio 0.2 0.34\n\n")
+        fout.write("parRange dsratio 0.2 0.34\n")
+        fout.write("parRange dphase -3.14159 3.14159\n\n")
         
         scaleParName = "dsratio"
         constrainLinesDS = ""
@@ -255,6 +257,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
                         
                         constrainLinesDS += constrainLineDS
                         scaleLines += "scale LOOPREAC::" + loopSum + "::" + amp2 + " [" + scaleParName + "]\n"
+                        scaleLines += "amplitude LOOPREAC::" + loopSum + "::" + amp2 + " PhaseOffset [dphase]\n"
 
         fout.write(constrainLinesDS)
 

@@ -37,7 +37,7 @@ void plot_plotter(TString dir = "./", TString reac = "") {
         	hdat->SetMarkerSize(0.5);
 	        if(i==0) leg1->AddEntry(hdat, "GlueX Data", "ep");
         	else hdat->Draw();
-        
+
 		for(int j=0; j<maxAmps; j++) {
 	            TH1F *hacc = (TH1F*)f->Get(reac+plotNames[i]+"acc"+ampNames[j]);
             

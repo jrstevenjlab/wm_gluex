@@ -49,7 +49,11 @@ def main(argv):
 	waves.append( {"spin":2, "parity":-1, "l":3} ) #2- F-wave
     if "3m" in amps:
 	waves.append( {"spin":3, "parity":-1, "l":3} ) #3- F-wave
-    
+    if "iso" in amps:
+	waves.append( {"spin":-9, "parity":0, "l":-9} ) # isotropic background
+    if "dfree" in amps:
+	constrainDSamps = False # remove constraint on 1+ D-wave   
+ 
     # read template data for initial portion of config file defining common parameters and input file setup
     cfgTempl = templateName
     ftemplate = open(cfgTempl,'r')
@@ -85,7 +89,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
     char = {-2:"m2", -1:"m", 0:"0", +1:"p", +2:"p2"}
     word = {-1:"Neg", +1:"Pos"}
     wordcomp = {-1:"Imag", +1:"Real"}
-    L = {0:"s", 1:"p", 2:"d", 3:"f", 4:"g"}
+    L = {0:"s", 1:"p", 2:"d", 3:"f", 4:"g", -9:"b"}
     common = "angle fraction dalitz"
 
     # list of amplitudes for later constraints and scale factors
@@ -123,6 +127,14 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
             fout.write(jpComment)
             comments += jpComment
         
+	# write background amplitude
+        if wave["spin"] == -9:
+            fout.write("############################ isotropic background ##################################\n\n")
+            fout.write("sum %s::Bkgd\n" % reaction)
+            fout.write("amplitude %s::Bkgd::isotropic Uniform\n" % reaction)
+            fout.write("initialize %s::Bkgd::isotropic cartesian 100 0 real\n" % reaction)            
+            continue
+
 	if wave["spin"] == 0:
 	    write0m(fout)
 	    continue
@@ -239,9 +251,11 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
     # loop over amplitudes and constrain between S and D waves from same sum
     fout.write("\n# constrain S and D waves to the same amplitude and set scale factor for D/S ratio\n")
 
-    fout.write("parameter dsratio 0.27 bounded 0 1\n\n")
+    fout.write("parameter dsratio 0.27 bounded 0 1\n")
+    fout.write("parameter dphase 0.0 bounded -3.14159 3.14159\n\n")
     fout.write("keyword parRange 3 3\n")
-    fout.write("parRange dsratio 0.2 0.34\n\n")
+    fout.write("parRange dsratio 0.2 0.34\n")
+    fout.write("parRange dphase -3.14159 3.14159\n\n")
 
     fout.write("loop LOOPSUM ImagNegSign RealNegSign RealPosSign ImagPosSign\n")
     previousSumName = ""
@@ -254,6 +268,7 @@ def writeAmplitudes(waves, reaction, className, fout, forceRefl, initRefl, initR
             if amp1[:-1] == amp2[:-1] and (amp1[-1]=="s" and amp2[-1]=="d"):
                 fout.write("constrain %s LOOPSUM %s %s LOOPSUM %s\n" % (reaction, amp2, reaction, amp1))
                 scaleLines += "scale " + reaction + " LOOPSUM " + amp2 + " [" + scaleParName + "]\n"
+                scaleLines += "amplitude " + reaction + "::LOOPSUM::" + amp2 + " PhaseOffset [dphase]\n"
                     
     fout.write(scaleLines)
     

@@ -4,11 +4,11 @@ This directory contains small helper scripts to convert GlueX analysis trees int
 
 ## Data:
 
-The analysis trees for a given run period can be found on the Private Wiki at links like the one below which referes to the runPeriod-2018-08
+The analysis trees for a given run period can be found on the Private Wiki at links like the one below which refers to the RunPeriod-2018-08
 
 https://halldweb.jlab.org/wiki-private/index.php/Fall_2018_Analysis_Launch
 
-Typically, you want to use the latest (largest version number) of the analysis launch available, in the case of `tree_kpkm__B4` that would be version 13.
+Typically, you want to use the latest (largest version number) of the analysis launch available, in the case of `tree_kpkm__B4` that would be version 18.
 
 ## Script: `writeData.sh`
 
@@ -17,7 +17,7 @@ Typically, you want to use the latest (largest version number) of the analysis l
 Default settings in the script:
 - `TREE=tree_kpkm__B4`
 - Input directory:
-  - `/cache/halld/RunPeriod-2018-08/analysis/ver13/${TREE}/merged`
+  - `/cache/halld/RunPeriod-2018-08/analysis/ver18/${TREE}/merged`
 - Output directory (that you can change to your own preferred location):
   - `/volatile/halld/home/jrsteven/flattened/${TREE}/data`
 - Flatten options:
@@ -52,7 +52,7 @@ If needed, edit `TREE`, `INDIR`, and `OUTDIR` at the top of `writeData.sh` befor
 
 For example, if the files don't exist on the cache disk already, they may need to be pulled from tape.  You can search for the file stubs in the `/mss/halld/` path and then get them from tape with
 
-`jcache get /mss/halld/RunPeriod-2018-08/analysis/ver13/tree_kpkm__B4/merged/*.root`
+`jcache get /mss/halld/RunPeriod-2018-08/analysis/ver18/tree_kpkm__B4/merged/*.root`
 
 which will eventually place them at the same path with `mss` replaced with `cache` where they can be read from the disk.
 
@@ -60,8 +60,9 @@ which will eventually place them at the same path with `mss` replaced with `cach
 
 An example follow-up workflow in this directory is:
 
-1. Skim a subset of events from the flattened trees.
-2. Plot and compare key distributions from the skimmed output.
+1. Build a global Chi2 ranking between the `kpkm` and `pippim` hypotheses.
+2. Skim a subset of `kpkm` events using that ranking.
+3. Plot and compare key distributions from the skimmed output.
 
 ### 1) Run the skim macro
 
@@ -71,12 +72,12 @@ From this directory:
 root -l -b -q 'skim_kpkm.C()'
 ```
 
-This macro is set up to produce reduced files such as:
+This macro now ranks the `kpkm` and `pippim` trees together and then keeps the `kpkm` candidates from the globally best `Chi2` choice. It produces reduced files such as:
 - `tree_kpkm__B4_BestChi2_SKIM.root`
 - `tree_kpkm__B4_BGGEN_BestChi2_SKIM.root`
 - `tree_kpkm__B4_PSMC_BestChi2_SKIM.root`
 
-Note: several skim steps inside `skim_kpkm.C` are currently commented out. Uncomment the `FSModeTree::skimTree(...)` and (if needed) `createChi2RankingTree(...)` lines you want to run for your sample before executing.
+The skim macro also writes the ranking friend tree, which provides the `Chi2Rank` and `Chi2RankGlobal` branches used by the downstream plots.
 
 ### 2) Run the plotting macro on the skim
 
@@ -92,6 +93,13 @@ To include BGGEN component overlays:
 root -l -b -q 'plot_kpkm.C(true)'
 ```
 
-This creates:
+This macro assumes the `Chi2Rank` friend tree is available and uses `Chi2RankGlobal==1` for the global-rank overlay in the kpkm mass plot. It creates:
 - `out_kpkm.root` with saved histograms for downstream plotting/fitting.
 - A `plots/` directory (recreated each run) for generated plot outputs.
+
+
+## Alternative Hypotheses
+
+The skim and plot scripts here are still focused on the `kpkm` analysis, but the ranking step now compares the kinematic-fit $\chi^2$ for `tree_kpkm__B4` against `tree_pippim__B4` and keeps the `kpkm` candidate only when it is the global winner.
+
+The same overall procedure can be followed for `jcache` and for flattening the trees for the alternative hypothesis before building the ranking tree that includes both topologies.

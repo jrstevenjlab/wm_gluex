@@ -34,7 +34,8 @@ void skim_period(int period=3){
   // Rank both hypotheses together so Chi2RankGlobal reflects the best
   // kpkm-vs-pippim choice for each Run/Event group
   FSModeTree::createRankingTree(FND_DATA_both,NT,"","Chi2Rank","Chi2DOF*1000","CUT(rf)");
-  
+
+  FSTree::addFriendTree("Chi2Rank");
   FSModeTree::skimTree(FND_DATA_kpkm,NT,"kpkm",Form("tree_kpkm__B4_BestChi2_SKIM_%02d.root",period),"CUT(chi2,rf)");
 
   return;

@@ -1,6 +1,6 @@
 
-TREE=tree_kpkm__B4
-INDIR=/cache/halld/RunPeriod-2018-08/analysis/ver18/$TREE/merged
+TREE=tree_pippim__B4
+INDIR=/cache/halld/RunPeriod-2018-08/analysis/ver15/$TREE/merged
 OUTDIR=/volatile/halld/home/jrsteven/flattened/$TREE/data
 mkdir -p $OUTDIR
 
@@ -19,6 +19,6 @@ if test -e "$OUTDIR/${TREE}_FSROOT_${RUN}.root"; then
 fi
 
 # flatten files for FSRoot with chi2 < 20 cut
-~/work2/analysisGluexI/builds/hd_utilities/FlattenForFSRoot/flatten -in $file -out $OUTDIR/${TREE}_FSROOT_${RUN}.root -chi2 20 -usePolarization 1
+~/work2/analysisGluexI/builds/hd_utilities/FlattenForFSRoot/flatten -in $file -out $OUTDIR/${TREE}_FSROOT_${RUN}.root -chi2 20 -usePolarization 1 -addPID 1
 
 done

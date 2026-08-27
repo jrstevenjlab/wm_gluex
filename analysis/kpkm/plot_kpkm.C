@@ -14,7 +14,8 @@ void setup(){
   FSCut::defineCut("MM2","abs(RMASS2(GLUEXTARGET,B,-1,-2,-3))<0.05");
   FSCut::defineCut("eBeam","EnPB>8.0");
   FSCut::defineCut("chi2","Chi2DOF<5");
-  FSCut::defineCut("chi2rank","Chi2RankHybrid==1");
+  FSCut::defineCut("chi2rank","Chi2Rank==1");
+  FSCut::defineCut("chi2rankglobal","Chi2RankGlobal==1");
   
   FSCut::defineCut("t","abs(-1*MASS2([proton],-GLUEXTARGET))<1.0");
   
@@ -32,12 +33,12 @@ void plot_kpkm(bool bggen=false){
   setup();
 
   // with mass constraints
-  TString FND_DATA = "tree_kpkm__B4_Hybrid_SKIM_*.root";
-  TString FND_BGGEN = "tree_kpkm__B4_BGGEN_Hybrid_SKIM.root";
-  TString FND_MC = "tree_kpkm__B4_Hybrid_SKIM_*.root"; // temporarily plot data twice until MC available "tree_kpkm__B4_PSMC_Hybrid_SKIM.root";
+  TString FND_DATA = "tree_kpkm__B4_BestChi2_SKIM_*.root";
+  TString FND_BGGEN = "tree_kpkm__B4_BGGEN_BestChi2_SKIM.root";
+  TString FND_MC = "tree_kpkm__B4_BestChi2_SKIM_*.root"; // temporarily plot data twice until MC available "tree_kpkm__B4_PSMC_Hybrid_SKIM.root";
   TString CATEGORY = "kpkm";
 
-  FSTree::addFriendTree("Chi2RankHybrid");
+  FSTree::addFriendTree("Chi2Rank");
 
   setup();
   system("rm -rf plots");  system("mkdir plots");
@@ -145,6 +146,10 @@ void plot_kpkm(bool bggen=false){
     hMkpkmMC->Scale(hMkpkm->GetMaximum()/hMkpkmMC->GetMaximum());
     hMkpkmMC->SetMarkerColor(kMagenta);
 
+    // Add cut on global chi2 rank to see how much background is removed by vetoing cases where pi+pi- has lower chi2 than K+K- (cross-hypothesis ranking)
+    TH1F* hMkpkm_global = FSModeHistogram::getTH1F(FND_DATA,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s,chi2rankglobal)",CUTS.Data()));
+    hMkpkm_global->SetMarkerColor(kBlue);
+
     if(bggen) {
 	    cb->cd(2);    
 	    TH1F* hMkpkm_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
@@ -165,7 +170,12 @@ void plot_kpkm(bool bggen=false){
     c11->Divide(2,1);
     c11->cd(1);
     hMkpkm->Draw();
-    hMkpkmMC->Draw("same");
+    //hMkpkmMC->Draw("same");
+    hMkpkm_global->Draw("same");
+    TLegend* leg = new TLegend(0.6,0.7,0.9,0.9);
+    leg->AddEntry(hMkpkm,"Data (Default Cuts)","lep");
+    leg->AddEntry(hMkpkm_global,"Data (Default Cuts && Chi2RankGlobal==1)","lep");
+    leg->Draw("same");
 
     c11->cd(2);
     hMkmp->Draw();

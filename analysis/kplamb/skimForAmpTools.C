@@ -33,7 +33,7 @@ void setup(){
   FSCut::defineCut("Lambda2DSB","abs(MASS(1) - 1.115) < 0.010","abs(MASS(1) - 1.115) > 0.015 && abs(MASS(1) - 1.115) < 0.035",0.5);
 }
 
-void skimForAmpTools(bool onlyMC = true){
+void skimForAmpTools(bool onlyMC = false){
 
   setup();
 

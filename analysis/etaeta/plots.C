@@ -29,8 +29,7 @@ void setup(){
   DEFAULT_CUTS = "unusedTracks,unusedE,z,eBeam,chi2,MM2,chi2rank,t,Metagg,Meta3pi,pi0veto";
 }
 
-void plots(bool bggen=false){
-  bool mc=true;
+void plots(){
 	
   // Basic plots for flattened and skimmed DATA trees:
   TString FND_DATA = "tree_pi0pippimeta__B4_M17_GENERAL_SKIM.root";

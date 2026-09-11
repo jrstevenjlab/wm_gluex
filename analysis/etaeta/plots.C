@@ -110,12 +110,18 @@ void plots(){
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",Metagg","");
   TH1F* hMgg = FSModeHistogram::getTH1F(FND_DATA,NT,"pi0pippimeta","MASS([eta]a,[eta]b)","(50,0.35,0.75)",Form("CUT(%s)",CUTS.Data()));
+  hMgg->SetTitle("#eta #rightarrow #gamma#gamma");
+  hMgg->SetXTitle("M(#gamma#gamma) [GeV]");
+  hMgg->SetYTitle("Entries");
   hMgg->Draw();
 
   c11->cd(2);
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",Meta3pi","");
   TH1F* hMpi0pippim = FSModeHistogram::getTH1F(FND_DATA,NT,"pi0pippimeta","MASS([pi0],[pi+],[pi-])","(60,0.35,0.85)",Form("CUT(%s)",CUTS.Data()));
+  hMpi0pippim->SetTitle("#eta #rightarrow #pi^{0}#pi^{+}#pi^{-}");
+  hMpi0pippim->SetXTitle("M(#pi^{0}#pi^{+}#pi^{-}) [GeV]");
+  hMpi0pippim->SetYTitle("Entries");
   hMpi0pippim->Draw();
 
   c11->cd(3);
@@ -123,18 +129,27 @@ void plots(){
   CUTS.ReplaceAll(",Metagg","");
   CUTS.ReplaceAll(",Meta3pi","");
   TH2F* hMggVsMpi0pippim = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimeta","MASS([pi0],[pi+],[pi-]):MASS([eta]a,[eta]b)","(50,0.35,0.75,60,0.35,0.85)",Form("CUT(%s)",CUTS.Data()));
+  hMggVsMpi0pippim->SetTitle("#eta #rightarrow #gamma#gamma vs. #eta #rightarrow #pi^{0}#pi^{+}#pi^{-}");
+  hMggVsMpi0pippim->SetXTitle("M(#gamma#gamma) [GeV]");
+  hMggVsMpi0pippim->SetYTitle("M(#pi^{0}#pi^{+}#pi^{-}) [GeV]");
   hMggVsMpi0pippim->Draw("colz");
  
   c11->cd(4);
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",pi0veto","");
   TH2F* hMgg_alt_etaa = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimeta","MASS([eta]a,[pi0]a):MASS([eta]a,[pi0]b)","(50,0.0,0.5,50,0,0.5)",Form("CUT(%s)",CUTS.Data()));
+  hMgg_alt_etaa->SetTitle("Alternative #gamma#gamma candidates: M(#eta_{a}#pi^{0}_{a}) vs. M(#eta_{a}#pi^{0}_{b})");
+  hMgg_alt_etaa->SetXTitle("M(#eta_{a}#pi^{0}_{a}) [GeV]");
+  hMgg_alt_etaa->SetYTitle("M(#eta_{a}#pi^{0}_{b}) [GeV]");
   hMgg_alt_etaa->Draw("colz");
 
   c11->cd(5);
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",pi0veto","");
   TH2F* hMgg_alt_etab = FSModeHistogram::getTH2F(FND_DATA,NT,"pi0pippimeta","MASS([eta]b,[pi0]a):MASS([eta]b,[pi0]b)","(50,0.0,0.5,50,0,0.5)",Form("CUT(%s)",CUTS.Data()));
+  hMgg_alt_etab->SetTitle("Alternative #gamma#gamma candidates: M(#eta_{b}#pi^{0}_{a}) vs. M(#eta_{b}#pi^{0}_{b})");
+  hMgg_alt_etab->SetXTitle("M(#eta_{b}#pi^{0}_{a}) [GeV]");
+  hMgg_alt_etab->SetYTitle("M(#eta_{b}#pi^{0}_{b}) [GeV]");
   hMgg_alt_etab->Draw("colz");
 
   FSHistogram::dumpHistogramCache();

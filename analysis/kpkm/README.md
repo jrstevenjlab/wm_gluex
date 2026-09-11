@@ -56,13 +56,14 @@ For example, if the files don't exist on the cache disk already, they may need t
 
 which will eventually place them at the same path with `mss` replaced with `cache` where they can be read from the disk.
 
-## Example: Skim Then Plot (`skim_kpkm.C` and `plot_kpkm.C`)
+## Example: Skim Then Plot (`skim_kpkm.C`, `plot_kpkm.C`, and `plot_hybrid_bestChi2.C`)
 
-The current follow-up workflow compares the `kpkm` and `pippim` hypotheses before making a `kpkm` skim:
+The current follow-up workflow compares the `kpkm` and `pippim` hypotheses with two ranking methods before making `kpkm` skims:
 
-1. Build a standard and a hybrid Chi2 ranking from both hypotheses.
-2. Keep `kpkm` candidates passing the fixed Chi2 and RF cuts.
-3. Compare the skimmed data and signal MC distributions.
+1. Build a standard Best Chi2 ranking from both hypotheses within each `Run/Event` group.
+2. Build a Hybrid Chi2 ranking from both hypotheses within each `Run/Event/beam-energy` group.
+3. Keep `kpkm` candidates passing the fit-quality and appropriate ranking cuts.
+4. Plot the standard Best Chi2 and Hybrid results separately and compare them side by side.
 
 ### 1) Run the skim macro
 
@@ -77,16 +78,20 @@ By default, `skim_kpkm()` calls `skim_period(5)`, corresponding to the 2018-08 s
 - Data: `tree_kpkm__B4` and `tree_pippim__B4` under `/volatile/halld/home/jrsteven/flattened/`
 - Signal MC: the corresponding flattened files under `/volatile/halld/home/jrsteven/flattened/`
 
-The macro creates ranking friend trees for both samples. `Chi2Rank` ranks candidates by `Chi2DOF` within each `Run/Event` group, while `HybridChi2Rank` also includes the beam-energy grouping. The ranking trees provide the `Chi2Rank` and `Chi2RankGlobal` branches used by the skim and plots.
+The macro creates ranking friend trees for both data and signal MC. `Chi2Rank` ranks candidates by `Chi2DOF` within each `Run/Event` group. `HybridChi2Rank` ranks candidates within each `Run/Event` and beam-energy group, using the photon beam energy to separate accidental photon combinations. The ranking trees provide the candidate-rank and global-rank branches used by the skims and plots.
 
-The default skim output is:
+The default skim outputs for period 5 are:
 
 - `tree_kpkm__B4_BestChi2_SKIM_05.root`
 - `tree_kpkm__B4_SIGMC_BestChi2_SKIM_05.root`
+- `tree_kpkm__B4_BestHybridChi2_SKIM_05.root`
+- `tree_kpkm__B4_SIGMC_BestHybridChi2_SKIM_05.root`
+
+The Best Chi2 skims apply `Chi2DOF<20`, `Chi2Rank==1`, and the RF signal cut. The Hybrid skims apply `Chi2DOF<20` and `HybridChi2Rank==1`; the comparison macro applies RF signal/sideband weighting to the Hybrid distributions.
 
 To process another period, enable the corresponding `skim_period()` call at the bottom of `skim_kpkm.C` and update the input file globs as needed.
 
-### 2) Run the plotting macro
+### 2) Plot the Best Chi2 skim
 
 After the skim and ranking friend trees exist, run:
 
@@ -101,6 +106,23 @@ The `kpkm` mass plot also shows the subset passing `Chi2RankGlobal==1`, which re
 - `out_kpkm.root`, containing the selected `kpkm` and `pK-` data/MC histograms for downstream fitting.
 - `plots/`, recreated at startup for plot output or interactive ROOT canvases.
 
+### 3) Compare Best Chi2 and Hybrid Chi2
+
+Run the comparison macro from the directory containing the four skim files and their friend trees:
+
+```bash
+root -l -b -q 'plot_hybrid_bestChi2.C()'
+```
+
+`plot_hybrid_bestChi2.C` creates one canvas with two panels:
+
+- Best Chi2 ranking on the left, using `Chi2Rank` and `Chi2RankGlobal`.
+- Hybrid Chi2 ranking on the right, using `HybridChi2Rank` and `HybridChi2RankGlobal`.
+
+Each panel shows data and signal MC, with separate entries for the standard candidate selection and the global-rank selection. The Hybrid panel uses the RF signal/sideband weights defined in `setup()` to account for accidental photon coincidences. The canvas and legends identify the data/MC samples, ranking method, and global-rank selections.
+
+The comparison macro recreates `plots/` and displays the distributions interactively; it does not write a separate ROOT output file.
+
 ## Alternative Hypotheses
 
-The cross-hypothesis ranking requires flattened `kpkm` and `pippim` trees to be available before running the skim. Update the paths in `skim_kpkm.C` when using a full run period, a different MC sample, or a different set of runs.
+The cross-hypothesis ranking requires flattened `kpkm` and `pippim` trees to be available before running the skim. Update the paths in `skim_kpkm.C` when using a full run period, a different MC sample, or a different set of runs. Keep the Best Chi2 and Hybrid friend-tree files together with their corresponding skim files before running the plotting macros.

@@ -48,12 +48,13 @@ void plot_hybrid_bestChi2(){
   system("rm -rf plots");  system("mkdir plots");
 
   TString CUTS;
-  TCanvas* c1 = new TCanvas("c1","c1",1000,600);
-  c1->Divide(3,2);
+  TCanvas* c1 = new TCanvas("c1","Best #chi^{2} vs Hybrid #chi^{2}",1000,500);
+  c1->Divide(2,1);
   c1->cd(1);
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",chi2,",",");
   TH1F* hChi2DOF_BestChi2 = FSModeHistogram::getTH1F(FND_DATA_BestChi2,NT,"kpkm","Chi2DOF","(40,0,20)",Form("CUT(%s)",CUTS.Data()));
+  hChi2DOF_BestChi2->SetTitle("Best #chi^{2} ranking");
   hChi2DOF_BestChi2->SetXTitle("#chi^{2}/dof");
   hChi2DOF_BestChi2->SetYTitle("Events");
   hChi2DOF_BestChi2->Draw();
@@ -72,11 +73,19 @@ void plot_hybrid_bestChi2(){
   hChi2DOFMC_BestChi2_Global->Scale(scale_bestChi2);
   hChi2DOFMC_BestChi2_Global->SetMarkerColor(kBlue);
   hChi2DOFMC_BestChi2_Global->Draw("same");
+
+  TLegend* legBestChi2 = new TLegend(0.48,0.65,0.88,0.88);
+  legBestChi2->AddEntry(hChi2DOF_BestChi2,"Data: Best #chi^{2}","lep");
+  legBestChi2->AddEntry(hChi2DOFMC_BestChi2,"MC: Best #chi^{2}","lep");
+  legBestChi2->AddEntry(hChi2DOF_BestChi2_Global,"Data: Best #chi^{2}, global rank","lep");
+  legBestChi2->AddEntry(hChi2DOFMC_BestChi2_Global,"MC: Best #chi^{2}, global rank","lep");
+  legBestChi2->Draw();
   
   c1->cd(2);
   CUTS = DEFAULT_CUTS;
   CUTS.ReplaceAll(",chi2,",",");
   TH1F* hChi2DOF_Hybrid = FSModeHistogram::getTH1F(FND_DATA_Hybrid,NT,"kpkm","Chi2DOF","(40,0,20)",Form("CUT(%s)*CUTWT(rf)",CUTS.Data()));
+  hChi2DOF_Hybrid->SetTitle("Hybrid #chi^{2} ranking");
   hChi2DOF_Hybrid->SetXTitle("#chi^{2}/dof");
   hChi2DOF_Hybrid->SetYTitle("Events");
   hChi2DOF_Hybrid->Draw();
@@ -95,6 +104,13 @@ void plot_hybrid_bestChi2(){
   hChi2DOFMC_Hybrid_Global->Scale(scale_hybrid);
   hChi2DOFMC_Hybrid_Global->SetMarkerColor(kBlue);
   hChi2DOFMC_Hybrid_Global->Draw("same");
+
+  TLegend* legHybrid = new TLegend(0.48,0.65,0.88,0.88);
+  legHybrid->AddEntry(hChi2DOF_Hybrid,"Data: Hybrid #chi^{2}","lep");
+  legHybrid->AddEntry(hChi2DOFMC_Hybrid,"MC: Hybrid #chi^{2}","lep");
+  legHybrid->AddEntry(hChi2DOF_Hybrid_Global,"Data: Hybrid #chi^{2}, global rank","lep");
+  legHybrid->AddEntry(hChi2DOFMC_Hybrid_Global,"MC: Hybrid #chi^{2}, global rank","lep");
+  legHybrid->Draw();
 
 /*
   // Some mass spectra...

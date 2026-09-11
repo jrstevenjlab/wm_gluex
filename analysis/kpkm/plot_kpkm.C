@@ -28,23 +28,17 @@ void setup(){
   DEFAULT_CUTS = "eBeam,chi2,rf,unusedE,unusedTracks,z,MM2,t,chi2rank";
 }
 
-void plot_kpkm(bool bggen=false){
+void plot_kpkm(){
 
   setup();
 
-  // with mass constraints
   TString FND_DATA = "tree_kpkm__B4_BestChi2_SKIM_*.root";
-  TString FND_BGGEN = "tree_kpkm__B4_BGGEN_BestChi2_SKIM.root";
-  TString FND_MC = "tree_kpkm__B4_BestChi2_SKIM_*.root"; // temporarily plot data twice until MC available "tree_kpkm__B4_PSMC_Hybrid_SKIM.root";
-  TString CATEGORY = "kpkm";
+  TString FND_MC = "tree_kpkm__B4_SIGMC_BestChi2_SKIM_*.root";
 
   FSTree::addFriendTree("Chi2Rank");
 
   setup();
   system("rm -rf plots");  system("mkdir plots");
-
-  TCanvas* cb = new TCanvas("cb","cb",1000,600);
-  cb->Divide(3,2);
 
     TString CUTS;
     TCanvas* c1 = new TCanvas("c1","c1",1000,600);
@@ -131,13 +125,6 @@ void plot_kpkm(bool bggen=false){
     hChi2DOFMC->Scale(hChi2DOF->GetMaximum()/hChi2DOFMC->GetMaximum());
     hChi2DOFMC->SetMarkerColor(kMagenta);
     hChi2DOFMC->Draw("same");
-
-    if(bggen) {
-	    cb->cd(1);    
-	    TH1F* hChi2DOF_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"kpkm","Chi2DOF","(40,0,20)",Form("CUT(%s)",CUTS.Data()));
-	    hChi2DOF_BGGEN->Draw();
-	    FSModeHistogram::drawMCComponentsSame(FND_BGGEN,NT,"kpkm","Chi2DOF","(40,0,20)",Form("CUT(%s)",CUTS.Data()));
-    }
     
     // Some mass spectra...
     CUTS = DEFAULT_CUTS;
@@ -149,13 +136,6 @@ void plot_kpkm(bool bggen=false){
     // Add cut on global chi2 rank to see how much background is removed by vetoing cases where pi+pi- has lower chi2 than K+K- (cross-hypothesis ranking)
     TH1F* hMkpkm_global = FSModeHistogram::getTH1F(FND_DATA,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s,chi2rankglobal)",CUTS.Data()));
     hMkpkm_global->SetMarkerColor(kBlue);
-
-    if(bggen) {
-	    cb->cd(2);    
-	    TH1F* hMkpkm_BGGEN = FSModeHistogram::getTH1F(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
-	    hMkpkm_BGGEN->Draw();
-	    FSModeHistogram::drawMCComponentsSame(FND_BGGEN,NT,"kpkm","MASS([K+],[K-])","(200,0.95,1.5)",Form("CUT(%s)",CUTS.Data()));
-    }
 
     CUTS = DEFAULT_CUTS;
 

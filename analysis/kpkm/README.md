@@ -58,11 +58,11 @@ which will eventually place them at the same path with `mss` replaced with `cach
 
 ## Example: Skim Then Plot (`skim_kpkm.C` and `plot_kpkm.C`)
 
-An example follow-up workflow in this directory is:
+The current follow-up workflow compares the `kpkm` and `pippim` hypotheses before making a `kpkm` skim:
 
-1. Build a global Chi2 ranking between the `kpkm` and `pippim` hypotheses.
-2. Skim a subset of `kpkm` events using that ranking.
-3. Plot and compare key distributions from the skimmed output.
+1. Build a standard and a hybrid Chi2 ranking from both hypotheses.
+2. Keep `kpkm` candidates passing the fixed Chi2 and RF cuts.
+3. Compare the skimmed data and signal MC distributions.
 
 ### 1) Run the skim macro
 
@@ -72,34 +72,35 @@ From this directory:
 root -l -b -q 'skim_kpkm.C()'
 ```
 
-This macro now ranks the `kpkm` and `pippim` trees together and then keeps the `kpkm` candidates from the globally best `Chi2` choice. It produces reduced files such as:
-- `tree_kpkm__B4_BestChi2_SKIM.root`
-- `tree_kpkm__B4_BGGEN_BestChi2_SKIM.root`
-- `tree_kpkm__B4_PSMC_BestChi2_SKIM.root`
+By default, `skim_kpkm()` calls `skim_period(5)`, corresponding to the 2018-08 sample. The input globs are currently hard-coded in `skim_period()` and use a test subset of data runs `0506*`:
 
-The skim macro also writes the ranking friend tree, which provides the `Chi2Rank` and `Chi2RankGlobal` branches used by the downstream plots.
+- Data: `tree_kpkm__B4` and `tree_pippim__B4` under `/volatile/halld/home/jrsteven/flattened/`
+- Signal MC: the corresponding flattened files under `/volatile/halld/home/jrsteven/flattened/`
 
-### 2) Run the plotting macro on the skim
+The macro creates ranking friend trees for both samples. `Chi2Rank` ranks candidates by `Chi2DOF` within each `Run/Event` group, while `HybridChi2Rank` also includes the beam-energy grouping. The ranking trees provide the `Chi2Rank` and `Chi2RankGlobal` branches used by the skim and plots.
 
-After the skim files exist, run:
+The default skim output is:
+
+- `tree_kpkm__B4_BestChi2_SKIM_05.root`
+- `tree_kpkm__B4_SIGMC_BestChi2_SKIM_05.root`
+
+To process another period, enable the corresponding `skim_period()` call at the bottom of `skim_kpkm.C` and update the input file globs as needed.
+
+### 2) Run the plotting macro
+
+After the skim and ranking friend trees exist, run:
 
 ```bash
 root -l -b -q 'plot_kpkm.C()'
 ```
 
-To include BGGEN component overlays:
+`plot_kpkm.C` reads `tree_kpkm__B4_BestChi2_SKIM_*.root` and `tree_kpkm__B4_SIGMC_BestChi2_SKIM_*.root`, attaches the `Chi2Rank` friend tree, and compares data with signal MC for unused energy, production vertex, $|t|$, beam energy, missing-mass squared, fit $\chi^2$/dof, and invariant-mass distributions. Its default cuts include the RF, vertex, missing-mass, unused-energy, unused-track, beam-energy, fit-quality, and `Chi2Rank==1` selections.
 
-```bash
-root -l -b -q 'plot_kpkm.C(true)'
-```
+The `kpkm` mass plot also shows the subset passing `Chi2RankGlobal==1`, which removes events where the competing `pippim` hypothesis has the better global fit ranking. The macro writes:
 
-This macro assumes the `Chi2Rank` friend tree is available and uses `Chi2RankGlobal==1` for the global-rank overlay in the kpkm mass plot. It creates:
-- `out_kpkm.root` with saved histograms for downstream plotting/fitting.
-- A `plots/` directory (recreated each run) for generated plot outputs.
-
+- `out_kpkm.root`, containing the selected `kpkm` and `pK-` data/MC histograms for downstream fitting.
+- `plots/`, recreated at startup for plot output or interactive ROOT canvases.
 
 ## Alternative Hypotheses
 
-The skim and plot scripts here are still focused on the `kpkm` analysis, but the ranking step now compares the kinematic-fit $\chi^2$ for `tree_kpkm__B4` against `tree_pippim__B4` and keeps the `kpkm` candidate only when it is the global winner.
-
-The same overall procedure can be followed for `jcache` and for flattening the trees for the alternative hypothesis before building the ranking tree that includes both topologies.
+The cross-hypothesis ranking requires flattened `kpkm` and `pippim` trees to be available before running the skim. Update the paths in `skim_kpkm.C` when using a full run period, a different MC sample, or a different set of runs.

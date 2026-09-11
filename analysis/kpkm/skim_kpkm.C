@@ -14,10 +14,9 @@ void setup(){
   // FIXED CUTS
   FSCut::defineCut("chi2","Chi2DOF<20");
   FSCut::defineCut("rf","abs(RFDeltaT)<2.004");
+  FSCut::defineCut("chi2rank","Chi2Rank==1");
+  FSCut::defineCut("hybridchi2Rank","HybridChi2Rank==1");
 
-  // RANKING CUTS
-  FSCut::defineCut("chi2rankhybrid","Chi2RankHybrid==1");
-  FSCut::defineCut("chi2rank","Chi2Rank==1 && Chi2RankGlobal==1");
 }
 
 void skim_period(int period=3){
@@ -26,18 +25,36 @@ void skim_period(int period=3){
   TString FND_DATA_pippim = "/volatile/halld/home/jrsteven/flattened/tree_pippim__B4/data/tree_pippim__B4_FSROOT_0506*.root"; //subset of data for testing
   TString FND_DATA_both = "/volatile/halld/home/jrsteven/flattened/tree_*p*m__B4/data/tree_*__B4_FSROOT_0506*.root"; //kpkm + pippim data for cross-hypothesis ranking
 
-  //TString FND_BGGEN_kpkm = Form("/volatile/halld/home/jrsteven/flattened/tree_kpkm__B4/*bggen*/tree_kpkm__B4_FSROOT_%02d*.root", period);
-  //TString FND_BGGEN_pippim = Form("/volatile/halld/home/jrsteven/flattened/tree_kpkm__B4/*bggen*/tree_kpkm__B4_FSROOT_%02d*.root", period);
-  //TString FND_SIGMC_kpkm = Form("/volatile/halld/home/jrsteven/flattened/tree_kpkm__B4/*phi*/tree_kpkm__B4_FSROOT_%02d*.root", period);
-  //TString FND_SIGMC_pippim = Form("/volatile/halld/home/jrsteven/flattened/tree_kpkm__B4/*phi*/tree_kpkm__B4_FSROOT_%02d*.root", period);
+  TString FND_SIGMC_kpkm = "/volatile/halld/home/jrsteven/flattened/tree_kpkm__B4/akovatsb_kpkmMC__B4_4890/tree_kpkm__B4_FSROOT_050*.root";
+  TString FND_SIGMC_pippim = "/volatile/halld/home/jrsteven/flattened/tree_pippim__B4/akovatsb_kpkmMC__B4_4890/tree_pippim__B4_FSROOT_050*.root";
+  TString FND_SIGMC_both = "/volatile/halld/home/jrsteven/flattened/tree_*p*m__B4/akovatsb_kpkmMC__B4_4890/tree_*__B4_FSROOT_050*.root";
 
-  // Rank both hypotheses together so Chi2RankGlobal reflects the best
-  // kpkm-vs-pippim choice for each Run/Event group
-  FSModeTree::createRankingTree(FND_DATA_both,NT,"","Chi2Rank","Chi2DOF*1000","CUT(rf)");
+  ///////////////////////
+  // Best Chi2 method: //
+  ///////////////////////
 
+  // Rank both hypotheses together so Chi2RankGlobal reflects the best kpkm-vs-pippim choice for each Run/Event group
+  FSModeTree::createRankingTree(FND_DATA_both,NT,"","Chi2Rank","Chi2DOF*1000","CUT(rf)","Run","Event");
+  FSModeTree::createRankingTree(FND_SIGMC_both,NT,"","Chi2Rank","Chi2DOF*1000","CUT(rf)","Run","Event","MCPxP2*10000");
+
+  // Make skim where kpkm hypothesis had a better Chi2 than pippim hypothesis (one combination for each event)
   FSTree::addFriendTree("Chi2Rank");
-  FSModeTree::skimTree(FND_DATA_kpkm,NT,"kpkm",Form("tree_kpkm__B4_BestChi2_SKIM_%02d.root",period),"CUT(chi2,rf)");
+  FSModeTree::skimTree(FND_DATA_kpkm,NT,"kpkm",Form("tree_kpkm__B4_BestChi2_SKIM_%02d.root",period),"CUT(chi2,chi2rank,rf)");
+  FSModeTree::skimTree(FND_SIGMC_kpkm,NT,"kpkm",Form("tree_kpkm__B4_SIGMC_BestChi2_SKIM_%02d.root",period),"CUT(chi2,chi2rank,rf)");
 
+  ////////////////////
+  // Hybrid method: //
+  ////////////////////
+
+  // Rank both hypotheses together so Chi2RankGlobal reflects the best kpkm-vs-pippim choice for each Run/Event/Photon beam group
+  FSModeTree::createRankingTree(FND_DATA_both,NT,"","HybridChi2Rank","Chi2DOF*1000","1==1","Run","Event","EnPB*100000");
+  FSModeTree::createRankingTree(FND_SIGMC_both,NT,"","HybridChi2Rank","Chi2DOF*1000","1==1","Run","Event","MCPxP2*10000+EnPB*100000");
+
+  // Make skim where kpkm hypothesis had a better Chi2 than pippim hypothesis (one combination for each beam photon, requires RFDeltaT subtraction in analysis)
+  FSTree::addFriendTree("HybridChi2Rank");
+  FSModeTree::skimTree(FND_DATA_kpkm,NT,"kpkm",Form("tree_kpkm__B4_BestHybridChi2_SKIM_%02d.root",period),"CUT(chi2,hybridchi2Rank)");
+  FSModeTree::skimTree(FND_SIGMC_kpkm,NT,"kpkm",Form("tree_kpkm__B4_SIGMC_BestHybridChi2_SKIM_%02d.root",period),"CUT(chi2,hybridchi2Rank)");
+  
   return;
 }
 

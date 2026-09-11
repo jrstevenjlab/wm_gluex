@@ -1,4 +1,4 @@
-TREE=tree_pippim__B4
+TREE=tree_kpkm__B4
 SAMPLE=akovatsb_kpkmMC__B4_4890
 INDIR=/volatile/halld/home/jrsteven/simulation/$SAMPLE/trees
 OUTDIR=/volatile/halld/home/jrsteven/flattened/$TREE/$SAMPLE

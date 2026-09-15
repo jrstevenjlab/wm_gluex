@@ -25,7 +25,7 @@ fi
 if test -e "$OUTDIR/${TREE}_thrown_FSROOT_${RUN}_MCGEN.root"; then
   echo "Thrown file for run '$RUN' exists, skip!"
 else
-  ~/work2/analysisGluexI/builds/hd_utilities/FlattenForFSRoot/flatten -in $INDIR_THROWN/*$RUN.root -out $OUTDIR/${TREE}_thrown_FSROOT_${RUN}_MCGEN.root -mc 1 -combos 1 -mctag 0_100_110000:w
+  ~/work2/analysisGluexI/builds/hd_utilities/FlattenForFSRoot/flatten -in $INDIR_THROWN/*$RUN.root -out $OUTDIR/${TREE}_thrown_FSROOT_${RUN}_MCGEN.root -mc 1 -combos 1 -mctag 0_100_110000
 fi
 
 done

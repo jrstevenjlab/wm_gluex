@@ -288,6 +288,13 @@ The events are four-vectors only: no detector simulation or reconstruction is
 applied.  For realistic acceptance, pass the output through a detector
 simulation, or use reconstructed phase-space MC as `accmc`.
 
+The notebook `analysis/kplamb/fitting/gen_khyperon_diagnostics.ipynb` runs
+the generator from a single settings cell and compares every generated
+distribution with the model.  The comparisons cover beam energy, −t, −u,
+K+ cos θ_CM and all eight Λ decay-angle projections, and the notebook also
+recovers Σ, P, T, Ox and Oz from moments of the generated events.  It ends
+with notes on using the files in a detector simulation.
+
 ### Production model
 
 The unpolarized production is modeled as a forward (t-channel) peak plus an

@@ -282,6 +282,9 @@ holds diagnostic histograms:
   and `gen_cosThetaCM` (K+ polar angle relative to the beam in the gamma p CM
   frame).  `gen_t` and `gen_u` use 0.01 GeV^2 bins over the full kinematic
   range, for comparing with published dsigma/dt, dsigma/du and dsigma/dcos(theta).
+- final state: `gen_pTheta_Kp`, `gen_pTheta_p` and `gen_pTheta_pim`, lab
+  momentum vs polar angle relative to the beam (0–180° in 0.5° bins, and
+  0 to the maximum beam energy in 400 bins).
 - decay: `gen_MLambda`, `gen_cosThetaX/Y/Z`, `gen_Phi` and `gen_cosThetaY_vs_Phi`.
 
 The events are four-vectors only: no detector simulation or reconstruction is
@@ -291,7 +294,8 @@ simulation, or use reconstructed phase-space MC as `accmc`.
 The notebook `analysis/kplamb/fitting/gen_khyperon_diagnostics.ipynb` runs
 the generator from a single settings cell and compares every generated
 distribution with the model.  The comparisons cover beam energy, −t, −u,
-K+ cos θ_CM and all eight Λ decay-angle projections, and the notebook also
+K+ cos θ_CM and all eight Λ decay-angle projections.  It also shows lab
+momentum vs polar angle for the K+, p and pi-, and the notebook
 recovers Σ, P, T, Ox and Oz from moments of the generated events.  It ends
 with notes on using the files in a detector simulation.
 

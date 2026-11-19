@@ -284,7 +284,8 @@ class FSRootMCWriter
 {
 public:
 
-  FSRootMCWriter( const string& fileName, const string& treeName ) :
+  // pMax is the upper edge of the momentum axis of the p vs theta histograms
+  FSRootMCWriter( const string& fileName, const string& treeName, double pMax ) :
     m_file( TFile::Open( fileName.c_str(), "RECREATE" ) ), m_count( 0 )
   {
     if( !m_file || m_file->IsZombie() ){
@@ -317,6 +318,15 @@ public:
     m_hPhi    = new TH1D( "gen_Phi", "#Phi;#Phi (rad);Events", 100, -M_PI, M_PI );
     m_hCosYPhi = new TH2D( "gen_cosThetaY_vs_Phi", "cos#theta_{y} vs #Phi;#Phi (rad);cos#theta_{y}",
                            50, -M_PI, M_PI, 50, -1.0, 1.0 );
+
+    // lab momentum vs polar angle (relative to the beam) of each final-state particle
+    const char* pNames[3]  = { "gen_pTheta_Kp", "gen_pTheta_p", "gen_pTheta_pim" };
+    const char* pTitles[3] = { "K^{+}", "p", "#pi^{-}" };
+    for( int i = 0; i < 3; ++i ){
+      const string title = string( pTitles[i] ) +
+        " momentum vs polar angle;#theta_{lab} (deg);p (GeV)";
+      m_hPTheta[i] = new TH2D( pNames[i], title.c_str(), 360, 0.0, 180.0, 400, 0.0, pMax );
+    }
   }
 
   ~FSRootMCWriter()
@@ -325,7 +335,8 @@ public:
     m_file->cd();
     m_tree->Write();
     TH1* hists[] = { m_hE, m_hT, m_hU, m_hCosCM, m_hMLam,
-                     m_hCosX, m_hCosY, m_hCosZ, m_hPhi, m_hCosYPhi };
+                     m_hCosX, m_hCosY, m_hCosZ, m_hPhi, m_hCosYPhi,
+                     m_hPTheta[0], m_hPTheta[1], m_hPTheta[2] };
     for( TH1* h : hists ){
       h->Write();
       delete h;
@@ -379,6 +390,11 @@ public:
     m_hCosZ->Fill( cos( pLam.Vect().Angle( z ) ) );
     m_hPhi->Fill( Phi );
     m_hCosYPhi->Fill( Phi, cosY );
+
+    const TLorentzVector* fs[3] = { &k, &p, &pi };
+    for( int i = 0; i < 3; ++i ){
+      m_hPTheta[i]->Fill( fs[i]->Theta() * 180.0 / M_PI, fs[i]->P() );
+    }
   }
 
   long count() const { return m_count; }
@@ -395,6 +411,7 @@ private:
 
   TH1D *m_hE, *m_hT, *m_hU, *m_hCosCM, *m_hMLam, *m_hCosX, *m_hCosY, *m_hCosZ, *m_hPhi;
   TH2D* m_hCosYPhi;
+  TH2D* m_hPTheta[3];   // K+, p, pi-
 };
 
 } // namespace
@@ -495,7 +512,7 @@ main( int argc, char* argv[] )
   // --- flat phase space: no AmpTools needed ---
   if( genFlat ){
     cout << "Generating " << nEvents << " flat phase-space events into " << outName << endl;
-    FSRootMCWriter writer( outName, treeName );
+    FSRootMCWriter writer( outName, treeName, eHigh );
     for( long i = 0; i < nEvents; ++i ){
       Kinematics* kin = generator.generate();
       writer.write( *kin );
@@ -521,7 +538,7 @@ main( int argc, char* argv[] )
   cout << endl << "Generating " << nEvents << " events for reaction " << reaction
        << " into " << outName << endl;
 
-  FSRootMCWriter writer( outName, treeName );
+  FSRootMCWriter writer( outName, treeName, eHigh );
   double maxInten = -1.0;
   long nThrown = 0;
 

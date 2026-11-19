@@ -231,8 +231,8 @@ def load_root():
         import ROOT
     except ImportError as exc:
         raise SystemExit(
-            "Could not import PyROOT. Source the analysis environment first, "
-            "for example: source /sciclone/home/jrstevens01/wm_gluex/setup_root.sh"
+            "Could not import PyROOT. Set up your ROOT environment first, "
+            "for example: source <root install>/bin/thisroot.sh"
         ) from exc
 
     ROOT.gROOT.SetBatch(True)

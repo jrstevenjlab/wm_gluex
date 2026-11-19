@@ -1,0 +1,11 @@
+# build products
+*.o
+fit
+khyperon_plotter
+gen_khyperon
+
+# AmpTools downloaded and built by 'make amptools'
+AmpTools/
+
+# quick-start closure test directory
+toy/

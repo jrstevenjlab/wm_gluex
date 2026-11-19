@@ -1,13 +1,13 @@
-#!/usr/bin/env python3.9
+#!/usr/bin/env python3
 
 # Alex Austregesilo
 # aaustreg@jlab.org
 
+import argparse
 import sys
 import os
 import subprocess
 import math
-from optparse import OptionParser
 from shutil import copyfile
 #import ROOT
 
@@ -26,6 +26,21 @@ def main(argv):
         workingDir = os.getcwd()
         scriptDir = os.path.dirname(os.path.abspath(__file__))
 
+        # default input: the analysis/ directory of this repository, which holds
+        # kplamb/out/t_<low>_<high>/ after running kplamb/skimForAmpTools.C
+        defaultInDir = os.path.abspath(os.path.join(scriptDir, "..", ".."))
+
+        parser = argparse.ArgumentParser(
+                description="Run the standalone KHyperon fit in each t bin.")
+        parser.add_argument("--indir", default=defaultInDir,
+                help="directory containing <channel>/out/t_<low>_<high>/ skims "
+                     "[default: %(default)s]")
+        parser.add_argument("--nrand", default="25",
+                help="number of randomized fit trials per t bin [default: %(default)s]")
+        parser.add_argument("--maxcalls", default="1000000",
+                help="maximum MINUIT iterations [default: %(default)s]")
+        args = parser.parse_args(argv)
+
         # channel specific information: names, trees, data location
         channel = "kplamb"
         tree = "kplamb__B4_M18"
@@ -34,11 +49,11 @@ def main(argv):
         reacName = "Beam K+ Proton Pi-"
 
         # directory that data is located in
-        inDir = "/sciclone/home/jrstevens01/wm_gluex/analysis/"
+        inDir = os.path.abspath(args.indir)
 
         # define type of fit to be performed
-        numRand = "25"
-        maxCalls = "1000000"
+        numRand = args.nrand
+        maxCalls = args.maxcalls
         fitName = "khyperon"
         cfgTempl = os.path.join(scriptDir, "fit_" + fitName + ".cfg")
         fitBinary = os.path.join(scriptDir, "standalone", "fit")
